@@ -1,0 +1,98 @@
+//
+//  sampling.h
+//  PathTracer
+//
+//  Created by HYZ on 2018/2/4.
+//  Copyright © 2018年 HYZ. All rights reserved.
+//
+
+//This file contains inline sampling functions
+
+#ifndef sampling_h
+#define sampling_h
+
+#include "typeAlias.h"
+#include "globalConstants.h"
+#include "Sampler.h"
+
+//RandomSampler rsp;
+
+//pbrt: page: 775
+inline Point3f uniformSampleHemisphere(const Point2f u){
+    float z = u[0];
+    float r = sqrt(1.0 - z * z);
+    float phi = 2 * Pi * u[1];
+    return Point3f(r * cos(phi), r * sin(phi), z);
+}
+inline float uniformSampleHemispherePDF(){
+    return Inv2Pi;
+}
+
+
+//pbrt: page776
+inline Point3f uniformSampleSphere(const Point2f u){
+    float z = 1.0 - 2.0 * u[0];
+    float r = sqrt(1.0 - z * z);
+    float phi = 2 * Pi * u[1];
+    return Point3f(r * cos(phi), r * sin(phi), z);
+}
+inline float uniformSampleSpherePDF(){
+    return Inv4Pi;
+}
+
+//pbrt: page 777. This function is not used
+inline Point2f uniformSampleDisk(const Point2f u) {
+    float r = sqrt(u[0]);
+    float theta = 2 * M_PI * u[1];
+    Point2f p = Point2f(r * cos(theta), r * sin(theta));
+    return p;
+}
+
+//pbrt: page 778
+inline Point2f concentricSampleDisk(const Point2f u) {
+    // Map uniform random numbers to $[-1,1]^2$
+    Point2f uMapped = 2.0 * u - Vector2f(1.0, 1.0);
+    
+    // Handle degeneracy at the origin
+    if (uMapped[0] == 0 && uMapped[1] == 0) {
+        return Point2f(0.0, 0.0);
+    }
+    
+    float r, theta;
+    if(abs(uMapped[0]) > abs(uMapped[1])) {
+        r = uMapped[0];
+        theta = PiOver4 * (uMapped[0] / uMapped[1]);
+    }
+    else{
+        r = uMapped[1];
+        theta = PiOver2 - PiOver4 * (uMapped[0] / uMapped[1]);
+    }
+    Point2f p = Point2f(r * cos(theta), r * sin(theta));
+    return p;
+}
+
+//pbrt: page 780
+inline Point3f cosineSampleHemisphere(const Point2f u){
+    Point2f p_disk = concentricSampleDisk(u);
+    float z = sqrt(1.0 - p_disk.x() * p_disk.x() - p_disk.y() - p_disk.y());
+    return Point3f(p_disk.x(), p_disk.y(), z);
+}
+inline float cosinSampleHemisphere(float cosTheta){
+    return cosTheta * InvPi;
+}
+
+//pbrt: page 781
+inline Point3f uniformSampleCone(const Point2f u, const float cosThetaMax){
+    float cosTheta = (1.0 - u[0]) + u[0] * cosThetaMax;
+    float sinTheta = sqrt(1.0 - cosTheta * cosTheta);
+    float phi = u[1] * 2 * Pi;
+    return Point3f(cos(phi) * sinTheta, sin(phi) * sinTheta, cosTheta);
+}
+inline float uniformSampleConePDF(const float cosThetaMax){
+    return 1 / (2 * Pi * (1 - cosThetaMax));
+}
+
+
+
+
+#endif /* sampling_h */
