@@ -10,6 +10,7 @@
 #define Intersection_h
 
 #include "typeAlias.h"
+#include "Material.h"
 
 class Shape;
 class Ray;
@@ -20,14 +21,16 @@ private:
     Shape* shape;
     Point3f interP;
     Vector3f localN;
+    Material* matetial;
 public:
-    Intersection(Ray* r, Shape* sp, Point3f iP, Vector3f lN);
+    Intersection(Ray* r, Shape* sp, Point3f iP, Vector3f lN, Material* mt);
     ~Intersection();
     
     Ray* getRay() const;
     Shape* getShape() const;
     Point3f getInterPoint() const;
     Vector3f getLocalNormal() const;
+    Material* getMaterial() const;
 };
 
 

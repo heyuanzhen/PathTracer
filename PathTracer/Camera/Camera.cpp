@@ -7,6 +7,7 @@
 //
 
 #include "Camera.h"
+#include "Sampler.h"
 #include <iostream>
 
 Camera::Camera() {}
@@ -69,7 +70,7 @@ void PerspectiveCamera::calcCameraMatrices() {
     isCalc = true;
 }
 
-Point2i PerspectiveCamera::transToImg(Point3f p){
+Point2i PerspectiveCamera::worldToImg(Point3f p){
     Point4f homoP(p(0), p(1), p(2), 1.0);
     if (!isCalc) {
         calcCameraMatrices();
@@ -82,6 +83,10 @@ Point2i PerspectiveCamera::transToImg(Point3f p){
     return Point2i(posInPix(1), posInPix(0)); //(row, col)
 }
 
+void PerspectiveCamera::generateRays(Ray *rays) {
+    StratifiedSampler sp = StratifiedSampler(1);
+    
+}
 
 
 

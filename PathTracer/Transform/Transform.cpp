@@ -15,12 +15,19 @@ Transform::Transform() {
     MRot.setIdentity();
     invMRot.setIdentity();
     isInvMCalc = true;
+    isInvMRotCalc = true;
 }
 
 Transform::~Transform() {}
 
 void Transform::calcInvM() {
     invM = M.inverse();
+    isInvMCalc = true;
+}
+
+void Transform::calcInvMRot() {
+    invMRot = MRot.inverse();
+    isInvMRotCalc = true;
 }
 
 void Transform::setTranslation(float *ds) {
@@ -46,7 +53,9 @@ void Transform::setRotateX(float rad){
     Mt(2, 1) = sin(rad);
     Mt(2, 2) = cos(rad);
     M = Mt * M;
+    MRot = Mt * MRot;
     isInvMCalc = false;
+    isInvMRotCalc = false;
 }
 
 void Transform::setRotateY(float rad){
@@ -56,7 +65,9 @@ void Transform::setRotateY(float rad){
     Mt(2, 0) = -sin(rad);
     Mt(2, 2) = cos(rad);
     M = Mt * M;
+    MRot = Mt * MRot;
     isInvMCalc = false;
+    isInvMRotCalc = false;
 }
 
 void Transform::setRotateZ(float rad){
@@ -66,7 +77,9 @@ void Transform::setRotateZ(float rad){
     Mt(1, 0) = sin(rad);
     Mt(1, 1) = cos(rad);
     M = Mt * M;
+    MRot = Mt * MRot;
     isInvMCalc = false;
+    isInvMRotCalc = false;
 }
 
 void Transform::setIdentityM() {
@@ -74,19 +87,27 @@ void Transform::setIdentityM() {
     isInvMCalc = false;
 }
 
-Matrix4f Transform::getM() {
+Matrix4f Transform::getM() const {
     return M;
+}
+
+Matrix4f Transform::getMRot() const {
+    return MRot;
 }
 
 Matrix4f Transform::getInvM() {
     if (!isInvMCalc) {
         calcInvM();
-        isInvMCalc = true;
     }
     return invM;
 }
 
-
+Matrix4f Transform::getInvMRot() {
+    if (!isInvMRotCalc) {
+        calcInvMRot();
+    }
+    return invMRot;
+}
 
 
 

@@ -11,10 +11,8 @@
 
 #include "typeAlias.h"
 #include "globalConstants.h"
-#include "Ray.h"
 #include "Intersection.h"
 #include "Transform.h"
-
 
 
 class Shape {
@@ -22,16 +20,16 @@ public:
     enum ShapeType{
         SPHERE = 1
     };
+    const ShapeType type;
+    Transform trans;
+    Material* material;
     
     Shape(ShapeType tp);
     ~Shape();
     
-    
-    const ShapeType type;
-    Transform trans;
-    
+    void transRayToLocal(Ray* rayW, Ray& rayL);
     virtual Vector3f getNormal(Point3f pWorld) = 0;
-    virtual bool isIntersected(Ray* ray, Intersection* its) = 0;
+    virtual float isIntersected(Ray* ray, Intersection* its) = 0;
 };
 
 class Sphere : public Shape {
@@ -45,7 +43,7 @@ public:
     Point3f getCenPos() const;
     float getR() const;
     virtual Vector3f getNormal(Vector3f pWorld);
-    virtual bool isIntersected(Ray* ray, Intersection* its);
+    virtual float isIntersected(Ray* rayW, Intersection* its);
 };
 
 #endif /* Shape_h */

@@ -27,10 +27,16 @@ void test(){
     Vector3f cenPos = Vector3f(0.0, 0.0, 0.0);
     Scene* scene = new Scene(spC, liC);
     Sphere* sphere1 = new Sphere(r, cenPos);
-//    cout<<sphere1->type<<endl;
     scene->addShape(sphere1);
-//    cout<<scene->getShapeCount()<<endl;
-    cout<<scene->getShape(0)->getNormal(Point3f(0.0, 0.0, -0.5))<<endl;
+    
+    Ray r1 = Ray(Vector3f(0.5, 0.0, 2.0), Vector3f(0.0, 0.0, -1.0), 0.0);
+    Shape* sp = scene->getShape(0);
+    float ds[3] = {0.5, 0.0, 0.0};
+    sp->trans.setTranslation(ds);
+    Intersection* its = nullptr;
+    float t = sp->isIntersected(&r1, its);
+    cout<<t<<endl;
+    
     delete sphere1;
     delete scene;
 }

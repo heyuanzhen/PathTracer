@@ -23,6 +23,11 @@ class Ray {
 public:
     Ray(Point3f _o, Vector3f _d, float _t);
     ~Ray();
+    Point3f getOrigin() const;
+    Vector3f getDirection() const;
+    float getT() const;
+    void setRay(Point3f _o, Vector3f _d, float _t);
+    void setT(float _t);
     void findIntersection(Scene* scene);
     void calcInterPoint();
     

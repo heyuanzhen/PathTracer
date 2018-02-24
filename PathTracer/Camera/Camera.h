@@ -10,12 +10,15 @@
 #define Camera_h
 
 #include "typeAlias.h"
+#include "Ray.h"
 
 class Camera {
     
 public:
     Camera();
     ~Camera();
+    
+    virtual void generateRays(Ray* rays) = 0;
 };
 
 
@@ -38,7 +41,8 @@ public:
     ~PerspectiveCamera();
     
     void calcCameraMatrices();
-    Point2i transToImg(Point3f p);
+    Point2i worldToImg(Point3f p);
+    virtual void generateRays(Ray* rays);
 };
 
 #endif /* Camera_h */
