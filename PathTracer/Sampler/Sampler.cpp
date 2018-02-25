@@ -66,10 +66,11 @@ void StratifiedSampler::genRandNumArr2D(){
             curY = (rowi + 0.5) * blocksDelta + jitter[0];
             curX = (coli + 0.5) * blocksDelta + jitter[1];
             randNumArr[rowi * blocksPerAxis + coli] = Point2f(curX, curY);
-            std::cout<<"(i, j) = ("<<rowi<<", "<<coli<<")"
-            <<"curX = "<<Point2f(curX, curY).transpose()<<std::endl;
+//            std::cout<<"(i, j) = ("<<rowi<<", "<<coli<<")"
+//            <<"curX = "<<Point2f(curX, curY).transpose()<<std::endl;
         }
     }
+    currentNumberIndex = 0;
 }
 
 bool StratifiedSampler::noNumRemains(){
@@ -84,8 +85,9 @@ float StratifiedSampler::get1D(){
 
 Point2f StratifiedSampler::get2D(){
     if (noNumRemains()) {
-        std::cout<<"ERROR: No random number remains in stratified sampler!"<<std::endl;
-        exit(1);
+        genRandNumArr2D();
+//        std::cout<<"ERROR: No random number remains in stratified sampler!"<<std::endl;
+//        exit(1);
     }
     Point2f xi = randNumArr[currentNumberIndex];
     currentNumberIndex++;

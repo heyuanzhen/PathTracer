@@ -10,15 +10,19 @@
 #define Camera_h
 
 #include "typeAlias.h"
+#include "Sampler.h"
 #include "Ray.h"
 
 class Camera {
-    
+protected:
+    const int sampleCount;
+    Sampler* sampler;
+    Ray* rays;
 public:
-    Camera();
+    Camera(int spC, Sampler* sp);
     ~Camera();
     
-    virtual void generateRays(Ray* rays) = 0;
+    virtual void generateRays() = 0;
 };
 
 
@@ -30,19 +34,27 @@ class PerspectiveCamera : public Camera{
     Point3f target;
     Point3f origin;
     Vector3f up;
-    bool isCalc;
+    bool isWToICalc;
+    bool isIToWCalc;
     
     Matrix4f m_worldToCam;
     MatrixXf m_camToImgPlane;
     MatrixXf m_imgPlaneToImage;
+    
+    Matrix3f m_imageToImgPlane;
+    Matrix3f m_imgPlaneToCam;
+    Matrix4f m_camToWorld;
 public:
     //reso[2] should be rows * cols
-    PerspectiveCamera(float* lookAt, int* reso, float fovf);
+    PerspectiveCamera(float* lookAt, int* reso, float fovf, int spC, Sampler* sp);
     ~PerspectiveCamera();
     
-    void calcCameraMatrices();
+    void calcWToIMatrices();
+    void calcIToWMatrices();
     Point2i worldToImg(Point3f p);
-    virtual void generateRays(Ray* rays);
+    Point3f imgToWorld(Point2f p);
+    void calcRayParas(Point3f pos, Ray* ray);
+    virtual void generateRays();
 };
 
 #endif /* Camera_h */

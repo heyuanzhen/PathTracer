@@ -21,6 +21,7 @@ class Ray {
     float t;
     Intersection* its;
 public:
+    Ray();
     Ray(Point3f _o, Vector3f _d, float _t);
     ~Ray();
     Point3f getOrigin() const;

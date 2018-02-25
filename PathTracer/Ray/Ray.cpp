@@ -10,6 +10,13 @@
 #include "Shape.h"
 #include <iostream>
 
+Ray::Ray() {
+    o = Vector3f(0.0, 0.0, 0.0);
+    d = Vector3f(0.0, 0.0, 0.0);
+    t = 0.0;
+    its = nullptr;
+}
+
 Ray::Ray(Point3f _o, Vector3f _d, float _t) : o(_o), d(_d), t(_t), its(nullptr) {}
 
 Ray::~Ray() {}
