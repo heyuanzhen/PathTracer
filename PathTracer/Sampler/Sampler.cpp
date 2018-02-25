@@ -48,7 +48,7 @@ void StratifiedSampler::clipInputBlocks(){
         blocksPerAxis = static_cast<int>(sqrt(blocks));
         blocks = blocksPerAxis * blocksPerAxis;
     }
-    std::cout<<"blocks: "<<blocks<<std::endl;
+//    std::cout<<"blocks: "<<blocks<<std::endl;
 }
 
 void StratifiedSampler::initializeSampler(){
