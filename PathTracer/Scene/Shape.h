@@ -28,8 +28,9 @@ public:
     ~Shape();
     
     void transRayToLocal(Ray* rayW, Ray& rayL);
+    Material* getMaterial() const;
     virtual Vector3f getNormal(Point3f pWorld) = 0;
-    virtual float isIntersected(Ray* ray, Intersection* its) = 0;
+    virtual float isIntersected(Ray* ray) = 0;
 };
 
 class Sphere : public Shape {
@@ -43,7 +44,7 @@ public:
     Point3f getCenPos() const;
     float getR() const;
     virtual Vector3f getNormal(Vector3f pWorld);
-    virtual float isIntersected(Ray* rayW, Intersection* its);
+    virtual float isIntersected(Ray* rayW);
 };
 
 #endif /* Shape_h */

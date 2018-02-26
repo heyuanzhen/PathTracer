@@ -19,8 +19,8 @@ protected:
     Sampler* sampler;
     Ray* rays;
 public:
-    Camera(int spC, Sampler* sp);
-    ~Camera();
+    Camera(int spC, Sampler* sp, Ray* r);
+    virtual ~Camera();
     
     virtual void generateRays() = 0;
 };
@@ -46,7 +46,7 @@ class PerspectiveCamera : public Camera{
     Matrix4f m_camToWorld;
 public:
     //reso[2] should be rows * cols
-    PerspectiveCamera(float* lookAt, int* reso, float fovf, int spC, Sampler* sp);
+    PerspectiveCamera(float* lookAt, int* reso, float fovf, int spC, Sampler* sp, Ray* r);
     ~PerspectiveCamera();
     
     void calcWToIMatrices();

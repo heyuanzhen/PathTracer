@@ -19,7 +19,10 @@ class Ray {
     Point3f o;
     Vector3f d;
     float t;
-    Intersection* its;
+    Intersection its;
+    Spectrum3f radiance;
+    
+    void brutalWayToFind(Scene *scene);
 public:
     Ray();
     Ray(Point3f _o, Vector3f _d, float _t);
@@ -27,12 +30,11 @@ public:
     Point3f getOrigin() const;
     Vector3f getDirection() const;
     float getT() const;
+    Intersection* getIntersection();
+    Point3f calcP() const;
     void setRay(Point3f _o, Vector3f _d, float _t);
     void setT(float _t);
     void findIntersection(Scene* scene);
-    void calcInterPoint();
-    
-    void brutalWayToFind(Scene *scene);
 };
 
 #endif /* Ray_h */

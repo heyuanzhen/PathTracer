@@ -22,9 +22,16 @@ void Shape::transRayToLocal(Ray* rayW, Ray& rayL) {
     rayL.setRay(oL, dL, 0.0);
 }
 
+Material* Shape::getMaterial() const {
+    return material;
+}
+
 
 ////Sphere class
-Sphere::Sphere(float _r, Vector3f _cenPos) : radius(_r), center(_cenPos), Shape(SPHERE) {}
+Sphere::Sphere(float _r, Vector3f _cenPos) : radius(_r), center(_cenPos), Shape(SPHERE) {
+    float ds[3] = {_cenPos(0), _cenPos(1), _cenPos(2)};
+    trans.setTranslation(ds);
+}
 
 Sphere::~Sphere() {}
 
@@ -39,13 +46,14 @@ float Sphere::getR() const {
 Vector3f Sphere::getNormal(Vector3f pWorld) {
     Vector3f normal = pWorld - center;
     if (normal.norm() - radius > eps) {
+        std::cout<<normal.transpose()<<", "<<normal.norm() - radius<<std::endl;
         std::cout<<"This point is not on the sphere's surface !"<<std::endl;
         return Vector3f(0.0, 0.0, 0.0);
     }
     return normal.normalized();
 }
 
-float Sphere::isIntersected(Ray *rayW, Intersection* its) {
+float Sphere::isIntersected(Ray *rayW) {
     //1.cordinate transform
     //2.get quadratic equation's coefficient
     //3.delta judgement
@@ -54,6 +62,7 @@ float Sphere::isIntersected(Ray *rayW, Intersection* its) {
     transRayToLocal(rayW, rayL);
     Point3f oL = rayL.getOrigin();
     Vector3f dL = rayL.getDirection();
+//    std::cout<<dL.transpose()<<std::endl;
     float a = dL(0) * dL(0) + dL(1) * dL(1) + dL(2) * dL(2);
     float b = 2.0 * (dL(0) * oL(0) + dL(1) * oL(1) + dL(2) * oL(2));
     float c = oL(0) * oL(0) + oL(1) * oL(1) + oL(2) * oL(2) - radius * radius;
@@ -62,15 +71,14 @@ float Sphere::isIntersected(Ray *rayW, Intersection* its) {
         return MAX_FLOAT;
     }
     else{
-        float x1 = (-b - sqrt(delta)) / (2.0 * a);
-        if (x1 < 0.0) {
+        float t1 = (-b - sqrt(delta)) / (2.0 * a);
+        if (t1 < 0.0) {
             return MAX_FLOAT;
         }
         else{
-            return  x1;
+            return  t1;
         }
     }
-    return false;
 }
 
 

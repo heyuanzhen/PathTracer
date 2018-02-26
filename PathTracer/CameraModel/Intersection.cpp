@@ -10,8 +10,15 @@
 #include "Ray.h"
 #include "Shape.h"
 
+Intersection::Intersection() {
+    ray = nullptr;
+    shape = nullptr;
+    matetial = nullptr;
+    isInter = false;
+}
+
 Intersection::Intersection(Ray* r, Shape* sp, Point3f iP, Vector3f lN, Material* mt) :
-                           ray(r), shape(sp), interP(iP), localN(lN), matetial(mt) {}
+                           ray(r), shape(sp), interP(iP), localN(lN), matetial(mt), isInter(true) {}
 
 Intersection::~Intersection() {}
 
@@ -33,4 +40,8 @@ Vector3f Intersection::getLocalNormal() const {
 
 Material* Intersection::getMaterial() const {
     return matetial;
+}
+
+bool Intersection::getIsInter() const {
+    return isInter;
 }

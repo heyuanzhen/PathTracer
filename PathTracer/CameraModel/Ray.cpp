@@ -14,10 +14,9 @@ Ray::Ray() {
     o = Vector3f(0.0, 0.0, 0.0);
     d = Vector3f(0.0, 0.0, 0.0);
     t = 0.0;
-    its = nullptr;
 }
 
-Ray::Ray(Point3f _o, Vector3f _d, float _t) : o(_o), d(_d), t(_t), its(nullptr) {}
+Ray::Ray(Point3f _o, Vector3f _d, float _t) : o(_o), d(_d), t(_t){}
 
 Ray::~Ray() {}
 
@@ -31,6 +30,14 @@ Vector3f Ray::getDirection() const {
 
 float Ray::getT() const {
     return t;
+}
+
+Intersection* Ray::getIntersection() {
+    return &its;
+}
+
+Point3f Ray::calcP() const {
+    return o + t * d;
 }
 
 void Ray::setRay(Point3f _o, Vector3f _d, float _t) {
@@ -53,22 +60,25 @@ void Ray::brutalWayToFind(Scene* scene) {
     }
     Vector3f interP;
     float t_min = MAX_FLOAT;
-    Intersection* its_now = nullptr;
+    Intersection its_now;
     for (int i = 0; i < scene->getShapeCount(); i++) {
+//        std::cout<<i<<std::endl;
         Shape* sp = scene->getShape(i);
-        float t_now = sp->isIntersected(this, its_now);
-        if (!its_now) {
-            continue;
+        float t_now = sp->isIntersected(this);
+        if (t_now < t_min) {
+            t_min = t_now;
+            t = t_now;
+            its = Intersection(this, sp, calcP(), sp->getNormal(calcP()), sp->getMaterial());
         }
         else{
-            if (t_now < t_min) {
-                t_min = t_now;
-                its = its_now;
-            }
-            else{
-                continue;
-            }
+            continue;
         }
     }
 }
+
+
+
+
+
+
 

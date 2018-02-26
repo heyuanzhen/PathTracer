@@ -22,7 +22,9 @@ private:
     Point3f interP;
     Vector3f localN;
     Material* matetial;
+    bool isInter;
 public:
+    Intersection();
     Intersection(Ray* r, Shape* sp, Point3f iP, Vector3f lN, Material* mt);
     ~Intersection();
     
@@ -31,6 +33,7 @@ public:
     Point3f getInterPoint() const;
     Vector3f getLocalNormal() const;
     Material* getMaterial() const;
+    bool getIsInter() const;
 };
 
 

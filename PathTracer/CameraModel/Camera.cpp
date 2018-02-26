@@ -10,14 +10,14 @@
 #include "Sampler.h"
 #include <iostream>
 
-Camera::Camera(int spC, Sampler* sp) : sampleCount(spC), sampler(sp) {
-    rays = nullptr;
+Camera::Camera(int spC, Sampler* sp, Ray* r) : sampleCount(spC), sampler(sp) {
+    rays = r;
 }
 Camera::~Camera() {}
 
 
-PerspectiveCamera::PerspectiveCamera(float* lookAt, int* reso, float fovf, int spC, Sampler* sp)
-                                    : Camera(spC, sp){
+PerspectiveCamera::PerspectiveCamera(float* lookAt, int* reso, float fovf, int spC, Sampler* sp, Ray* r)
+                                    : Camera(spC, sp, r){
     fov = fovf;
     xres = reso[1];
     yres = reso[0];
@@ -41,7 +41,6 @@ PerspectiveCamera::PerspectiveCamera(float* lookAt, int* reso, float fovf, int s
     m_camToWorld.setIdentity();
     
     Point3f zero(0.0, 0.0, 0.0);
-    rays = new Ray[xres * yres * sampleCount]();
 }
 
 PerspectiveCamera::~PerspectiveCamera() {}
@@ -157,7 +156,7 @@ void PerspectiveCamera::calcRayParas(Point3f pos, Ray *ray) {
 }
 
 void PerspectiveCamera::generateRays() {
-    int offset;
+    #pragma omp parallel for schedule(dynamic)
     for (int rowi = 0; rowi < yres; rowi++) {
         for (int coli = 0; coli < xres; coli++) {
             for (int spi = 0; spi < sampleCount; spi++) {
@@ -165,7 +164,7 @@ void PerspectiveCamera::generateRays() {
                 p += sampler->get2D() - Point2f(0.5, 0.5);
                 Point3f pW = imgToWorld(p);
 //                std::cout<<pW.transpose()<<std::endl;
-                offset = (rowi * xres + coli) * sampleCount + spi;
+                int offset = (rowi * xres + coli) * sampleCount + spi;
                 calcRayParas(pW, &rays[offset]);
             }
         }
