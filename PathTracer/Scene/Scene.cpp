@@ -23,7 +23,7 @@ Scene::~Scene(){
 
 Shape* Scene::getShape(int spi) {
     if (spi >= shapeTotal) {
-        std::cout<<"Shape index out of range !"<<std::endl;
+        std::cout<<"Shape index "<<spi<<" out of range !"<<std::endl;
         return nullptr;
     }
     return shapes[spi];

@@ -8,24 +8,26 @@
 
 #include "Renderer.h"
 #include "Shape.h"
-#include <iostream>
+#include "PathIntegrator.h"
 
+#include <iostream>
 #include <opencv2/opencv.hpp>
 
-Renderer::Renderer(int* reso, int spc) {
+Renderer::Renderer(int* reso, int spc, int mD, Scene* scene, Camera* camera, Sampler* sampler, Ray* rays) {
     xres = reso[1];
     yres = reso[0];
     sampleCount = spc;
-    scene = nullptr;
-    camera = nullptr;
-    sampler = nullptr;
-    isInit = false;
-    rays = new Ray[xres * yres * sampleCount]();
+    maxDepth = mD;
     pixels = new float*[yres]();
     for (int i = 0; i < yres; i++) {
         pixels[i] = new float[xres * 3](); //3 channels
     }
+    this->scene = scene;
+    this->camera = camera;
+    this->sampler = sampler;
+    this->rays = rays;
 }
+
 
 Renderer::~Renderer() {
     for (int i = 0; i < yres; i++) {
@@ -63,52 +65,35 @@ void Renderer::showImage() const {
     cv::waitKey(0);
 }
 
-void Renderer::initRenderer(Scene *scene, Camera *camera, Sampler* sampler) {
-    this->scene = scene;
-    this->camera = camera;
-    this->sampler = sampler;
-}
+
 
 void Renderer::startRendering() {
-//    int ind = 150 * xres + 200;
-//    Point3f o = rays[ind].getOrigin();
-//    Vector3f d = rays[ind].getDirection();
-//    float t = rays[ind].getT();
-//    std::cout<<"o = "<<o.transpose()<<", d = "<<d.transpose()<<", t = "<<t<<std::endl;
-//    rays[ind].findIntersection(scene);
-//    std::cout<<rays[ind].getIntersection()->getIsInter()<<std::endl;
-    
-//    #pragma omp parallel for schedule(dynamic)
+    std::cout<<"–––––––––––––––––––Start Rendering––––––––––––––––––"<<std::endl;
+    #pragma omp parallel for schedule(dynamic)
     for (int rowi = 0; rowi < yres; rowi++) {
         for (int coli = 0; coli < xres; coli++) {
             for (int spi = 0; spi < sampleCount; spi++) {
                 int offset = (rowi * xres + coli) * sampleCount + spi;
-                rays[offset].findIntersection(scene);
-                if (rays[offset].getIntersection()->getIsInter()) {
-                    pixels[rowi][coli * 3] = 1.0;
-                    pixels[rowi][coli * 3 + 1] = 1.0;
-                    pixels[rowi][coli * 3 + 2] = 1.0;
+                if (!rays[offset].isInit()) {
+                    std::cout<<"This ray has not been initialized !"<<std::endl;
+                    continue;
                 }
+                PathIntegrator path = PathIntegrator(&rays[offset], scene, sampler, maxDepth);
+                Spectrum3f rad = path.Li();
+                pixels[rowi][coli * 3] = rad(0);
+                pixels[rowi][coli * 3 + 1] = rad(1);
+                pixels[rowi][coli * 3 + 2] = rad(2);
             }
         }
+        if ((rowi + 1) % 100 == 0) {
+            std::cout<<rowi + 1<<"lines have been rendered."<<std::endl;
+        }
     }
+    std::cout<<"––––––––––––––––––Finish Rendering––––––––––––––––––"<<std::endl;
 }
 
 void Renderer::test() {
-    scene = new Scene(1, 1);
-    Sphere sphere1 = Sphere(0.5, Point3f(0.3, 0.0, 0.0));
-    scene->addShape(&sphere1);
-    sampler = new StratifiedSampler(1);
-    float lookAt[9] = {0.0,0.0,0.0, 0.0,0.0,2.0, 0.0,1.0,0.0};
-    int reso[2] = {yres, xres};
-    float fov = M_PI / 4.0;
-    int sampleCount = 1;
-    camera = new PerspectiveCamera(lookAt, reso, fov, sampleCount, sampler, rays);
     camera->generateRays();
     startRendering();
     showImage();
-
-    delete scene;
-    delete sampler;
-    delete camera;
 }

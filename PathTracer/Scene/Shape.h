@@ -29,6 +29,7 @@ public:
     
     void transRayToLocal(Ray* rayW, Ray& rayL);
     Material* getMaterial() const;
+    void setMaterial(Material* material);
     virtual Vector3f getNormal(Point3f pWorld) = 0;
     virtual float isIntersected(Ray* ray) = 0;
 };

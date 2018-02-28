@@ -16,13 +16,14 @@
 class Shape;
 
 class Ray {
+private:
     Point3f o;
     Vector3f d;
     float t;
     Intersection its;
     Spectrum3f radiance;
     
-    void brutalWayToFind(Scene *scene);
+    bool brutalWayToFind(Scene *scene);
 public:
     Ray();
     Ray(Point3f _o, Vector3f _d, float _t);
@@ -31,10 +32,14 @@ public:
     Vector3f getDirection() const;
     float getT() const;
     Intersection* getIntersection();
+    Spectrum3f getRadiance() const;
+    
     Point3f calcP() const;
+    bool isInit() const;
     void setRay(Point3f _o, Vector3f _d, float _t);
     void setT(float _t);
-    void findIntersection(Scene* scene);
+    void setRadiance(Spectrum3f rad);
+    bool findIntersection(Scene* scene); //this method will change t and its!
 };
 
 #endif /* Ray_h */

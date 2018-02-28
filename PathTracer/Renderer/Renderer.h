@@ -12,22 +12,24 @@
 #include "Scene.h"
 #include "Camera.h"
 #include "Sampler.h"
+#include "PathIntegrator.h"
+
 
 class Renderer {
+protected:
     int xres, yres;
     int sampleCount;
+    int maxDepth;
     float** pixels;
     Scene* scene;
     Camera* camera;
     Sampler* sampler;
     Ray* rays;
-    bool isInit;
 public:
-    Renderer(int* reso, int spc);
+    Renderer(int* reso, int spc, int mD, Scene* scene, Camera* camera, Sampler* sampler, Ray* rays);
     ~Renderer();
     void printPixels() const;
     void showImage() const;
-    void initRenderer(Scene* scene, Camera* camera, Sampler* sampler);
     void startRendering();
     void test();
 };

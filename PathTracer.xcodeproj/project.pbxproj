@@ -255,10 +255,10 @@
 			children = (
 				6036E857202C315D00F47D9D /* Material.h */,
 				6036E858202C315D00F47D9D /* Material.cpp */,
-				60EF459920275FA800DFCF7A /* BxDF.h */,
-				60B011FE202C2C9D004BEC4E /* BxDF.cpp */,
 				604AA84E202D4ADE007224E6 /* BSDF.h */,
 				604AA84F202D4ADE007224E6 /* BSDF.cpp */,
+				60EF459920275FA800DFCF7A /* BxDF.h */,
+				60B011FE202C2C9D004BEC4E /* BxDF.cpp */,
 			);
 			path = Material;
 			sourceTree = "<group>";

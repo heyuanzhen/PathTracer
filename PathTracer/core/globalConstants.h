@@ -17,7 +17,7 @@ static const float Inv4Pi = 0.07957747154594766788;
 static const float PiOver2 = 1.57079632679489661923;
 static const float PiOver4 = 0.78539816339744830961;
 static const float Sqrt2 = 1.41421356237309504880;
-static const float eps = 1e-6;
+static const float eps = 1e-5;
 
 static const float MAX_FLOAT = 1e+15;
 static const float MIN_FLOAT = -1e+15;

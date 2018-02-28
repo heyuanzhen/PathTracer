@@ -25,9 +25,26 @@ void test(){
     
     
     int reso[2] = {300, 400};
-    int spc = 1;
-    Renderer renderer = Renderer(reso, spc);
+    int sampleCount = 4;
+    int maxDepth = 2;
+    
+    Scene* scene = new Scene(2, 1);
+    Sphere sphere1 = Sphere(0.5, Point3f(0.3, 0.0, 0.0));
+    scene->addShape(&sphere1);
+    Sphere sphere2 = Sphere(0.1, Point3f(-0.2, 0.0, 0.1));
+    scene->addShape(&sphere2);
+    Sampler* sampler = new StratifiedSampler(sampleCount);
+    float lookAt[9] = {0.0,0.0,0.0, 0.0,0.0,2.0, 0.0,1.0,0.0};
+    float fov = M_PI / 4.0;
+    Ray* rays = new Ray[reso[1] * reso[0] * sampleCount]();
+    Camera* camera = new PerspectiveCamera(lookAt, reso, fov, sampleCount, sampler, rays);
+    
+    Renderer renderer = Renderer(reso, sampleCount, maxDepth, scene, camera, sampler, rays);
     renderer.test();
+    
+    delete scene;
+    delete sampler;
+    delete camera;
 }
 
 void parallelTest(){

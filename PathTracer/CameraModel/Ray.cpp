@@ -32,12 +32,20 @@ float Ray::getT() const {
     return t;
 }
 
-Intersection* Ray::getIntersection() {
+Intersection* Ray::getIntersection(){
     return &its;
+}
+
+Spectrum3f Ray::getRadiance() const {
+    return radiance;
 }
 
 Point3f Ray::calcP() const {
     return o + t * d;
+}
+
+bool Ray::isInit() const {
+    return d.norm() > eps ? true : false;
 }
 
 void Ray::setRay(Point3f _o, Vector3f _d, float _t) {
@@ -50,11 +58,16 @@ void Ray::setT(float _t) {
     t = _t;
 }
 
-void Ray::findIntersection(Scene* scene) {
-    brutalWayToFind(scene);
+void Ray::setRadiance(Spectrum3f rad) {
+    radiance = rad;
 }
 
-void Ray::brutalWayToFind(Scene* scene) {
+bool Ray::findIntersection(Scene* scene) {
+    return brutalWayToFind(scene);
+}
+
+bool Ray::brutalWayToFind(Scene* scene) {
+    bool isIntersected = false;
     if (!scene->getShapeCount()) {
         std::cout<<"No shape in the scene !"<<std::endl;
     }
@@ -69,11 +82,13 @@ void Ray::brutalWayToFind(Scene* scene) {
             t_min = t_now;
             t = t_now;
             its = Intersection(this, sp, calcP(), sp->getNormal(calcP()), sp->getMaterial());
+            isIntersected = true;
         }
         else{
             continue;
         }
     }
+    return isIntersected;
 }
 
 

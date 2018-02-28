@@ -9,7 +9,7 @@
 #include "Material.h"
 #include <iostream>
 
-////MAterial
+////Material
 Material::Material(materialType mt) : mType(mt) {
     M.setZero();
     bsdfCount = 0;
@@ -66,7 +66,7 @@ Spectrum3f Material::eval(const Vector3f woW, const Vector3f wiW) const {
     return f;
 }
 
-////Phong
+////BlinnPhong
 
 
 

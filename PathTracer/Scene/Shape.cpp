@@ -26,6 +26,9 @@ Material* Shape::getMaterial() const {
     return material;
 }
 
+void Shape::setMaterial(Material *material) {
+    this->material = material;
+}
 
 ////Sphere class
 Sphere::Sphere(float _r, Vector3f _cenPos) : radius(_r), center(_cenPos), Shape(SPHERE) {

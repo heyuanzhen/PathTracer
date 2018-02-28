@@ -10,14 +10,20 @@
 #define PathIntegrator_h
 
 #include "Ray.h"
+#include "Scene.h"
+#include "Sampler.h"
 
-
-class PathIntegrator {
+class PathIntegrator{
     Ray* ray;
-    
+    Scene* scene;
+    Sampler* sampler;
+    int maxDepth;
 public:
-    PathIntegrator();
+//    PathIntegrator();
+    PathIntegrator(Ray* r, Scene* sce, Sampler* sp, int mD);
     ~PathIntegrator();
+    
+    Spectrum3f Li();
 };
 
 #endif /* PathIntegrator_h */

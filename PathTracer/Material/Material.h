@@ -35,10 +35,10 @@ protected:
     int bsdfCount;
 };
 
-class Phong : public Material{
+class BlinnPhong : public Material{
 public:
-    Phong(float _ka, float _kd, float _ks);
-    ~Phong();
+    BlinnPhong(float _ka, float _kd, float _ks);
+    ~BlinnPhong();
     
     virtual void addBSDF(BxDF* bsdf);
 private:
