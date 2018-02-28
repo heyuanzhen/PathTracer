@@ -70,7 +70,6 @@
 		6036E858202C315D00F47D9D /* Material.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Material.cpp; sourceTree = "<group>"; };
 		604AA84E202D4ADE007224E6 /* BSDF.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BSDF.h; sourceTree = "<group>"; };
 		604AA84F202D4ADE007224E6 /* BSDF.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = BSDF.cpp; sourceTree = "<group>"; };
-		606319A420297A4100F92B06 /* initialze.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = initialze.h; sourceTree = "<group>"; };
 		60809A24203D4C270051EB4F /* Intersection.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Intersection.h; sourceTree = "<group>"; };
 		60809A25203D4C270051EB4F /* Intersection.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Intersection.cpp; sourceTree = "<group>"; };
 		609D7D1A203AC08700599AFE /* Ray.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Ray.h; sourceTree = "<group>"; };
@@ -101,6 +100,7 @@
 		60C904F7204439D100417DDA /* libopencv_shape.3.3.1.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libopencv_shape.3.3.1.dylib; path = ../../../../../../usr/local/lib/libopencv_shape.3.3.1.dylib; sourceTree = "<group>"; };
 		60C905092044451C00417DDA /* PathIntegrator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PathIntegrator.h; sourceTree = "<group>"; };
 		60C9050A2044451C00417DDA /* PathIntegrator.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PathIntegrator.cpp; sourceTree = "<group>"; };
+		60D551A02046E9BE00DF789A /* operation.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = operation.h; sourceTree = "<group>"; };
 		60EF45912026F7E000DFCF7A /* sampling.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = sampling.h; sourceTree = "<group>"; };
 		60EF45972027026700DFCF7A /* globalConstants.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = globalConstants.h; sourceTree = "<group>"; };
 		60EF459920275FA800DFCF7A /* BxDF.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BxDF.h; sourceTree = "<group>"; };
@@ -245,7 +245,7 @@
 				603089652025DA9500C6D568 /* typeAlias.h */,
 				60EF45972027026700DFCF7A /* globalConstants.h */,
 				60EF45912026F7E000DFCF7A /* sampling.h */,
-				606319A420297A4100F92B06 /* initialze.h */,
+				60D551A02046E9BE00DF789A /* operation.h */,
 			);
 			path = core;
 			sourceTree = "<group>";
