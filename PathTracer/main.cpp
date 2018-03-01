@@ -16,10 +16,11 @@
 #include "Scene.h"
 #include "Shape.h"
 #include "Renderer.h"
+#include "Light.h"
 
 using namespace std;
 
-void test(){
+void exapmle(){
     srand((unsigned)time(NULL));
     rand();
     
@@ -47,6 +48,16 @@ void test(){
     delete camera;
 }
 
+void test() {
+    Scene scene = Scene(1, 1);
+    PointLight pl = PointLight(Point3f(1.5, 1.0, 0.0), Spectrum3f(1.0, 1.0, 1.0));
+    scene.addLight(&pl);
+    Sphere sphere1 = Sphere(1.0, Point3f(1.0, 0.0, 0.0));
+    scene.addShape(&sphere1);
+    bool vis = pl.testVisibility( pl.getPos(), Point3f(1.0, 1.0, 0.0), &scene);
+    cout<<vis<<endl;
+}
+
 void parallelTest(){
     #pragma omp parallel for schedule(dynamic)
     for (int i = 0; i < 100; i++) {
@@ -55,7 +66,8 @@ void parallelTest(){
 }
 
 int main(int argc, const char * argv[]) {
-    test();
+    exapmle();
+//    test();
 //    parallelTest();
     return 0;
 }

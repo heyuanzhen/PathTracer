@@ -17,7 +17,8 @@ class Scene;
 class Light {
 public:
     enum LightType{
-        POINT = 1
+        POINT = 1,
+        DIRECTIONAL = 2
     };
     const LightType type;
     
@@ -35,9 +36,22 @@ class PointLight : public Light {
 public:
     PointLight(Point3f _pos, Spectrum3f _I);
     ~PointLight();
+    Point3f getPos() const;
     virtual Spectrum3f Sample_Li(const Intersection inter, const Point2f &u, Vector3f& wi,
                                  float& pdf, bool& vis, Scene* scene) const;
 };
 
+class DirectionalLight : public Light{
+    const Vector3f dir;
+    const Spectrum3f I;
+    Point3f worldCenter;
+    float worldRadius;
+    
+public:
+    DirectionalLight(Vector3f _dir, Spectrum3f _I, Point3f wC, float wR);
+    ~DirectionalLight();
+    virtual Spectrum3f Sample_Li(const Intersection inter, const Point2f &u, Vector3f& wi,
+                                 float& pdf, bool& vis, Scene* scene) const;
+};
 
 #endif /* Light_h */

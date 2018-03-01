@@ -66,6 +66,10 @@ bool Ray::findIntersection(Scene* scene) {
     return brutalWayToFind(scene);
 }
 
+bool Ray::findInterBetween(Scene *scene, float tmax) {
+    return brutalWayToFindBetween(scene, tmax);
+}
+
 bool Ray::brutalWayToFind(Scene* scene) {
     bool isIntersected = false;
     if (!scene->getShapeCount()) {
@@ -78,17 +82,31 @@ bool Ray::brutalWayToFind(Scene* scene) {
 //        std::cout<<i<<std::endl;
         Shape* sp = scene->getShape(i);
         float t_now = sp->isIntersected(this);
-        if (t_now < t_min) {
+        if (t_now < t_min && t_now > 0.0) {
             t_min = t_now;
             t = t_now;
             its = Intersection(this, sp, calcP(), sp->getNormal(calcP()), sp->getMaterial());
             isIntersected = true;
         }
-        else{
-            continue;
-        }
     }
     return isIntersected;
+}
+
+bool Ray::brutalWayToFindBetween(Scene *scene, float tmax) {
+    if (!scene->getShapeCount()) {
+        std::cout<<"No shape in the scene !"<<std::endl;
+    }
+    Vector3f interP;
+    Intersection its_now;
+    for (int i = 0; i < scene->getShapeCount(); i++) {
+        //        std::cout<<i<<std::endl;
+        Shape* sp = scene->getShape(i);
+        float t_now = sp->isIntersected(this);
+        if ((t_now < tmax - eps) && (t_now > 0.0)) {
+            return true;
+        }
+    }
+    return false;
 }
 
 

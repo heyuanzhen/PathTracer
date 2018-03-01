@@ -24,6 +24,7 @@ private:
     Spectrum3f radiance;
     
     bool brutalWayToFind(Scene *scene);
+    bool brutalWayToFindBetween(Scene* scene, float tmax);
 public:
     Ray();
     Ray(Point3f _o, Vector3f _d, float _t);
@@ -40,6 +41,7 @@ public:
     void setT(float _t);
     void setRadiance(Spectrum3f rad);
     bool findIntersection(Scene* scene); //this method will change t and its!
+    bool findInterBetween(Scene* scene, float tmax);
 };
 
 #endif /* Ray_h */
