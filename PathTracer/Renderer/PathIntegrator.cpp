@@ -7,6 +7,7 @@
 //
 
 #include "PathIntegrator.h"
+#include <iostream>
 
 //PathIntegrator::PathIntegrator() {
 //    ray = nullptr;
@@ -15,8 +16,9 @@
 //    maxDepth = 0;
 //}
 
-PathIntegrator::PathIntegrator(Ray* r, Scene* sce, Sampler* sp, int mD) :
-ray(r), scene(sce), sampler(sp), maxDepth(mD) {}
+
+PathIntegrator::PathIntegrator(Ray* r, Scene* sce, Sampler* nsp, int mD) :
+ray(r), scene(sce), normalSampler(nsp), maxDepth(mD) {}
 
 PathIntegrator::~PathIntegrator() {}
 
@@ -44,6 +46,9 @@ Spectrum3f PathIntegrator::Li() {
         //⟨Compute scattering functions and skip over medium boundaries⟩  //(4)
         
         //⟨Sample illumination from lights to find path contribution⟩ //(5)
+//        std::cout<<"here"<<std::endl;
+        uniformSampleOneLight(inter, scene, normalSampler, false);
+        
         
         //⟨Sample BSDF to get new path direction⟩ //(6)
         
@@ -56,3 +61,34 @@ Spectrum3f PathIntegrator::Li() {
     ray->setRadiance(L);
     return ray->getRadiance();
 }
+
+Spectrum3f PathIntegrator::uniformSampleOneLight(const Intersection* it, const Scene* scene,
+                                                 Sampler* sampler, bool handleMedia) {
+    // Randomly choose a single light to sample, _light_
+    int nLights = int(scene->getLightCount());
+    if (nLights == 0) return Spectrum3f(0.0, 0.0, 0.0);
+    int lightNum;
+    float lightPdf;
+    
+    lightNum = std::min((int)(sampler->get1D() * nLights), nLights - 1);
+    lightPdf = 1.0 / nLights;
+    Light* light = scene->getLight(lightNum);
+    Point2f uLight = sampler->get2D();
+    Point2f uScattering = sampler->get2D();
+    //    return EstimateDirect(it, uScattering, *light, uLight,
+    //                          scene, sampler, arena, handleMedia) / lightPdf;
+    return Spectrum3f(0.0, 0.0, 0.0);
+}
+
+Spectrum3f PathIntegrator::estimateDirectLightOnly(const Intersection* it, const Point2f uScattering,
+                                                    const Light* light, const Point2f uLight,
+                                                    const Scene* scene, Sampler* sampler,
+                                                    bool handleMedia, bool specular) {
+    Spectrum3f Ld(0.0, 0.0, 0.0);
+    
+    
+    return Ld;
+}
+
+
+

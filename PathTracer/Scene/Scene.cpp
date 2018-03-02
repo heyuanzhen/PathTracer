@@ -21,7 +21,7 @@ Scene::~Scene(){
     delete[] lights;
 }
 
-Shape* Scene::getShape(int spi) {
+Shape* Scene::getShape(int spi) const {
     if (spi >= shapeTotal) {
         std::cout<<"Shape index "<<spi<<" out of range !"<<std::endl;
         return nullptr;
@@ -29,7 +29,7 @@ Shape* Scene::getShape(int spi) {
     return shapes[spi];
 }
 
-Light* Scene::getLight(int li) {
+Light* Scene::getLight(int li) const {
     if (li >= lightTotal) {
         std::cout<<"Light index out of range !"<<std::endl;
         return nullptr;

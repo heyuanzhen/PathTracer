@@ -29,23 +29,29 @@ void exapmle(){
     int sampleCount = 4;
     int maxDepth = 2;
     
-    Scene* scene = new Scene(2, 1);
+    Scene* scene = new Scene(2, 2);
+    
     Sphere sphere1 = Sphere(0.5, Point3f(0.3, 0.0, 0.0));
     scene->addShape(&sphere1);
     Sphere sphere2 = Sphere(0.1, Point3f(-0.2, 0.0, 0.1));
     scene->addShape(&sphere2);
-    Sampler* sampler = new StratifiedSampler(sampleCount);
+    
+    PointLight pl1 = PointLight(Point3f(0.0, 2.0, 0.0), Spectrum3f(1.0, 2.0, 3.0));
+    scene->addLight(&pl1);
+    PointLight pl2 = PointLight(Point3f(2.0, 2.0, 0.0), Spectrum3f(3.0, 2.0, 1.0));
+    scene->addLight(&pl2);
+    
+    Sampler* pixelSampler = new StratifiedSampler(sampleCount);
+    Sampler* normalSampler = new RandomSampler();
     float lookAt[9] = {0.0,0.0,0.0, 0.0,0.0,2.0, 0.0,1.0,0.0};
     float fov = M_PI / 4.0;
-    Ray* rays = new Ray[reso[1] * reso[0] * sampleCount]();
-    Camera* camera = new PerspectiveCamera(lookAt, reso, fov, sampleCount, sampler, rays);
-    
-    Renderer renderer = Renderer(reso, sampleCount, maxDepth, scene, camera, sampler, rays);
+    Renderer renderer = Renderer(reso, sampleCount, maxDepth, scene,
+                                 pixelSampler, normalSampler, lookAt, fov);
     renderer.test();
     
     delete scene;
-    delete sampler;
-    delete camera;
+    delete pixelSampler;
+    delete normalSampler;
 }
 
 void test() {

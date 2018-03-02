@@ -13,7 +13,8 @@
 #include <iostream>
 #include <opencv2/opencv.hpp>
 
-Renderer::Renderer(int* reso, int spc, int mD, Scene* scene, Camera* camera, Sampler* sampler, Ray* rays) {
+Renderer::Renderer(int* reso, int spc, int mD, Scene* sc, Sampler* psp,
+                   Sampler* nsp, float* lookAt, float fov) {
     xres = reso[1];
     yres = reso[0];
     sampleCount = spc;
@@ -22,10 +23,11 @@ Renderer::Renderer(int* reso, int spc, int mD, Scene* scene, Camera* camera, Sam
     for (int i = 0; i < yres; i++) {
         pixels[i] = new float[xres * 3](); //3 channels
     }
-    this->scene = scene;
-    this->camera = camera;
-    this->sampler = sampler;
-    this->rays = rays;
+    scene = sc;
+    pixelSampler = psp;
+    normalSampler = nsp;
+    rays = new Ray[reso[1] * reso[0] * sampleCount]();
+    camera = new PerspectiveCamera(lookAt, reso, fov, sampleCount, pixelSampler, rays);
 }
 
 
@@ -78,7 +80,7 @@ void Renderer::startRendering() {
                     std::cout<<"This ray has not been initialized !"<<std::endl;
                     continue;
                 }
-                PathIntegrator path = PathIntegrator(&rays[offset], scene, sampler, maxDepth);
+                PathIntegrator path = PathIntegrator(&rays[offset], scene, normalSampler, maxDepth);
                 Spectrum3f rad = path.Li();
                 pixels[rowi][coli * 3] = rad(0);
                 pixels[rowi][coli * 3 + 1] = rad(1);

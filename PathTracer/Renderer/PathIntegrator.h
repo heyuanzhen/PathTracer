@@ -16,14 +16,20 @@
 class PathIntegrator{
     Ray* ray;
     Scene* scene;
-    Sampler* sampler;
+    Sampler* normalSampler;
     int maxDepth;
 public:
 //    PathIntegrator();
-    PathIntegrator(Ray* r, Scene* sce, Sampler* sp, int mD);
+    PathIntegrator(Ray* r, Scene* sce, Sampler* nsp, int mD);
     ~PathIntegrator();
     
     Spectrum3f Li();
+    Spectrum3f uniformSampleOneLight(const Intersection* it, const Scene* scene,
+                          Sampler* sampler, bool handleMedia);
+    Spectrum3f estimateDirectLightOnly(const Intersection* it, const Point2f uScattering,
+                                       const Light* light, const Point2f uLight,
+                                       const Scene* scene, Sampler* sampler,
+                                       bool handleMedia, bool specular);
 };
 
 #endif /* PathIntegrator_h */

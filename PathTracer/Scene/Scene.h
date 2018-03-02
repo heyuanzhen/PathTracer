@@ -27,8 +27,8 @@ public:
     ~Scene();
     
     void parseSceneFile(std::string filePath);
-    Shape* getShape(int spi);
-    Light* getLight(int li);
+    Shape* getShape(int spi) const;
+    Light* getLight(int li) const;
     int getShapeTotal() const;
     int getLightTotal() const;
     int getShapeCount() const;

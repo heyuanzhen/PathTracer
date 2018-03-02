@@ -23,10 +23,12 @@ protected:
     float** pixels;
     Scene* scene;
     Camera* camera;
-    Sampler* sampler;
+    Sampler* pixelSampler;
+    Sampler* normalSampler;
     Ray* rays;
 public:
-    Renderer(int* reso, int spc, int mD, Scene* scene, Camera* camera, Sampler* sampler, Ray* rays);
+    Renderer(int* reso, int spc, int mD, Scene* sc, Sampler* psp,
+             Sampler* nsp, float* lookAt, float fov);
     ~Renderer();
     void printPixels() const;
     void showImage() const;
