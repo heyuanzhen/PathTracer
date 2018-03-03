@@ -61,7 +61,7 @@ Spectrum3f Material::eval(const Vector3f woW, const Vector3f wiW) const {
     }
     
     for (int i = 0; i < bsdfCount; i++) {
-        f += bsdfs[i]->eval(wo, wi);
+        f += bsdf->bxdfs[i]->eval(wo, wi);
     }
     return f;
 }

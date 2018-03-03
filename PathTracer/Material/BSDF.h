@@ -13,7 +13,13 @@
 
 
 class BSDF {
+protected:
+    static const int maxBxDFs = 5;
+    int BxDFCount;
+    bool isBuilt;
 public:
+    BxDF* bxdfs[maxBxDFs];
+    
     BSDF();
     virtual ~BSDF();
     bool isFull() const;
@@ -21,11 +27,6 @@ public:
     void setBuilt(bool ib);
     bool getBuilt() const;
     virtual void buildBSDF() = 0;
-protected:
-    static const int maxBxDFs = 5;
-    int BxDFCount;
-    BxDF* bxdfs[maxBxDFs];
-    bool isBuilt;
 };
 
 class BlinnPhongBSDF : public BSDF {

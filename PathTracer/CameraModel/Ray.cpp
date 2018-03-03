@@ -62,15 +62,15 @@ void Ray::setRadiance(Spectrum3f rad) {
     radiance = rad;
 }
 
-bool Ray::findIntersection(Scene* scene) {
+bool Ray::findIntersection(const Scene* scene) {
     return brutalWayToFind(scene);
 }
 
-bool Ray::findInterBetween(Scene *scene, float tmax) {
+bool Ray::findInterBetween(const Scene *scene, float tmax) {
     return brutalWayToFindBetween(scene, tmax);
 }
 
-bool Ray::brutalWayToFind(Scene* scene) {
+bool Ray::brutalWayToFind(const Scene* scene) {
     bool isIntersected = false;
     if (!scene->getShapeCount()) {
         std::cout<<"No shape in the scene !"<<std::endl;
@@ -92,7 +92,7 @@ bool Ray::brutalWayToFind(Scene* scene) {
     return isIntersected;
 }
 
-bool Ray::brutalWayToFindBetween(Scene *scene, float tmax) {
+bool Ray::brutalWayToFindBetween(const Scene *scene, float tmax) {
     if (!scene->getShapeCount()) {
         std::cout<<"No shape in the scene !"<<std::endl;
     }

@@ -7,6 +7,7 @@
 //
 
 #include "PathIntegrator.h"
+#include "Light.h"
 #include <iostream>
 
 //PathIntegrator::PathIntegrator() {
@@ -75,9 +76,11 @@ Spectrum3f PathIntegrator::uniformSampleOneLight(const Intersection* it, const S
     Light* light = scene->getLight(lightNum);
     Point2f uLight = sampler->get2D();
     Point2f uScattering = sampler->get2D();
-    //    return EstimateDirect(it, uScattering, *light, uLight,
-    //                          scene, sampler, arena, handleMedia) / lightPdf;
-    return Spectrum3f(0.0, 0.0, 0.0);
+//    bool isSpecular = it->getMaterial()-
+    bool isSpecular = false;//need to be done
+    return estimateDirectLightOnly(it, uScattering, light, uLight,
+                                   scene, normalSampler, false, isSpecular)/ lightPdf;
+//    return Spectrum3f(0.0, 0.0, 0.0);
 }
 
 Spectrum3f PathIntegrator::estimateDirectLightOnly(const Intersection* it, const Point2f uScattering,
@@ -85,7 +88,10 @@ Spectrum3f PathIntegrator::estimateDirectLightOnly(const Intersection* it, const
                                                     const Scene* scene, Sampler* sampler,
                                                     bool handleMedia, bool specular) {
     Spectrum3f Ld(0.0, 0.0, 0.0);
-    
+    Vector3f wi;
+    float lightPdf = 0.0, scatteringPdf = 0.0;
+    bool visibility;
+    Spectrum3f Li = light->Sample_Li(it, uLight, wi, lightPdf, visibility, scene);
     
     return Ld;
 }

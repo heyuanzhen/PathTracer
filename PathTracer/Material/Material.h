@@ -9,7 +9,7 @@
 #ifndef Material_h
 #define Material_h
 
-#include "BxDF.h"
+#include "BSDF.h"
 
 class Material {
 public:
@@ -28,10 +28,9 @@ public:
     virtual Spectrum3f eval(const Vector3f wo, const Vector3f wi) const;
 protected:
     materialType mType;
-    Matrix3f M;
+    Matrix3f M;    //M and nG should be modified !!!1
     const Vector3f nG = Vector3f(0.0, 0.0, 1.0); //geometry normal
-    static const int maxBSDFs = 5;
-    BxDF* bsdfs[maxBSDFs];
+    BSDF* bsdf;
     int bsdfCount;
 };
 
