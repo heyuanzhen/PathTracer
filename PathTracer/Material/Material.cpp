@@ -17,7 +17,7 @@ Material::Material(materialType mt) : mType(mt) {
 
 Material::~Material() {}
 
-void Material::getRotateMartix(const Vector3f nW){
+void Material::calcRotateMartix(const Vector3f nW){
     Vector3f v = nW.cross(nG);
     float s = v.norm();
     float c = nW.dot(nG);
@@ -47,23 +47,28 @@ Matrix3f Material::getM() const {
 
 void Material::addBSDF(BxDF *bsd) {};
 
-Spectrum3f Material::eval(const Vector3f woW, const Vector3f wiW) const {
+void Material::eval(const Vector3f woW, const Vector3f wiW, Spectrum3f& f, float& pdf) const {
     Vector3f wo = rotateNormalToLocal(woW);
     Vector3f wi = rotateNormalToLocal(wiW);
     if (!isSameHemisphere(wo, wi)) {
         std::cout<<"Back ray !"<<std::endl;
-        return Spectrum3f(0.0, 0.0, 0.0);
-    }
-    Spectrum3f f(1.0, 1.0, 1.0);
-    if (!bsdfCount) {
-        std::cout<<"Empty material !"<<std::endl;
-        return Spectrum3f(0.0, 0.0, 0.0);
+        f = Spectrum3f(0.0, 0.0, 0.0);
+        pdf = 0.0;
+        return;
     }
     
+    if (!bsdfCount) {
+        std::cout<<"Empty material !"<<std::endl;
+        f = Spectrum3f(0.0, 0.0, 0.0);
+        pdf = 0.0;
+        return;
+    }
+    f = Spectrum3f(1.0, 1.0, 1.0);
+    pdf = 0.0;
     for (int i = 0; i < bsdfCount; i++) {
         f += bsdf->bxdfs[i]->eval(wo, wi);
+        pdf += bsdf->bxdfs[i]->calcPDF(wo, wi);
     }
-    return f;
 }
 
 ////BlinnPhong

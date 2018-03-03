@@ -89,7 +89,7 @@ protected:
     Spectrum3f n;
 };
 
-
+////calcPDF() should be redefined according to the type of reflection model!!!
 class SpecularReflection : public BxDF {
     float ks;
 public:

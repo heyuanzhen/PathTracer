@@ -25,11 +25,11 @@ public:
     
     Spectrum3f Li();
     Spectrum3f uniformSampleOneLight(const Intersection* it, const Scene* scene,
-                          Sampler* sampler, bool handleMedia);
+                          Sampler* sampler, Vector3f wo, bool handleMedia);
     Spectrum3f estimateDirectLightOnly(const Intersection* it, const Point2f uScattering,
                                        const Light* light, const Point2f uLight,
                                        const Scene* scene, Sampler* sampler,
-                                       bool handleMedia, bool specular);
+                                       Vector3f wo, bool handleMedia, bool specular);
 };
 
 #endif /* PathIntegrator_h */

@@ -8,6 +8,8 @@
 
 #include "PathIntegrator.h"
 #include "Light.h"
+#include "BxDF.h"
+#include "Shape.h"
 #include <iostream>
 
 //PathIntegrator::PathIntegrator() {
@@ -48,7 +50,7 @@ Spectrum3f PathIntegrator::Li() {
         
         //⟨Sample illumination from lights to find path contribution⟩ //(5)
 //        std::cout<<"here"<<std::endl;
-        uniformSampleOneLight(inter, scene, normalSampler, false);
+        uniformSampleOneLight(inter, scene, normalSampler, -ray->getDirection(), false); //wo = - ray.d
         
         
         //⟨Sample BSDF to get new path direction⟩ //(6)
@@ -64,7 +66,7 @@ Spectrum3f PathIntegrator::Li() {
 }
 
 Spectrum3f PathIntegrator::uniformSampleOneLight(const Intersection* it, const Scene* scene,
-                                                 Sampler* sampler, bool handleMedia) {
+                                                 Sampler* sampler, Vector3f wo, bool handleMedia) {
     // Randomly choose a single light to sample, _light_
     int nLights = int(scene->getLightCount());
     if (nLights == 0) return Spectrum3f(0.0, 0.0, 0.0);
@@ -79,19 +81,40 @@ Spectrum3f PathIntegrator::uniformSampleOneLight(const Intersection* it, const S
 //    bool isSpecular = it->getMaterial()-
     bool isSpecular = false;//need to be done
     return estimateDirectLightOnly(it, uScattering, light, uLight,
-                                   scene, normalSampler, false, isSpecular)/ lightPdf;
+                                   scene, normalSampler, wo, false, isSpecular)/ lightPdf;
 //    return Spectrum3f(0.0, 0.0, 0.0);
 }
 
 Spectrum3f PathIntegrator::estimateDirectLightOnly(const Intersection* it, const Point2f uScattering,
                                                     const Light* light, const Point2f uLight,
                                                     const Scene* scene, Sampler* sampler,
-                                                    bool handleMedia, bool specular) {
+                                                    Vector3f wo, bool handleMedia, bool specular) {
     Spectrum3f Ld(0.0, 0.0, 0.0);
     Vector3f wi;
     float lightPdf = 0.0, scatteringPdf = 0.0;
     bool visibility;
+    
+    //get Li, wi, lightPdf, visibility
     Spectrum3f Li = light->Sample_Li(it, uLight, wi, lightPdf, visibility, scene);
+    
+    if (lightPdf > 0 && !Li.isZero()) {
+        Spectrum3f f;
+        // Evaluate BSDF for light sampling strategy
+        Material* material = it->getMaterial();
+        Shape* interShape = it->getShape();
+        Point3f interPoint = it->getInterPoint();
+        material->calcRotateMartix(interShape->getNormal(interPoint));
+        
+        //get f, scatteringPdf
+        material->eval(wo, wi, f, scatteringPdf);
+        f *= abs(wi.dot(material->getGeometryNormal()));
+        std::cout<<"f = "<<f<<", scatteringPDF = "<<scatteringPdf<<std::endl;
+        
+        if (!f.isZero()) {
+            ⟨Compute effect of visibility for light source sample 859⟩
+            ⟨Add light’s contribution to reflected radiance 860⟩
+        }
+    }
     
     return Ld;
 }
