@@ -15,50 +15,50 @@
 #include "globalConstants.h"
 
 //pbrt: page 510
-inline float cosTheta(Point3f w){
+inline double cosTheta(Point3d w){
     return w[2];
 }
 
-inline float cos2theta(Point3f w){
+inline double cos2theta(Point3d w){
     return w[2] * w[2];
 }
 
-inline float absCosTheta(Point3f w){
+inline double absCosTheta(Point3d w){
     return abs(w[2]);
 }
 
-inline float sin2Theta(Point3f w){
+inline double sin2Theta(Point3d w){
     return 1.0 - cos2theta(w) > 0.0 ? 1.0 - cos2theta(w) : 0.0;
 }
 
-inline float sinTheta(Point3f w){
+inline double sinTheta(Point3d w){
     return sqrt(sin2Theta(w));
 }
 
-inline float cosPhi(Point3f w){
+inline double cosPhi(Point3d w){
     return (sinTheta(w) - 0.0 > eps) ? 1.0 : w[0] / sinTheta(w);
 }
 
-inline float sinPhi(Point3f w){
+inline double sinPhi(Point3d w){
     return (sinTheta(w) - 0.0 > eps) ? 1.0 : w[1] / sinTheta(w);
 }
 
-inline float sin2Phi(Point3f w){
+inline double sin2Phi(Point3d w){
     return sinPhi(w) * sinPhi(w);
 }
 
-inline float cos2Phi(Point3f w){
+inline double cos2Phi(Point3d w){
     return cosPhi(w) * cosPhi(w);
 }
 
-inline float clamp(float val, float low, float up){
+inline double clamp(double val, double low, double up){
     val = val > low ? val : low;
     val = val < up ? val : up;
     return val;
 }
 
-inline bool isSameHemisphere(const Vector3f wo, const Vector3f wi){
-    return wo[2] * wi[2] > 0 ? true : false;
+inline bool isSameHemisphere(const Vector3d wo, const Vector3d wi){
+    return wo[1] * wi[1] > 0 ? true : false;
 }
 
 
@@ -75,67 +75,67 @@ public:
     virtual ~BxDF();
     
     //calculate BxDF function value (pure virtual)
-    virtual Spectrum3f eval(const Vector3f wo, const Vector3f wi) const = 0;
+    virtual Spectrum3d eval(const Vector3d wo, const Vector3d wi) const = 0;
     
     //default sample method to sample wi
-    virtual Spectrum3f sampleWiAndEval(const Vector3f wo, Vector3f& wi, Point2f u, float& pdf) const;
+    virtual Spectrum3d sampleWiAndEval(const Vector3d wo, Vector3d& wi, Point2f u, double& pdf) const;
     
     //default pdf calculate method
-    virtual float calcPDF(const Vector3f wo, const Vector3f wi) const;
+    virtual double calcPDF(const Vector3d wo, const Vector3d wi) const;
 private:
     const BxDFType type;
 protected:
     //geometry normal
-    Spectrum3f n;
+    Spectrum3d n;
 };
 
 ////calcPDF() should be redefined according to the type of reflection model!!!
 class SpecularReflection : public BxDF {
-    float ks;
+    double ks;
 public:
-    SpecularReflection(float _ks, float _shiniess);
+    SpecularReflection(double _ks, double _shiniess);
     ~SpecularReflection();
     
-    float shininess;
-    virtual Spectrum3f eval(const Vector3f wo, const Vector3f wi) const;
+    double shininess;
+    virtual Spectrum3d eval(const Vector3d wo, const Vector3d wi) const;
 };
 
 class LambertianDiffuseReflection : public BxDF {
-    float kd;
+    double kd;
 public:
-    LambertianDiffuseReflection(float _kd);
+    LambertianDiffuseReflection(double _kd);
     ~LambertianDiffuseReflection();
     
-    virtual Spectrum3f eval(const Vector3f wo, const Vector3f wi) const;
+    virtual Spectrum3d eval(const Vector3d wo, const Vector3d wi) const;
 };
 
 class ConstantReflection : public BxDF {
-    float k;
+    double k;
 public:
-    ConstantReflection(float _k);
+    ConstantReflection(double _k);
     ~ConstantReflection();
     
-    virtual Spectrum3f eval(const Vector3f wo, const Vector3f wi) const;
+    virtual Spectrum3d eval(const Vector3d wo, const Vector3d wi) const;
 };
 
 class BlinnPhongSpecularReflection : public BxDF{
-    float ks;
-    float shininess;
+    double ks;
+    double shininess;
 public:
-    BlinnPhongSpecularReflection(float _ks, float _sh);
+    BlinnPhongSpecularReflection(double _ks, double _sh);
     ~BlinnPhongSpecularReflection();
-    virtual Spectrum3f eval(const Vector3f wo, const Vector3f wi) const;
+    virtual Spectrum3d eval(const Vector3d wo, const Vector3d wi) const;
 };
 
 //class BlinnPhong : public BSDF{
 //private:
 //    // I = ka * Ia + Ii * [kd * (N * L) + ks * (H * N)^shininess]
-//    float ka, kd, ks, shininess;
+//    double ka, kd, ks, shininess;
 //public:
-//    BlinnPhong(float _ka, float _kd, float _ks, float _shininess);
+//    BlinnPhong(double _ka, double _kd, double _ks, double _shininess);
 //    ~BlinnPhong();
 //
-//    virtual Spectrum3f eval(const Vector3f wo, const Vector3f wi) const;
+//    virtual Spectrum3d eval(const Vector3d wo, const Vector3d wi) const;
 //};
 
 #endif /* BxDF_h */

@@ -11,24 +11,24 @@
 #include <iostream>
 
 Ray::Ray() {
-    o = Vector3f(0.0, 0.0, 0.0);
-    d = Vector3f(0.0, 0.0, 0.0);
+    o = Vector3d(0.0, 0.0, 0.0);
+    d = Vector3d(0.0, 0.0, 0.0);
     t = 0.0;
 }
 
-Ray::Ray(Point3f _o, Vector3f _d, float _t) : o(_o), d(_d), t(_t){}
+Ray::Ray(Point3d _o, Vector3d _d, double _t) : o(_o), d(_d), t(_t){}
 
 Ray::~Ray() {}
 
-Point3f Ray::getOrigin() const {
+Point3d Ray::getOrigin() const {
     return o;
 }
 
-Vector3f Ray::getDirection() const {
+Vector3d Ray::getDirection() const {
     return d;
 }
 
-float Ray::getT() const {
+double Ray::getT() const {
     return t;
 }
 
@@ -36,11 +36,11 @@ Intersection* Ray::getIntersection(){
     return &its;
 }
 
-Spectrum3f Ray::getRadiance() const {
+Spectrum3d Ray::getRadiance() const {
     return radiance;
 }
 
-Point3f Ray::calcP() const {
+Point3d Ray::calcP() const {
     return o + t * d;
 }
 
@@ -48,17 +48,17 @@ bool Ray::isInit() const {
     return d.norm() > eps ? true : false;
 }
 
-void Ray::setRay(Point3f _o, Vector3f _d, float _t) {
+void Ray::setRay(Point3d _o, Vector3d _d, double _t) {
     o = _o;
     d = _d;
     t = _t;
 }
 
-void Ray::setT(float _t) {
+void Ray::setT(double _t) {
     t = _t;
 }
 
-void Ray::setRadiance(Spectrum3f rad) {
+void Ray::setRadiance(Spectrum3d rad) {
     radiance = rad;
 }
 
@@ -66,7 +66,7 @@ bool Ray::findIntersection(const Scene* scene) {
     return brutalWayToFind(scene);
 }
 
-bool Ray::findInterBetween(const Scene *scene, float tmax) {
+bool Ray::findInterBetween(const Scene *scene, double tmax) {
     return brutalWayToFindBetween(scene, tmax);
 }
 
@@ -75,13 +75,13 @@ bool Ray::brutalWayToFind(const Scene* scene) {
     if (!scene->getShapeCount()) {
         std::cout<<"No shape in the scene !"<<std::endl;
     }
-    Vector3f interP;
-    float t_min = MAX_FLOAT;
+    Vector3d interP;
+    double t_min = MAX_double;
     Intersection its_now;
     for (int i = 0; i < scene->getShapeCount(); i++) {
 //        std::cout<<i<<std::endl;
         Shape* sp = scene->getShape(i);
-        float t_now = sp->isIntersected(this);
+        double t_now = sp->isIntersected(this);
         if (t_now < t_min && t_now > 0.0) {
             t_min = t_now;
             t = t_now;
@@ -92,17 +92,17 @@ bool Ray::brutalWayToFind(const Scene* scene) {
     return isIntersected;
 }
 
-bool Ray::brutalWayToFindBetween(const Scene *scene, float tmax) {
+bool Ray::brutalWayToFindBetween(const Scene *scene, double tmax) {
     if (!scene->getShapeCount()) {
         std::cout<<"No shape in the scene !"<<std::endl;
     }
-    Vector3f interP;
+    Vector3d interP;
     Intersection its_now;
     for (int i = 0; i < scene->getShapeCount(); i++) {
         //        std::cout<<i<<std::endl;
         Shape* sp = scene->getShape(i);
-        float t_now = sp->isIntersected(this);
-        if ((t_now < tmax - eps) && (t_now > 0.0)) {
+        double t_now = sp->isIntersected(this);
+        if ((t_now < (tmax - 1e-5)) && (t_now > 0.0)) {
             return true;
         }
     }

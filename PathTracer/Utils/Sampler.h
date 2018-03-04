@@ -18,10 +18,10 @@ public:
     Sampler();
     virtual ~Sampler(); //virtual
     
-    float random1D() const;
+    double random1D() const;
     Point2f random2D() const;
     virtual void initializeSampler() = 0;
-    virtual float get1D() = 0;
+    virtual double get1D() = 0;
     virtual Point2f get2D() = 0;
 };
 
@@ -43,7 +43,7 @@ public:
     bool noNumRemains();
     
     //get 1-D random number in array
-    virtual float get1D();
+    virtual double get1D();
     
     //get 2-D random number in array
     virtual Point2f get2D();
@@ -61,7 +61,7 @@ public:
     ~RandomSampler();
     
     virtual void initializeSampler();
-    virtual float get1D();
+    virtual double get1D();
     virtual Point2f get2D();
 };
 

@@ -17,31 +17,31 @@ class Shape;
 
 class Ray {
 private:
-    Point3f o;
-    Vector3f d;
-    float t;
+    Point3d o;
+    Vector3d d;
+    double t;
     Intersection its;
-    Spectrum3f radiance;
+    Spectrum3d radiance;
     
     bool brutalWayToFind(const Scene *scene);
-    bool brutalWayToFindBetween(const Scene* scene, float tmax);
+    bool brutalWayToFindBetween(const Scene* scene, double tmax);
 public:
     Ray();
-    Ray(Point3f _o, Vector3f _d, float _t);
+    Ray(Point3d _o, Vector3d _d, double _t);
     ~Ray();
-    Point3f getOrigin() const;
-    Vector3f getDirection() const;
-    float getT() const;
+    Point3d getOrigin() const;
+    Vector3d getDirection() const;
+    double getT() const;
     Intersection* getIntersection();
-    Spectrum3f getRadiance() const;
+    Spectrum3d getRadiance() const;
     
-    Point3f calcP() const;
+    Point3d calcP() const;
     bool isInit() const;
-    void setRay(Point3f _o, Vector3f _d, float _t);
-    void setT(float _t);
-    void setRadiance(Spectrum3f rad);
+    void setRay(Point3d _o, Vector3d _d, double _t);
+    void setT(double _t);
+    void setRadiance(Spectrum3d rad);
     bool findIntersection(const Scene* scene); //this method will change t and its!
-    bool findInterBetween(const Scene* scene, float tmax);
+    bool findInterBetween(const Scene* scene, double tmax);
 };
 
 #endif /* Ray_h */

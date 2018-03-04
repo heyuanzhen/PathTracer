@@ -18,32 +18,32 @@
 //RandomSampler rsp;
 
 //pbrt: page: 775
-inline Point3f uniformSampleHemisphere(const Point2f u){
-    float z = u[0];
-    float r = sqrt(1.0 - z * z);
-    float phi = 2 * Pi * u[1];
-    return Point3f(r * cos(phi), r * sin(phi), z);
+inline Point3d uniformSampleHemisphere(const Point2f u){
+    double z = u[0];
+    double r = sqrt(1.0 - z * z);
+    double phi = 2 * Pi * u[1];
+    return Point3d(r * cos(phi), r * sin(phi), z);
 }
-inline float uniformSampleHemispherePDF(){
+inline double uniformSampleHemispherePDF(){
     return Inv2Pi;
 }
 
 
 //pbrt: page776
-inline Point3f uniformSampleSphere(const Point2f u){
-    float z = 1.0 - 2.0 * u[0];
-    float r = sqrt(1.0 - z * z);
-    float phi = 2 * Pi * u[1];
-    return Point3f(r * cos(phi), r * sin(phi), z);
+inline Point3d uniformSampleSphere(const Point2f u){
+    double z = 1.0 - 2.0 * u[0];
+    double r = sqrt(1.0 - z * z);
+    double phi = 2 * Pi * u[1];
+    return Point3d(r * cos(phi), r * sin(phi), z);
 }
-inline float uniformSampleSpherePDF(){
+inline double uniformSampleSpherePDF(){
     return Inv4Pi;
 }
 
 //pbrt: page 777. This function is not used
 inline Point2f uniformSampleDisk(const Point2f u) {
-    float r = sqrt(u[0]);
-    float theta = 2 * M_PI * u[1];
+    double r = sqrt(u[0]);
+    double theta = 2 * M_PI * u[1];
     Point2f p = Point2f(r * cos(theta), r * sin(theta));
     return p;
 }
@@ -58,7 +58,7 @@ inline Point2f concentricSampleDisk(const Point2f u) {
         return Point2f(0.0, 0.0);
     }
     
-    float r, theta;
+    double r, theta;
     if(abs(uMapped[0]) > abs(uMapped[1])) {
         r = uMapped[0];
         theta = PiOver4 * (uMapped[0] / uMapped[1]);
@@ -72,24 +72,30 @@ inline Point2f concentricSampleDisk(const Point2f u) {
 }
 
 //pbrt: page 780
-inline Point3f cosineSampleHemisphere(const Point2f u){
+inline Point3d cosineSampleHemisphere(const Point2f u){
     Point2f p_disk = concentricSampleDisk(u);
-    float z = sqrt(1.0 - p_disk.x() * p_disk.x() - p_disk.y() - p_disk.y());
-    return Point3f(p_disk.x(), p_disk.y(), z);
+    double z = sqrt(1.0 - p_disk.x() * p_disk.x() - p_disk.y() - p_disk.y());
+    return Point3d(p_disk.x(), p_disk.y(), z);
 }
-inline float cosinSampleHemisphere(float cosTheta){
+inline double cosinSampleHemisphere(double cosTheta){
     return cosTheta * InvPi;
 }
 
 //pbrt: page 781
-inline Point3f uniformSampleCone(const Point2f u, const float cosThetaMax){
-    float cosTheta = (1.0 - u[0]) + u[0] * cosThetaMax;
-    float sinTheta = sqrt(1.0 - cosTheta * cosTheta);
-    float phi = u[1] * 2 * Pi;
-    return Point3f(cos(phi) * sinTheta, sin(phi) * sinTheta, cosTheta);
+inline Point3d uniformSampleCone(const Point2f u, const double cosThetaMax){
+    double cosTheta = (1.0 - u[0]) + u[0] * cosThetaMax;
+    double sinTheta = sqrt(1.0 - cosTheta * cosTheta);
+    double phi = u[1] * 2 * Pi;
+    return Point3d(cos(phi) * sinTheta, sin(phi) * sinTheta, cosTheta);
 }
-inline float uniformSampleConePDF(const float cosThetaMax){
+inline double uniformSampleConePDF(const double cosThetaMax){
     return 1 / (2 * Pi * (1 - cosThetaMax));
+}
+
+//what's this ????
+inline double powerHeuristic(int nf, double fPdf, int ng, double gPdf) {
+    double f = nf * fPdf, g = ng * gPdf;
+    return (f * f) / (f * f + g * g);
 }
 
 

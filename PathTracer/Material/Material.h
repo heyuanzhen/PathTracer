@@ -17,31 +17,31 @@ public:
         PHONG = 1
     };
     
-    Material(materialType mt);
+    Material(materialType mt, BSDF* bs);
     virtual ~Material();
     
-    void calcRotateMartix(const Vector3f nW);
-    Vector3f rotateNormalToLocal(const Vector3f vW) const;
-    Vector3f getGeometryNormal() const;
-    Matrix3f getM() const;
-    virtual void addBSDF(BxDF* bsdf);
-    virtual void eval(const Vector3f wo, const Vector3f wi, Spectrum3f& f, float& pdf) const;
+    void calcRotateMartix(const Vector3d nW);
+    Vector3d rotateNormalToLocal(const Vector3d vW) const;
+    Vector3d getGeometryNormal() const;
+    Matrix3d getM() const;
+    virtual void eval(const Vector3d wo, const Vector3d wi,
+                      Vector3d& woL, Vector3d& wiL,
+                      Spectrum3d& f, double& pdf) const;
 protected:
     materialType mType;
-    Matrix3f M; //M is a matrix that transform a normal to (0, 0, 1)
-    const Vector3f nG = Vector3f(0.0, 0.0, 1.0); //geometry normal in local cordinate
+    Matrix3d M; //M is a matrix that transform a normal to (0, 0, 1)
+    const Vector3d nG = Vector3d(0.0, 1.0, 0.0); //geometry normal in local cordinate
     BSDF* bsdf;
-    int bsdfCount;
 };
 
-class BlinnPhong : public Material{
-public:
-    BlinnPhong(float _ka, float _kd, float _ks);
-    ~BlinnPhong();
-    
-    virtual void addBSDF(BxDF* bsdf);
-private:
-    float ka, kd, ks;
-};
+//class BlinnPhong : public Material{
+//public:
+//    BlinnPhong(double _ka, double _kd, double _ks);
+//    ~BlinnPhong();
+//    
+//    virtual void addBSDF(BxDF* bsdf);
+//private:
+//    double ka, kd, ks;
+//};
 
 #endif /* Material_h */

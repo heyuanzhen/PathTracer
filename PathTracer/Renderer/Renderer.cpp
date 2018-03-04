@@ -14,14 +14,14 @@
 #include <opencv2/opencv.hpp>
 
 Renderer::Renderer(int* reso, int spc, int mD, Scene* sc, Sampler* psp,
-                   Sampler* nsp, float* lookAt, float fov) {
+                   Sampler* nsp, double* lookAt, double fov) {
     xres = reso[1];
     yres = reso[0];
     sampleCount = spc;
     maxDepth = mD;
-    pixels = new float*[yres]();
+    pixels = new double*[yres]();
     for (int i = 0; i < yres; i++) {
-        pixels[i] = new float[xres * 3](); //3 channels
+        pixels[i] = new double[xres * 3](); //3 channels
     }
     scene = sc;
     pixelSampler = psp;
@@ -55,12 +55,12 @@ void Renderer::printPixels() const {
 }
 
 void Renderer::showImage() const {
-    cv::Mat img = cv::Mat::zeros(yres, xres, CV_32FC3);
+    cv::Mat img = cv::Mat::zeros(yres, xres, CV_64FC3);
     for (int i = 0; i < yres; i++) {
         for (int j = 0; j < xres; j++) {
-            img.at<cv::Vec3f>(i, j)[0] = pixels[i][j * 3];
-            img.at<cv::Vec3f>(i, j)[1] = pixels[i][j * 3 + 1];
-            img.at<cv::Vec3f>(i, j)[2] = pixels[i][j * 3 + 2];
+            img.at<cv::Vec3d>(i, j)[0] = pixels[i][j * 3];
+            img.at<cv::Vec3d>(i, j)[1] = pixels[i][j * 3 + 1];
+            img.at<cv::Vec3d>(i, j)[2] = pixels[i][j * 3 + 2];
         }
     }
     cv::imshow("window", img);
@@ -71,9 +71,11 @@ void Renderer::showImage() const {
 
 void Renderer::startRendering() {
     std::cout<<"–––––––––––––––––––Start Rendering––––––––––––––––––"<<std::endl;
-    #pragma omp parallel for schedule(dynamic)
+//    #pragma omp parallel for schedule(dynamic)
     for (int rowi = 0; rowi < yres; rowi++) {
         for (int coli = 0; coli < xres; coli++) {
+//    for (int rowi = 149; rowi < 152; rowi++) {
+//        for (int coli = 199; coli < 202; coli++) {
             for (int spi = 0; spi < sampleCount; spi++) {
                 int offset = (rowi * xres + coli) * sampleCount + spi;
                 if (!rays[offset].isInit()) {
@@ -81,7 +83,7 @@ void Renderer::startRendering() {
                     continue;
                 }
                 PathIntegrator path = PathIntegrator(&rays[offset], scene, normalSampler, maxDepth);
-                Spectrum3f rad = path.Li();
+                Spectrum3d rad = path.Li();
                 pixels[rowi][coli * 3] = rad(0);
                 pixels[rowi][coli * 3 + 1] = rad(1);
                 pixels[rowi][coli * 3 + 2] = rad(2);

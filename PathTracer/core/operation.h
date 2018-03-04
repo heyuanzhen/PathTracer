@@ -11,19 +11,19 @@
 
 #include "typeAlias.h"
 
-inline float lengthSquared(Vector3f vec) {
+inline double lengthSquared(Vector3d vec) {
     return vec.x() * vec.x() + vec.y() * vec.y() + vec.z() * vec.z();
 }
 
-inline float distanceSquared(Point3f p1, Point3f p2) {
+inline double distanceSquared(Point3d p1, Point3d p2) {
     return lengthSquared(p2 - p1);
 }
 
-inline float getMaxDistanceInOneDim(Point3f p1, Point3f p2, int& dim) {
-    float deltaX = p2.x() - p1.x();
-    float deltaY = p2.y() - p1.y();
-    float deltaZ = p2.z() - p1.z();
-    float maxD = 0.0;
+inline double getMaxDistanceInOneDim(Point3d p1, Point3d p2, int& dim) {
+    double deltaX = p2.x() - p1.x();
+    double deltaY = p2.y() - p1.y();
+    double deltaZ = p2.z() - p1.z();
+    double maxD = 0.0;
     if (abs(deltaX) > abs(deltaY)) {
         if (abs(deltaX) > abs(deltaZ)) {
             maxD = deltaX;

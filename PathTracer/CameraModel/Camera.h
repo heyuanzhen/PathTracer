@@ -29,11 +29,11 @@ public:
 
 class PerspectiveCamera : public Camera{
     int xres, yres;
-    float f, fov; // fov is the view angle along x axis
-    float xLength, yLength; // image-plane's size in world cordinate
-    Point3f target;
-    Point3f origin;
-    Vector3f up;
+    double f, fov; // fov is the view angle along x axis
+    double xLength, yLength; // image-plane's size in world cordinate
+    Point3d target;
+    Point3d origin;
+    Vector3d up;
     bool isWToICalc;
     bool isIToWCalc;
     
@@ -41,19 +41,19 @@ class PerspectiveCamera : public Camera{
     MatrixXf m_camToImgPlane;
     MatrixXf m_imgPlaneToImage;
     
-    Matrix3f m_imageToImgPlane;
-    Matrix3f m_imgPlaneToCam;
+    Matrix3d m_imageToImgPlane;
+    Matrix3d m_imgPlaneToCam;
     Matrix4f m_camToWorld;
 public:
     //reso[2] should be rows * cols
-    PerspectiveCamera(float* lookAt, int* reso, float fovf, int spC, Sampler* sp, Ray* r);
+    PerspectiveCamera(double* lookAt, int* reso, double fovf, int spC, Sampler* sp, Ray* r);
     ~PerspectiveCamera();
     
     void calcWToIMatrices();
     void calcIToWMatrices();
-    Point2i worldToImg(Point3f p);
-    Point3f imgToWorld(Point2f p);
-    void calcRayParas(Point3f pos, Ray* ray);
+    Point2i worldToImg(Point3d p);
+    Point3d imgToWorld(Point2f p);
+    void calcRayParas(Point3d pos, Ray* ray);
     virtual void generateRays();
 };
 

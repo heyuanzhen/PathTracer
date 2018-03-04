@@ -30,14 +30,14 @@ void Transform::calcInvMRot() {
     isInvMRotCalc = true;
 }
 
-void Transform::setTranslation(float *ds) {
+void Transform::setTranslation(double *ds) {
     M(0, 3) += ds[0];
     M(1, 3) += ds[1];
     M(2, 3) += ds[2];
     isInvMCalc = false;
 }
 
-void Transform::setScale(float* s) {
+void Transform::setScale(double* s) {
     Matrix4f Mt = Matrix4f::Identity(4, 4);
     Mt(0, 0) = s[0];
     Mt(1, 1) = s[1];
@@ -46,7 +46,7 @@ void Transform::setScale(float* s) {
     isInvMCalc = false;
 }
 
-void Transform::setRotateX(float rad){
+void Transform::setRotateX(double rad){
     Matrix4f Mt = Matrix4f::Identity(4, 4);
     Mt(1, 1) = cos(rad);
     Mt(1, 2) = -sin(rad);
@@ -58,7 +58,7 @@ void Transform::setRotateX(float rad){
     isInvMRotCalc = false;
 }
 
-void Transform::setRotateY(float rad){
+void Transform::setRotateY(double rad){
     Matrix4f Mt = Matrix4f::Identity(4, 4);
     Mt(0, 0) = cos(rad);
     Mt(0, 2) = sin(rad);
@@ -70,7 +70,7 @@ void Transform::setRotateY(float rad){
     isInvMRotCalc = false;
 }
 
-void Transform::setRotateZ(float rad){
+void Transform::setRotateZ(double rad){
     Matrix4f Mt = Matrix4f::Identity(4, 4);
     Mt(0, 0) = cos(rad);
     Mt(0, 1) = -sin(rad);

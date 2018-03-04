@@ -35,9 +35,13 @@ bool BSDF::getBuilt() const {
     return isBuilt;
 }
 
+int BSDF::getBxDFCount() const {
+    return BxDFCount;
+}
+
 
 ////Blinn-Phong Reflection Model
-BlinnPhongBSDF::BlinnPhongBSDF(float _ka, float _kd, float _ks, float _sh):
+BlinnPhongBSDF::BlinnPhongBSDF(double _ka, double _kd, double _ks, double _sh):
                 ka(_ka), kd(_kd), ks(_ks), shininess(_sh){}
 
 BlinnPhongBSDF::~BlinnPhongBSDF() {

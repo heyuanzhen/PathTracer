@@ -20,7 +20,7 @@ protected:
     int xres, yres;
     int sampleCount;
     int maxDepth;
-    float** pixels;
+    double** pixels;
     Scene* scene;
     Camera* camera;
     Sampler* pixelSampler;
@@ -28,7 +28,7 @@ protected:
     Ray* rays;
 public:
     Renderer(int* reso, int spc, int mD, Scene* sc, Sampler* psp,
-             Sampler* nsp, float* lookAt, float fov);
+             Sampler* nsp, double* lookAt, double fov);
     ~Renderer();
     void printPixels() const;
     void showImage() const;

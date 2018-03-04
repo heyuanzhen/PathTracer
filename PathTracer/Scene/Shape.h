@@ -30,22 +30,22 @@ public:
     void transRayToLocal(Ray* rayW, Ray& rayL);
     Material* getMaterial() const;
     void setMaterial(Material* material);
-    virtual Vector3f getNormal(Point3f pWorld) = 0;
-    virtual float isIntersected(Ray* ray) = 0;
+    virtual Vector3d getNormal(Point3d pWorld) = 0;
+    virtual double isIntersected(Ray* ray) = 0;
 };
 
 class Sphere : public Shape {
-    float radius;
-    Point3f center;
+    double radius;
+    Point3d center;
     
 public:
-    Sphere(float _r, Point3f _cenPos);
+    Sphere(double _r, Point3d _cenPos);
     ~Sphere();
     
-    Point3f getCenPos() const;
-    float getR() const;
-    virtual Vector3f getNormal(Vector3f pWorld);
-    virtual float isIntersected(Ray* rayW);
+    Point3d getCenPos() const;
+    double getR() const;
+    virtual Vector3d getNormal(Vector3d pWorld);
+    virtual double isIntersected(Ray* rayW);
 };
 
 #endif /* Shape_h */

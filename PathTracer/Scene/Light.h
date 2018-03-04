@@ -24,34 +24,35 @@ public:
     
     Light(LightType tp);
     ~Light();
-    bool testVisibility(Point3f pL, Point3f pS, const Scene* scene) const;
-    virtual Spectrum3f Sample_Li(const Intersection* inter, const Point2f u, Vector3f& wi,
-                                 float& pdf, bool& vis, const Scene* scene) const = 0;
+    bool testVisibility(Point3d pL, Point3d pS, const Scene* scene) const;
+    bool isDeltaLight() const;
+    virtual Spectrum3d Sample_Li(const Intersection* inter, const Point2f u, Vector3d& wi,
+                                 double& pdf, bool& vis, const Scene* scene) const = 0;
 };
 
 class PointLight : public Light {
-    const Point3f pos;
-    const Spectrum3f I;
+    const Point3d pos;
+    const Spectrum3d I;
     
 public:
-    PointLight(Point3f _pos, Spectrum3f _I);
+    PointLight(Point3d _pos, Spectrum3d _I);
     ~PointLight();
-    Point3f getPos() const;
-    virtual Spectrum3f Sample_Li(const Intersection* inter, const Point2f u, Vector3f& wi,
-                                 float& pdf, bool& vis, const Scene* scene) const;
+    Point3d getPos() const;
+    virtual Spectrum3d Sample_Li(const Intersection* inter, const Point2f u, Vector3d& wi,
+                                 double& pdf, bool& vis, const Scene* scene) const;
 };
 
 class DirectionalLight : public Light{
-    const Vector3f dir;
-    const Spectrum3f I;
-    Point3f worldCenter;
-    float worldRadius;
+    const Vector3d dir;
+    const Spectrum3d I;
+    Point3d worldCenter;
+    double worldRadius;
     
 public:
-    DirectionalLight(Vector3f _dir, Spectrum3f _I, Point3f wC, float wR);
+    DirectionalLight(Vector3d _dir, Spectrum3d _I, Point3d wC, double wR);
     ~DirectionalLight();
-    virtual Spectrum3f Sample_Li(const Intersection* inter, const Point2f u, Vector3f& wi,
-                                 float& pdf, bool& vis, const Scene* scene) const;
+    virtual Spectrum3d Sample_Li(const Intersection* inter, const Point2f u, Vector3d& wi,
+                                 double& pdf, bool& vis, const Scene* scene) const;
 };
 
 #endif /* Light_h */

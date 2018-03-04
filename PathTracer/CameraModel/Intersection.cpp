@@ -17,7 +17,7 @@ Intersection::Intersection() {
     isInter = false;
 }
 
-Intersection::Intersection(Ray* r, Shape* sp, Point3f iP, Vector3f lN, Material* mt) :
+Intersection::Intersection(Ray* r, Shape* sp, Point3d iP, Vector3d lN, Material* mt) :
                            ray(r), shape(sp), interP(iP), localN(lN), matetial(mt), isInter(true) {}
 
 Intersection::~Intersection() {}
@@ -30,11 +30,11 @@ Shape* Intersection::getShape() const {
     return shape;
 }
 
-Point3f Intersection::getInterPoint() const {
+Point3d Intersection::getInterPoint() const {
     return interP;
 }
 
-Vector3f Intersection::getLocalNormal() const {
+Vector3d Intersection::getLocalNormal() const {
     return localN;
 }
 

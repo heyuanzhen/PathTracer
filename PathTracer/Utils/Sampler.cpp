@@ -14,14 +14,14 @@ Sampler::Sampler(){}
 
 Sampler::~Sampler(){}
 
-float Sampler::random1D() const{
-    float xi = rand() * 1.0 / RAND_MAX;
+double Sampler::random1D() const{
+    double xi = rand() * 1.0 / RAND_MAX;
     return xi;
 }
 
 Point2f Sampler::random2D() const{
-    float xi1 = rand() * 1.0 / RAND_MAX;
-    float xi2 = rand() * 1.0 / RAND_MAX;
+    double xi1 = rand() * 1.0 / RAND_MAX;
+    double xi2 = rand() * 1.0 / RAND_MAX;
     Point2f xi = Point2f(xi1, xi2);
     return xi;
 }
@@ -56,9 +56,9 @@ void StratifiedSampler::initializeSampler(){
 }
 
 void StratifiedSampler::genRandNumArr2D(){
-    float blocksDelta = 1.0 / blocksPerAxis;
+    double blocksDelta = 1.0 / blocksPerAxis;
     Point2f bias = Point2f(blocksDelta * 0.5, blocksDelta * 0.5);
-    float curX, curY;
+    double curX, curY;
     Point2f jitter;
     for (int rowi = 0; rowi < blocksPerAxis; rowi++) {
         for (int coli = 0; coli < blocksPerAxis; coli++) {
@@ -77,7 +77,7 @@ bool StratifiedSampler::noNumRemains(){
     return currentNumberIndex >= blocks;
 }
 
-float StratifiedSampler::get1D(){
+double StratifiedSampler::get1D(){
     std::cout<<"ERROR: You can not use get1D() in stratified sampling !"<<std::endl;
     system("pause");
     exit(1);
@@ -105,7 +105,7 @@ RandomSampler::~RandomSampler(){}
 
 void RandomSampler::initializeSampler(){}
 
-float RandomSampler::get1D(){
+double RandomSampler::get1D(){
     return random1D();
 }
 

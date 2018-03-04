@@ -26,18 +26,19 @@ public:
     void addBxDF(BxDF* bxdf);
     void setBuilt(bool ib);
     bool getBuilt() const;
+    int getBxDFCount() const;
     virtual void buildBSDF() = 0;
 };
 
 class BlinnPhongBSDF : public BSDF {
 public:
-    BlinnPhongBSDF(float _ka, float _kd, float _ks, float _sh);
+    BlinnPhongBSDF(double _ka, double _kd, double _ks, double _sh);
     ~BlinnPhongBSDF();
     
     virtual void buildBSDF();
 private:
-    float ka, kd, ks;
-    float shininess;
+    double ka, kd, ks;
+    double shininess;
 };
 
 

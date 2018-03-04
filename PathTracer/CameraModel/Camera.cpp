@@ -16,18 +16,18 @@ Camera::Camera(int spC, Sampler* sp, Ray* r) : sampleCount(spC), sampler(sp) {
 Camera::~Camera() {}
 
 
-PerspectiveCamera::PerspectiveCamera(float* lookAt, int* reso, float fovf, int spC, Sampler* sp, Ray* r)
+PerspectiveCamera::PerspectiveCamera(double* lookAt, int* reso, double fovf, int spC, Sampler* sp, Ray* r)
                                     : Camera(spC, sp, r){
     fov = fovf;
     xres = reso[1];
     yres = reso[0];
-    target = Point3f(lookAt[0], lookAt[1], lookAt[2]);
-    origin = Point3f(lookAt[3], lookAt[4], lookAt[5]);
-    up = Vector3f(lookAt[6], lookAt[7], lookAt[8]);
+    target = Point3d(lookAt[0], lookAt[1], lookAt[2]);
+    origin = Point3d(lookAt[3], lookAt[4], lookAt[5]);
+    up = Vector3d(lookAt[6], lookAt[7], lookAt[8]);
     f = (target - origin).norm();
-    float theta = fov * 0.5;
+    double theta = fov * 0.5;
     xLength = 2.0 * f * tan(theta);
-    float yox = yres * 1.0 / (xres * 1.0);
+    double yox = yres * 1.0 / (xres * 1.0);
     yLength = xLength * yox;
     isWToICalc = false;
     isIToWCalc = false;
@@ -40,17 +40,17 @@ PerspectiveCamera::PerspectiveCamera(float* lookAt, int* reso, float fovf, int s
     m_imgPlaneToCam.setIdentity();
     m_camToWorld.setIdentity();
     
-    Point3f zero(0.0, 0.0, 0.0);
+    Point3d zero(0.0, 0.0, 0.0);
 }
 
 PerspectiveCamera::~PerspectiveCamera() {}
 
 void PerspectiveCamera::calcWToIMatrices() {
-    Vector3f VPN = target - origin;
-    Vector3f n = VPN.normalized();
-    Vector3f Vup = up.normalized();
-    Vector3f u = n.cross(Vup).normalized();
-    Vector3f v = u.cross(n).normalized();
+    Vector3d VPN = target - origin;
+    Vector3d n = VPN.normalized();
+    Vector3d Vup = up.normalized();
+    Vector3d u = n.cross(Vup).normalized();
+    Vector3d v = u.cross(n).normalized();
     
     m_worldToCam(0, 0) = u(0);
     m_worldToCam(0, 1) = u(1);
@@ -68,10 +68,10 @@ void PerspectiveCamera::calcWToIMatrices() {
     m_camToImgPlane(0, 0) = f;
     m_camToImgPlane(1, 1) = f;
     
-    float invDx = xres / xLength;
-    float invDy = yres / yLength;
-    float u0 = xres * 0.5;
-    float v0 = yres * 0.5;
+    double invDx = xres / xLength;
+    double invDy = yres / yLength;
+    double u0 = xres * 0.5;
+    double v0 = yres * 0.5;
     m_imgPlaneToImage(0, 0) = invDx;
     m_imgPlaneToImage(0, 2) = u0;
     m_imgPlaneToImage(1, 1) = invDy;
@@ -81,32 +81,32 @@ void PerspectiveCamera::calcWToIMatrices() {
 }
 
 void PerspectiveCamera::calcIToWMatrices() {
-    float Dx = xLength / xres;
-    float Dy = yLength / yres;
-    float u0 = xres * 0.5;
-    float v0 = yres * 0.5;
+    double Dx = xLength / xres;
+    double Dy = yLength / yres;
+    double u0 = xres * 0.5;
+    double v0 = yres * 0.5;
     m_imageToImgPlane(0, 0) = Dx;
     m_imageToImgPlane(0, 2) = -u0 * Dx;
     m_imageToImgPlane(1, 1) = Dy;
     m_imageToImgPlane(1, 2) = -v0 * Dy;
     
-    float invF = 1.0 / f;
+    double invF = 1.0 / f;
     m_imgPlaneToCam(0, 0) = invF;
     m_imgPlaneToCam(1, 1) = invF;
     
-    Vector3f VPN = target - origin;
-    Vector3f n = VPN.normalized();
-    Vector3f Vup = up.normalized();
-    Vector3f u = n.cross(Vup).normalized();
-    Vector3f v = u.cross(n).normalized();
+    Vector3d VPN = target - origin;
+    Vector3d n = VPN.normalized();
+    Vector3d Vup = up.normalized();
+    Vector3d u = n.cross(Vup).normalized();
+    Vector3d v = u.cross(n).normalized();
     
-    float ux = u.x(), uy = u.y(), uz = u.z();
-    float vx = v.x(), vy = v.y(), vz = v.z();
-    float nx = n.x(), ny = n.y(), nz = n.z();
-    float A = nx*uy*vz - nx*uz*vy - ny*ux*vz + ny*uz*vx + nz*ux*vy - nz*uy*vx;
-    float oriDotU = origin.dot(u);
-    float oriDotV = origin.dot(v);
-    float oriDotN = origin.dot(n);
+    double ux = u.x(), uy = u.y(), uz = u.z();
+    double vx = v.x(), vy = v.y(), vz = v.z();
+    double nx = n.x(), ny = n.y(), nz = n.z();
+    double A = nx*uy*vz - nx*uz*vy - ny*ux*vz + ny*uz*vx + nz*ux*vy - nz*uy*vx;
+    double oriDotU = origin.dot(u);
+    double oriDotV = origin.dot(v);
+    double oriDotN = origin.dot(n);
     m_camToWorld(0, 0) = -(ny*vz - nz*vy)/A;
     m_camToWorld(0, 1) = (ny*uz - nz*uy)/A;
     m_camToWorld(0, 2) = (uy*vz - uz*vy)/A;
@@ -122,7 +122,7 @@ void PerspectiveCamera::calcIToWMatrices() {
     isIToWCalc = true;
 }
 
-Point2i PerspectiveCamera::worldToImg(Point3f p){
+Point2i PerspectiveCamera::worldToImg(Point3d p){
     Point4f homoP(p(0), p(1), p(2), 1.0);
     if (!isWToICalc) {
         calcWToIMatrices();
@@ -135,23 +135,23 @@ Point2i PerspectiveCamera::worldToImg(Point3f p){
     return Point2i(posInPix(1), posInPix(0)); //(row, col)
 }
 
-Point3f PerspectiveCamera::imgToWorld(Point2f p) { //p:(row, col)
+Point3d PerspectiveCamera::imgToWorld(Point2f p) { //p:(row, col)
     if (!isIToWCalc) {
         calcIToWMatrices();
     }
     Point2f pos = Point2f(p(1), yres - p(0)); //pos:(x, y);
-    Point3f homoP(pos(0), pos(1), 1.0);
-    Point3f imgPlaneP = m_imageToImgPlane * homoP;
+    Point3d homoP(pos(0), pos(1), 1.0);
+    Point3d imgPlaneP = m_imageToImgPlane * homoP;
 //    std::cout<<"imgPlaneP: "<<imgPlaneP.transpose()<<std::endl;
-    Point3f camP = f * m_imgPlaneToCam * imgPlaneP;
+    Point3d camP = f * m_imgPlaneToCam * imgPlaneP;
 //    std::cout<<"camp: "<<camP.transpose()<<std::endl;
     Point4f homoCamP = Point4f(camP(0), camP(1), camP(2), 1.0);
     Point4f homoWorldP = m_camToWorld * homoCamP;
-    return Point3f(homoWorldP(0), homoWorldP(1), homoWorldP(2));
+    return Point3d(homoWorldP(0), homoWorldP(1), homoWorldP(2));
 }
 
-void PerspectiveCamera::calcRayParas(Point3f pos, Ray *ray) {
-    Vector3f dd = (pos - origin).normalized();
+void PerspectiveCamera::calcRayParas(Point3d pos, Ray *ray) {
+    Vector3d dd = (pos - origin).normalized();
     ray->setRay(origin, dd, 0.0);
 }
 
@@ -163,7 +163,7 @@ void PerspectiveCamera::generateRays() {
                 Point2f p(rowi, coli);
 //                std::cout<<"p = "<<p.transpose()<<std::endl;
                 p += sampler->get2D() - Point2f(0.5, 0.5);
-                Point3f pW = imgToWorld(p);
+                Point3d pW = imgToWorld(p);
 //                std::cout<<"pW = "<<pW.transpose()<<std::endl;
                 int offset = (rowi * xres + coli) * sampleCount + spi;
                 calcRayParas(pW, &rays[offset]);

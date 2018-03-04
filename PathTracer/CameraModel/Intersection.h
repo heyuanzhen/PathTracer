@@ -19,19 +19,19 @@ class Intersection {
 private:
     Ray* ray;
     Shape* shape;
-    Point3f interP;
-    Vector3f localN;
+    Point3d interP;
+    Vector3d localN;
     Material* matetial;
     bool isInter;
 public:
     Intersection();
-    Intersection(Ray* r, Shape* sp, Point3f iP, Vector3f lN, Material* mt);
+    Intersection(Ray* r, Shape* sp, Point3d iP, Vector3d lN, Material* mt);
     ~Intersection();
     
     Ray* getRay() const;
     Shape* getShape() const;
-    Point3f getInterPoint() const;
-    Vector3f getLocalNormal() const;
+    Point3d getInterPoint() const;
+    Vector3d getLocalNormal() const;
     Material* getMaterial() const;
     bool getIsInter() const;
 };
