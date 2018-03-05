@@ -7,6 +7,7 @@
 //
 
 #include "Material.h"
+#include "Sampler.h"
 #include <iostream>
 
 ////Material
@@ -56,25 +57,49 @@ void Material::eval(const Vector3d woW, const Vector3d wiW,
     wiL = rotateNormalToLocal(wiW);
 //    std::cout<<"wo = "<<wo.transpose()<< ", wi = "<<wi.transpose()<<std::endl;
     if (!isSameHemisphere(woL, wiL)) {
-        std::cout<<"Back ray !"<<" woW = "<<woL.transpose()<< ", wiW = "<<wiL.transpose()<<std::endl;
+//        std::cout<<"Back ray !"<<" woW = "<<woL.transpose()<< ", wiW = "<<wiL.transpose()<<std::endl;
         f = Spectrum3d(0.0, 0.0, 0.0);
         pdf = 0.0;
         return;
     }
     
-    if (!bsdf->getBxDFCount()) {
-        std::cout<<"Empty material !"<<std::endl;
-        f = Spectrum3d(0.0, 0.0, 0.0);
-        pdf = 0.0;
-        return;
-    }
     f = Spectrum3d(0.0, 0.0, 0.0);
     pdf = 0.0;
+    
+    if (!bsdf->getBxDFCount()) {
+        std::cout<<"Empty material !"<<std::endl;
+        return;
+    }
+
     for (int i = 0; i < bsdf->getBxDFCount(); i++) {
         f += bsdf->bxdfs[i]->eval(woL, wiL);
         pdf += bsdf->bxdfs[i]->calcPDF(woL, wiL);
     }
 //    std::cout<<"f = "<<f.transpose()<< ", pdf = "<<pdf<<std::endl;
+}
+
+Spectrum3d Material::sampleBSDF(const Vector3d wo, Vector3d wi, double &pdf) const {
+    Vector3d woL = rotateNormalToLocal(wo);
+    Spectrum3d f = Spectrum3d(0.0, 0.0, 0.0);
+    pdf = 0.0;
+    
+    if (!bsdf->getBuilt()) {
+        std::cout<<"The BSDF is not build !"<<std::endl;
+        return f;
+    }
+    
+    
+    if (!bsdf->getBxDFCount()) {
+        std::cout<<"Empty material !"<<std::endl;
+        return f;
+    }
+    
+    RandomSampler rsp;
+    int BxDFCount = bsdf->getBxDFCount();
+    int bxdfNum = std::min((int)(rsp.get1D() * BxDFCount), BxDFCount - 1);
+    f = bsdf->bxdfs[bxdfNum]->sampleWiAndEval(wo, wi, rsp.get2D(), pdf);
+    
+    return f;
 }
 
 ////BlinnPhong

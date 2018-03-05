@@ -156,9 +156,9 @@ void PerspectiveCamera::calcRayParas(Point3d pos, Ray *ray) {
 }
 
 void PerspectiveCamera::generateRays() {
-//    #pragma omp parallel for schedule(dynamic)
     for (int rowi = 0; rowi < yres; rowi++) {
         for (int coli = 0; coli < xres; coli++) {
+            #pragma omp parallel for schedule(dynamic)
             for (int spi = 0; spi < sampleCount; spi++) {
                 Point2f p(rowi, coli);
 //                std::cout<<"p = "<<p.transpose()<<std::endl;

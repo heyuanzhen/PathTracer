@@ -63,19 +63,22 @@ void Renderer::showImage() const {
             img.at<cv::Vec3d>(i, j)[2] = pixels[i][j * 3 + 2];
         }
     }
+    cv::imwrite("resul/img.png", img * 255.0);
     cv::imshow("window", img);
     cv::waitKey(0);
 }
 
 
 
+
 void Renderer::startRendering() {
     std::cout<<"–––––––––––––––––––Start Rendering––––––––––––––––––"<<std::endl;
-//    #pragma omp parallel for schedule(dynamic)
+    double* pixelBuffer = new double[sampleCount * 3]();
     for (int rowi = 0; rowi < yres; rowi++) {
         for (int coli = 0; coli < xres; coli++) {
 //    for (int rowi = 149; rowi < 152; rowi++) {
 //        for (int coli = 199; coli < 202; coli++) {
+            #pragma omp parallel for schedule(dynamic)
             for (int spi = 0; spi < sampleCount; spi++) {
                 int offset = (rowi * xres + coli) * sampleCount + spi;
                 if (!rays[offset].isInit()) {
@@ -84,15 +87,27 @@ void Renderer::startRendering() {
                 }
                 PathIntegrator path = PathIntegrator(&rays[offset], scene, normalSampler, maxDepth);
                 Spectrum3d rad = path.Li();
-                pixels[rowi][coli * 3] = rad(0);
-                pixels[rowi][coli * 3 + 1] = rad(1);
-                pixels[rowi][coli * 3 + 2] = rad(2);
+                pixelBuffer[spi * 3] = rad(0);
+                pixelBuffer[spi * 3 + 1] = rad(1);
+                pixelBuffer[spi * 3 + 2] = rad(2);
+//                pixels[rowi][coli * 3] = rad(0);
+//                pixels[rowi][coli * 3 + 1] = rad(1);
+//                pixels[rowi][coli * 3 + 2] = rad(2);
             }
+            Spectrum3d pix;
+            for (int spi = 0; spi < sampleCount; spi++) {
+                pix += Spectrum3d(pixelBuffer[spi * 3], pixelBuffer[spi * 3 + 1], pixelBuffer[spi * 3 + 2]);
+            }
+            pix /= (sampleCount * 1.0);
+            pixels[rowi][coli * 3] = pix(0);
+            pixels[rowi][coli * 3 + 1] = pix(1);
+            pixels[rowi][coli * 3 + 2] = pix(2);
         }
-        if ((rowi + 1) % 100 == 0) {
+        if ((rowi + 1) % 50 == 0) {
             std::cout<<rowi + 1<<"lines have been rendered."<<std::endl;
         }
     }
+    delete[] pixelBuffer;
     std::cout<<"––––––––––––––––––Finish Rendering––––––––––––––––––"<<std::endl;
 }
 

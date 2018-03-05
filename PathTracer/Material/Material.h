@@ -27,6 +27,8 @@ public:
     virtual void eval(const Vector3d wo, const Vector3d wi,
                       Vector3d& woL, Vector3d& wiL,
                       Spectrum3d& f, double& pdf) const;
+    virtual Spectrum3d sampleBSDF(const Vector3d wo, Vector3d wi,
+                                  double& pdf) const;
 protected:
     materialType mType;
     Matrix3d M; //M is a matrix that transform a normal to (0, 0, 1)

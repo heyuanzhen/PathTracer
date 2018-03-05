@@ -21,7 +21,7 @@
 //}
 
 
-PathIntegrator::PathIntegrator(Ray* r, Scene* sce, Sampler* nsp, int mD) :
+PathIntegrator::PathIntegrator(Ray* r, const Scene* sce, Sampler* nsp, int mD) :
 ray(r), scene(sce), normalSampler(nsp), maxDepth(mD) {}
 
 PathIntegrator::~PathIntegrator() {}
@@ -31,11 +31,8 @@ Spectrum3d PathIntegrator::uniformSampleOneLight(const Intersection* it, const S
     // Randomly choose a single light to sample, _light_
     int nLights = int(scene->getLightCount());
     if (nLights == 0) return Spectrum3d(0.0, 0.0, 0.0);
-    int lightNum;
-    double lightPdf;
-    
-    lightNum = std::min((int)(sampler->get1D() * nLights), nLights - 1);
-    lightPdf = 1.0 / nLights;
+    int lightNum = std::min((int)(sampler->get1D() * nLights), nLights - 1);
+    double lightPdf = lightPdf = 1.0 / nLights;
     Light* light = scene->getLight(lightNum);
     Point2f uLight = sampler->get2D();
     Point2f uScattering = sampler->get2D();
@@ -96,7 +93,7 @@ Spectrum3d PathIntegrator::estimateDirectLightOnly(const Intersection* it, const
             }
         }
         else {
-            std::cout<<"f = 0"<<std::endl;
+//            std::cout<<"f = 0"<<std::endl;
         }
     }
     
@@ -134,11 +131,9 @@ Spectrum3d PathIntegrator::Li() {
         L += Ld;
         
         //⟨Sample BSDF to get new path direction⟩ //(6)
-//        Vector3d wo = -ray.d, wi;
-//        double pdf;
-//        BxDFType flags;
-//        Spectrum f = isect.bsdf->Sample_f(wo, &wi, sampler.Get2D(), &pdf,
-//                                          BSDF_ALL, &flags);
+        Vector3d wi, wo = -ray->getDirection();
+        double pdf;
+//        Spectrum f = isect.bsdf->Sample_f(wo, &wi, sampler.Get2D(), &pdf);
         
         
         //⟨Account for subsurface scattering, if applicable⟩ (7)

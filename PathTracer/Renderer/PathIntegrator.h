@@ -15,12 +15,12 @@
 
 class PathIntegrator{
     Ray* ray;
-    Scene* scene;
+    const Scene* scene;
     Sampler* normalSampler;
     int maxDepth;
 public:
 //    PathIntegrator();
-    PathIntegrator(Ray* r, Scene* sce, Sampler* nsp, int mD);
+    PathIntegrator(Ray* r, const Scene* sce, Sampler* nsp, int mD);
     ~PathIntegrator();
     Spectrum3d uniformSampleOneLight(const Intersection* it, const Scene* scene,
                                      Sampler* sampler, Vector3d wo, bool handleMedia);
