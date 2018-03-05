@@ -68,11 +68,14 @@ public:
         SPECULAR    = 1,
         DIFFUSE     = 2,
         CONSTANT    = 3,
-        BFSPECULAR  = 4
+        BFSPECULAR  = 4,
+        TRANSMISSION = 5
     };
     
     BxDF(BxDFType tp);
     virtual ~BxDF();
+    
+    int getType() const;
     
     //calculate BxDF function value (pure virtual)
     virtual Spectrum3d eval(const Vector3d wo, const Vector3d wi) const = 0;

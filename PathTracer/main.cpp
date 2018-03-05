@@ -26,7 +26,7 @@ void exapmle(){
     
     
     int reso[2] = {300, 400};
-    int sampleCount = 16;
+    int sampleCount = 64;
     int maxDepth = 2;
     
     Scene* scene = new Scene(2, 1);
@@ -37,7 +37,7 @@ void exapmle(){
     Sphere sphere2 = Sphere(0.2, Point3d(-0.5, 0.0, 0.0));
     scene->addShape(&sphere2);
     
-    BlinnPhongBSDF bpBSDF1 = BlinnPhongBSDF(1.0, 1.0, 0.2, 2.0);
+    BlinnPhongBSDF bpBSDF1 = BlinnPhongBSDF(0.0, 1.0, 0.2, 2.0);
     bpBSDF1.buildBSDF();
     BlinnPhongBSDF bpBSDF2 = BlinnPhongBSDF(0.0, 1.0, 1.0, 1.0);
     bpBSDF2.buildBSDF();

@@ -68,21 +68,18 @@ Spectrum3d PathIntegrator::estimateDirectLightOnly(const Intersection* it, const
             std::cout<<"null material !"<<std::endl;
             return Spectrum3d(0.0, 0.0, 0.0);
         }
-        Shape* interShape = it->getShape();
-        Point3d interPoint = it->getInterPoint();
-        material->calcRotateMartix(interShape->getNormal(interPoint));
         
         //get f, scatteringPdf, woL, wiL
         Vector3d woL, wiL;
         material->eval(wo, -wi, woL, wiL, f, scatteringPdf); //wi := -wi
         f *= abs(wiL.dot(material->getGeometryNormal()));
-//        std::cout<<"f = "<<f<<", scatteringPDF = "<<scatteringPdf<<std::endl;
         
         if (!f.isZero()) {
 //            if (!visibility)    Li = Spectrum3d(0.0, 0.0, 0.0);
             if (!Li.isZero()) {
-                if (light->isDeltaLight())
+                if (light->isDeltaLight()){
                     Ld += f.cwiseProduct(Li) / lightPdf;
+                }
                 else {
                     double weight = powerHeuristic(1, lightPdf, 1, scatteringPdf);
                     Ld += f.cwiseProduct(Li) * weight / lightPdf;
@@ -122,7 +119,12 @@ Spectrum3d PathIntegrator::Li() {
         
         if (!isInter || bounces >= maxDepth)  break; //(3)
         
+        
         //⟨Compute scattering functions and skip over medium boundaries⟩  //(4)
+        Material* material = inter->getMaterial();
+        Shape* interShape = inter->getShape();
+        Point3d interPoint = inter->getInterPoint();
+        material->calcRotateMartix(interShape->getNormal(interPoint));
         
         //⟨Sample illumination from lights to find path contribution⟩ //(5)
 //        std::cout<<"here"<<std::endl;

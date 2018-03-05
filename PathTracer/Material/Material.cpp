@@ -13,6 +13,7 @@
 ////Material
 Material::Material(materialType mt, BSDF* bs) : mType(mt), bsdf(bs) {
     M.setZero();
+    invM.setZero();
 }
 
 Material::~Material() {}
@@ -27,14 +28,23 @@ void Material::calcRotateMartix(const Vector3d nW){
           -v.y(), v.x(), 0.0;
     Matrix3d I = Eigen::Matrix3d::Identity();
     M = I + vx + vx * vx * (1.0 - c) / (s * s);
+    invM = M.inverse();
 }
 
-Vector3d Material::rotateNormalToLocal(const Vector3d vW) const{
+Vector3d Material::rotateNormalToLocal(const Vector3d vW) const {
     if (M.isZero()) {
         std::cout<<"M is a zero matrix !"<<std::endl;
         exit(0);
     }
     return M * vW;
+}
+
+Vector3d Material::rotateNormalToWorld(const Vector3d vL) const {
+    if (invM.isZero()) {
+        std::cout<<"invM is a zero matrix !"<<std::endl;
+        exit(0);
+    }
+    return invM * vL;
 }
 
 Vector3d Material::getGeometryNormal() const {
@@ -71,41 +81,55 @@ void Material::eval(const Vector3d woW, const Vector3d wiW,
         return;
     }
 
+    int pdfCount = 0;
     for (int i = 0; i < bsdf->getBxDFCount(); i++) {
-        f += bsdf->bxdfs[i]->eval(woL, wiL);
         pdf += bsdf->bxdfs[i]->calcPDF(woL, wiL);
+        pdfCount++;
+        if (bsdf->bxdfs[i]->getType() != BxDF::TRANSMISSION) {
+            f += bsdf->bxdfs[i]->eval(woL, wiL);
+        }
     }
+//    std::cout<<"pdfCount = "<<pdfCount<<std::endl;
+//    pdf /= (1.0 * pdfCount);
 //    std::cout<<"f = "<<f.transpose()<< ", pdf = "<<pdf<<std::endl;
 }
 
-Spectrum3d Material::sampleBSDF(const Vector3d wo, Vector3d wi, double &pdf) const {
-    Vector3d woL = rotateNormalToLocal(wo);
+Spectrum3d Material::sampleBSDF(const Vector3d woW, Vector3d& wiW, double &pdf) const {
+    Vector3d woL = rotateNormalToLocal(woW);
     Spectrum3d f = Spectrum3d(0.0, 0.0, 0.0);
     pdf = 0.0;
-    
     if (!bsdf->getBuilt()) {
         std::cout<<"The BSDF is not build !"<<std::endl;
         return f;
     }
-    
-    
     if (!bsdf->getBxDFCount()) {
         std::cout<<"Empty material !"<<std::endl;
         return f;
     }
-    
     RandomSampler rsp;
     int BxDFCount = bsdf->getBxDFCount();
     int bxdfNum = std::min((int)(rsp.get1D() * BxDFCount), BxDFCount - 1);
-    f = bsdf->bxdfs[bxdfNum]->sampleWiAndEval(wo, wi, rsp.get2D(), pdf);
+    BxDF* bxdf = bsdf->bxdfs[bxdfNum];
+    Vector3d wiL;
+    f = bxdf->sampleWiAndEval(woL, wiL, rsp.get2D(), pdf);
+    wiW = rotateNormalToWorld(wiL);
+    
+    int pdfCount = 0;
+    for (int i = 0; i < BxDFCount; i++) {
+        if (bsdf->bxdfs[i] != bxdf) {
+            pdf += bsdf->bxdfs[i]->calcPDF(woL, wiL);
+            pdfCount++;
+            if (bsdf->bxdfs[i]->getType() != BxDF::TRANSMISSION) {
+                f += bsdf->bxdfs[i]->eval(woL, wiL);
+            }
+        }
+    }
+    pdf /= (1.0 * pdfCount);
     
     return f;
 }
 
 ////BlinnPhong
-
-
-
 
 
 

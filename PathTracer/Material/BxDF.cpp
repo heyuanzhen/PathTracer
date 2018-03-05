@@ -16,6 +16,10 @@ BxDF::BxDF(BxDFType tp) : type(tp) {
 }
 BxDF::~BxDF(){}
 
+int BxDF::getType() const {
+    return type;
+}
+
 double BxDF::calcPDF(const Vector3d wo, const Vector3d wi) const {
     return isSameHemisphere(wo, wi) ? absCosTheta(wi) * InvPi : 0.0;
 }
@@ -46,7 +50,7 @@ LambertianDiffuseReflection::LambertianDiffuseReflection(double _kd) : kd(_kd), 
 LambertianDiffuseReflection::~LambertianDiffuseReflection() {}
 
 Spectrum3d LambertianDiffuseReflection::eval(const Vector3d wo, const Vector3d wi) const {
-    Spectrum3d f = Spectrum3d(1.0, 1.0, 1.0) * kd * n.dot(wi);
+//    Spectrum3d f = Spectrum3d(1.0, 1.0, 1.0) * kd * n.dot(wi);
 //    std::cout<<"wi = "<<wi.transpose()<< ", n = "<<n.transpose()<<", f = "<<f.transpose()<<std::endl;
     return Spectrum3d(1.0, 1.0, 1.0) * kd * n.dot(wi);
 }
