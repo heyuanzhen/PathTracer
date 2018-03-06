@@ -26,7 +26,7 @@ public:
     ~Light();
     bool testVisibility(Point3d pL, Point3d pS, const Scene* scene) const;
     bool isDeltaLight() const;
-    virtual Spectrum3d Sample_Li(const Intersection* inter, const Point2f u, Vector3d& wi,
+    virtual Spectrum3d Sample_Li(const Intersection* inter, const Point2d u, Vector3d& wi,
                                  double& pdf, bool& vis, const Scene* scene) const = 0;
 };
 
@@ -38,7 +38,7 @@ public:
     PointLight(Point3d _pos, Spectrum3d _I);
     ~PointLight();
     Point3d getPos() const;
-    virtual Spectrum3d Sample_Li(const Intersection* inter, const Point2f u, Vector3d& wi,
+    virtual Spectrum3d Sample_Li(const Intersection* inter, const Point2d u, Vector3d& wi,
                                  double& pdf, bool& vis, const Scene* scene) const;
 };
 
@@ -51,7 +51,7 @@ class DirectionalLight : public Light{
 public:
     DirectionalLight(Vector3d _dir, Spectrum3d _I, Point3d wC, double wR);
     ~DirectionalLight();
-    virtual Spectrum3d Sample_Li(const Intersection* inter, const Point2f u, Vector3d& wi,
+    virtual Spectrum3d Sample_Li(const Intersection* inter, const Point2d u, Vector3d& wi,
                                  double& pdf, bool& vis, const Scene* scene) const;
 };
 

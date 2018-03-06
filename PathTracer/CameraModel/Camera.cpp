@@ -33,8 +33,8 @@ PerspectiveCamera::PerspectiveCamera(double* lookAt, int* reso, double fovf, int
     isIToWCalc = false;
     
     m_worldToCam.setIdentity();
-    m_camToImgPlane = MatrixXf::Identity(3, 4);
-    m_imgPlaneToImage = MatrixXf::Identity(2, 3);
+    m_camToImgPlane = MatrixXd::Identity(3, 4);
+    m_imgPlaneToImage = MatrixXd::Identity(2, 3);
     
     m_imageToImgPlane.setIdentity();
     m_imgPlaneToCam.setIdentity();
@@ -123,30 +123,30 @@ void PerspectiveCamera::calcIToWMatrices() {
 }
 
 Point2i PerspectiveCamera::worldToImg(Point3d p){
-    Point4f homoP(p(0), p(1), p(2), 1.0);
+    Point4d homoP(p(0), p(1), p(2), 1.0);
     if (!isWToICalc) {
         calcWToIMatrices();
     }
-    Point4f posInCam = m_worldToCam * homoP;
+    Point4d posInCam = m_worldToCam * homoP;
     posInCam = posInCam / posInCam(2);
-    Point2f posInPix = m_imgPlaneToImage * m_camToImgPlane *  posInCam;
+    Point2d posInPix = m_imgPlaneToImage * m_camToImgPlane *  posInCam;
     posInPix(1) = yres - posInPix(1);
     
     return Point2i(posInPix(1), posInPix(0)); //(row, col)
 }
 
-Point3d PerspectiveCamera::imgToWorld(Point2f p) { //p:(row, col)
+Point3d PerspectiveCamera::imgToWorld(Point2d p) { //p:(row, col)
     if (!isIToWCalc) {
         calcIToWMatrices();
     }
-    Point2f pos = Point2f(p(1), yres - p(0)); //pos:(x, y);
+    Point2d pos = Point2d(p(1), yres - p(0)); //pos:(x, y);
     Point3d homoP(pos(0), pos(1), 1.0);
     Point3d imgPlaneP = m_imageToImgPlane * homoP;
 //    std::cout<<"imgPlaneP: "<<imgPlaneP.transpose()<<std::endl;
     Point3d camP = f * m_imgPlaneToCam * imgPlaneP;
 //    std::cout<<"camp: "<<camP.transpose()<<std::endl;
-    Point4f homoCamP = Point4f(camP(0), camP(1), camP(2), 1.0);
-    Point4f homoWorldP = m_camToWorld * homoCamP;
+    Point4d homoCamP = Point4d(camP(0), camP(1), camP(2), 1.0);
+    Point4d homoWorldP = m_camToWorld * homoCamP;
     return Point3d(homoWorldP(0), homoWorldP(1), homoWorldP(2));
 }
 
@@ -160,9 +160,9 @@ void PerspectiveCamera::generateRays() {
         for (int coli = 0; coli < xres; coli++) {
             #pragma omp parallel for schedule(dynamic)
             for (int spi = 0; spi < sampleCount; spi++) {
-                Point2f p(rowi, coli);
+                Point2d p(rowi, coli);
 //                std::cout<<"p = "<<p.transpose()<<std::endl;
-                p += sampler->get2D() - Point2f(0.5, 0.5);
+                p += sampler->get2D() - Point2d(0.5, 0.5);
                 Point3d pW = imgToWorld(p);
 //                std::cout<<"pW = "<<pW.transpose()<<std::endl;
                 int offset = (rowi * xres + coli) * sampleCount + spi;

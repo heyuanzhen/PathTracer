@@ -38,7 +38,7 @@ void Transform::setTranslation(double *ds) {
 }
 
 void Transform::setScale(double* s) {
-    Matrix4f Mt = Matrix4f::Identity(4, 4);
+    Matrix4d Mt = Matrix4d::Identity(4, 4);
     Mt(0, 0) = s[0];
     Mt(1, 1) = s[1];
     Mt(2, 2) = s[2];
@@ -47,7 +47,7 @@ void Transform::setScale(double* s) {
 }
 
 void Transform::setRotateX(double rad){
-    Matrix4f Mt = Matrix4f::Identity(4, 4);
+    Matrix4d Mt = Matrix4d::Identity(4, 4);
     Mt(1, 1) = cos(rad);
     Mt(1, 2) = -sin(rad);
     Mt(2, 1) = sin(rad);
@@ -59,7 +59,7 @@ void Transform::setRotateX(double rad){
 }
 
 void Transform::setRotateY(double rad){
-    Matrix4f Mt = Matrix4f::Identity(4, 4);
+    Matrix4d Mt = Matrix4d::Identity(4, 4);
     Mt(0, 0) = cos(rad);
     Mt(0, 2) = sin(rad);
     Mt(2, 0) = -sin(rad);
@@ -71,7 +71,7 @@ void Transform::setRotateY(double rad){
 }
 
 void Transform::setRotateZ(double rad){
-    Matrix4f Mt = Matrix4f::Identity(4, 4);
+    Matrix4d Mt = Matrix4d::Identity(4, 4);
     Mt(0, 0) = cos(rad);
     Mt(0, 1) = -sin(rad);
     Mt(1, 0) = sin(rad);
@@ -87,22 +87,22 @@ void Transform::setIdentityM() {
     isInvMCalc = false;
 }
 
-Matrix4f Transform::getM() const {
+Matrix4d Transform::getM() const {
     return M;
 }
 
-Matrix4f Transform::getMRot() const {
+Matrix4d Transform::getMRot() const {
     return MRot;
 }
 
-Matrix4f Transform::getInvM() {
+Matrix4d Transform::getInvM() {
     if (!isInvMCalc) {
         calcInvM();
     }
     return invM;
 }
 
-Matrix4f Transform::getInvMRot() {
+Matrix4d Transform::getInvMRot() {
     if (!isInvMRotCalc) {
         calcInvMRot();
     }

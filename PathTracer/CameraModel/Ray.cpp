@@ -102,7 +102,7 @@ bool Ray::brutalWayToFindBetween(const Scene *scene, double tmax) {
         //        std::cout<<i<<std::endl;
         Shape* sp = scene->getShape(i);
         double t_now = sp->isIntersected(this);
-        if ((t_now < (tmax - 1e-5)) && (t_now > 0.0)) {
+        if ((t_now < (tmax - eps * 10)) && (t_now > 0.0)) {
             return true;
         }
     }

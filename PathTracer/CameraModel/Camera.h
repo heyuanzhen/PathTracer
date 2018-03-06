@@ -37,13 +37,13 @@ class PerspectiveCamera : public Camera{
     bool isWToICalc;
     bool isIToWCalc;
     
-    Matrix4f m_worldToCam;
-    MatrixXf m_camToImgPlane;
-    MatrixXf m_imgPlaneToImage;
+    Matrix4d m_worldToCam;
+    MatrixXd m_camToImgPlane;
+    MatrixXd m_imgPlaneToImage;
     
     Matrix3d m_imageToImgPlane;
     Matrix3d m_imgPlaneToCam;
-    Matrix4f m_camToWorld;
+    Matrix4d m_camToWorld;
 public:
     //reso[2] should be rows * cols
     PerspectiveCamera(double* lookAt, int* reso, double fovf, int spC, Sampler* sp, Ray* r);
@@ -52,7 +52,7 @@ public:
     void calcWToIMatrices();
     void calcIToWMatrices();
     Point2i worldToImg(Point3d p);
-    Point3d imgToWorld(Point2f p);
+    Point3d imgToWorld(Point2d p);
     void calcRayParas(Point3d pos, Ray* ray);
     virtual void generateRays();
 };

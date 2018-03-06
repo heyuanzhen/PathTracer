@@ -34,8 +34,8 @@ Spectrum3d PathIntegrator::uniformSampleOneLight(const Intersection* it, const S
     int lightNum = std::min((int)(sampler->get1D() * nLights), nLights - 1);
     double lightPdf = lightPdf = 1.0 / nLights;
     Light* light = scene->getLight(lightNum);
-    Point2f uLight = sampler->get2D();
-    Point2f uScattering = sampler->get2D();
+    Point2d uLight = sampler->get2D();
+    Point2d uScattering = sampler->get2D();
     //    bool isSpecular = it->getMaterial()-
     bool isSpecular = false;//need to be done
     return estimateDirectLightOnly(it, uScattering, light, uLight,
@@ -43,8 +43,8 @@ Spectrum3d PathIntegrator::uniformSampleOneLight(const Intersection* it, const S
     //    return Spectrum3d(0.0, 0.0, 0.0);
 }
 
-Spectrum3d PathIntegrator::estimateDirectLightOnly(const Intersection* it, const Point2f uScattering,
-                                                   const Light* light, const Point2f uLight,
+Spectrum3d PathIntegrator::estimateDirectLightOnly(const Intersection* it, const Point2d uScattering,
+                                                   const Light* light, const Point2d uLight,
                                                    const Scene* scene, Sampler* sampler,
                                                    Vector3d wo, bool handleMedia, bool specular) {
     Spectrum3d Ld(0.0, 0.0, 0.0);
@@ -97,6 +97,11 @@ Spectrum3d PathIntegrator::estimateDirectLightOnly(const Intersection* it, const
     return Ld;
 }
 
+void PathIntegrator::generateNewRay(Intersection* it, Vector3d wi) {
+    Point3d newO = it->getInterPoint() + wi * eps;
+    ray->setRay(newO, wi, 0.0);
+}
+
 
 Spectrum3d PathIntegrator::Li() {
     Spectrum3d L(0.0, 0.0, 0.0), beta(1.0, 1.0, 1.0);
@@ -135,8 +140,12 @@ Spectrum3d PathIntegrator::Li() {
         //⟨Sample BSDF to get new path direction⟩ //(6)
         Vector3d wi, wo = -ray->getDirection();
         double pdf;
-//        Spectrum f = isect.bsdf->Sample_f(wo, &wi, sampler.Get2D(), &pdf);
-        
+        Spectrum3d f = material->sampleBSDF(wo, wi, pdf);
+        if (f.isZero() || pdf == 0.f)   break;
+
+        beta = beta.cwiseProduct(f * abs(wi.dot(interShape->getNormal(interPoint))) / pdf);
+        std::cout<<"beta = "<<beta.transpose()<<", pdf = "<<pdf<<", f = "<<f.transpose()<<std::endl;
+        generateNewRay(inter, wi);
         
         //⟨Account for subsurface scattering, if applicable⟩ (7)
         

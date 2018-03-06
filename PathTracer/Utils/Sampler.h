@@ -19,10 +19,10 @@ public:
     virtual ~Sampler(); //virtual
     
     double random1D() const;
-    Point2f random2D() const;
+    Point2d random2D() const;
     virtual void initializeSampler() = 0;
     virtual double get1D() = 0;
-    virtual Point2f get2D() = 0;
+    virtual Point2d get2D() = 0;
 };
 
 class StratifiedSampler : public Sampler {
@@ -46,12 +46,12 @@ public:
     virtual double get1D();
     
     //get 2-D random number in array
-    virtual Point2f get2D();
+    virtual Point2d get2D();
     
 private:
     int blocks;
     int blocksPerAxis;
-    Point2f* randNumArr;
+    Point2d* randNumArr;
     int currentNumberIndex;
 };
 
@@ -62,7 +62,7 @@ public:
     
     virtual void initializeSampler();
     virtual double get1D();
-    virtual Point2f get2D();
+    virtual Point2d get2D();
 };
 
 #endif /* Sampler_h */

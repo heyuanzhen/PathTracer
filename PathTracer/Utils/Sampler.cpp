@@ -19,10 +19,10 @@ double Sampler::random1D() const{
     return xi;
 }
 
-Point2f Sampler::random2D() const{
+Point2d Sampler::random2D() const{
     double xi1 = rand() * 1.0 / RAND_MAX;
     double xi2 = rand() * 1.0 / RAND_MAX;
-    Point2f xi = Point2f(xi1, xi2);
+    Point2d xi = Point2d(xi1, xi2);
     return xi;
 }
 
@@ -31,7 +31,7 @@ Point2f Sampler::random2D() const{
 StratifiedSampler::StratifiedSampler(const int _blocks) : blocks(_blocks){
     currentNumberIndex = 0;
     clipInputBlocks();
-    randNumArr = new Point2f[blocks]();
+    randNumArr = new Point2d[blocks]();
     initializeSampler();
 }
 
@@ -57,17 +57,17 @@ void StratifiedSampler::initializeSampler(){
 
 void StratifiedSampler::genRandNumArr2D(){
     double blocksDelta = 1.0 / blocksPerAxis;
-    Point2f bias = Point2f(blocksDelta * 0.5, blocksDelta * 0.5);
+    Point2d bias = Point2d(blocksDelta * 0.5, blocksDelta * 0.5);
     double curX, curY;
-    Point2f jitter;
+    Point2d jitter;
     for (int rowi = 0; rowi < blocksPerAxis; rowi++) {
         for (int coli = 0; coli < blocksPerAxis; coli++) {
             jitter = random2D() * blocksDelta - bias;
             curY = (rowi + 0.5) * blocksDelta + jitter[0];
             curX = (coli + 0.5) * blocksDelta + jitter[1];
-            randNumArr[rowi * blocksPerAxis + coli] = Point2f(curX, curY);
+            randNumArr[rowi * blocksPerAxis + coli] = Point2d(curX, curY);
 //            std::cout<<"(i, j) = ("<<rowi<<", "<<coli<<")"
-//            <<"curX = "<<Point2f(curX, curY).transpose()<<std::endl;
+//            <<"curX = "<<Point2d(curX, curY).transpose()<<std::endl;
         }
     }
     currentNumberIndex = 0;
@@ -83,13 +83,13 @@ double StratifiedSampler::get1D(){
     exit(1);
 }
 
-Point2f StratifiedSampler::get2D(){
+Point2d StratifiedSampler::get2D(){
     if (noNumRemains()) {
         genRandNumArr2D();
 //        std::cout<<"ERROR: No random number remains in stratified sampler!"<<std::endl;
 //        exit(1);
     }
-    Point2f xi = randNumArr[currentNumberIndex];
+    Point2d xi = randNumArr[currentNumberIndex];
     currentNumberIndex++;
     return xi;
 }
@@ -109,7 +109,7 @@ double RandomSampler::get1D(){
     return random1D();
 }
 
-Point2f RandomSampler::get2D(){
+Point2d RandomSampler::get2D(){
     return random2D();
 }
 

@@ -33,6 +33,7 @@ public:
     Point3d getInterPoint() const;
     Vector3d getLocalNormal() const;
     Material* getMaterial() const;
+    Ray* generateNewRay() const;
     bool getIsInter() const;
 };
 

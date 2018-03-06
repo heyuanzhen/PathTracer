@@ -37,9 +37,9 @@ void exapmle(){
     Sphere sphere2 = Sphere(0.2, Point3d(-0.5, 0.0, 0.0));
     scene->addShape(&sphere2);
     
-    BlinnPhongBSDF bpBSDF1 = BlinnPhongBSDF(0.0, 1.0, 0.2, 2.0);
+    BlinnPhongBSDF bpBSDF1 = BlinnPhongBSDF(0.0, 1.0, 0.0, 0.0);
     bpBSDF1.buildBSDF();
-    BlinnPhongBSDF bpBSDF2 = BlinnPhongBSDF(0.0, 1.0, 1.0, 1.0);
+    BlinnPhongBSDF bpBSDF2 = BlinnPhongBSDF(0.0, 1.0, 0.0, 0.0);
     bpBSDF2.buildBSDF();
     
     Material mat1 = Material(Material::PHONG, &bpBSDF1);

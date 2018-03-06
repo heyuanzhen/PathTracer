@@ -41,7 +41,7 @@ Point3d PointLight::getPos() const {
 }
 
 
-Spectrum3d PointLight::Sample_Li(const Intersection* inter, const Point2f u, Vector3d& wi,
+Spectrum3d PointLight::Sample_Li(const Intersection* inter, const Point2d u, Vector3d& wi,
                                  double &pdf, bool &vis, const Scene* scene) const {
     Point3d pS = inter->getInterPoint();
     wi = (pS - pos).normalized();
@@ -57,7 +57,7 @@ DirectionalLight::DirectionalLight(Vector3d _dir, Spectrum3d _I, Point3d wC, dou
 
 DirectionalLight::~DirectionalLight() {}
 
-Spectrum3d DirectionalLight::Sample_Li(const Intersection* inter, const Point2f u, Vector3d &wi,
+Spectrum3d DirectionalLight::Sample_Li(const Intersection* inter, const Point2d u, Vector3d &wi,
                                        double &pdf, bool &vis, const Scene *scene) const {
     wi = dir;
     pdf = 1.0;

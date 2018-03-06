@@ -34,7 +34,7 @@ protected:
     materialType mType;
     Matrix3d M; //M is a matrix that transform a normal to (0, 0, 1)
     Matrix3d invM;
-    const Vector3d nG = Vector3d(0.0, 1.0, 0.0); //geometry normal in local cordinate
+    const Vector3d nG = Vector3d(0.0, 0.0, 1.0); //geometry normal in local cordinate
     BSDF* bsdf;
 };
 

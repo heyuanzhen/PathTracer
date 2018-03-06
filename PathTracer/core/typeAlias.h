@@ -13,18 +13,18 @@
 
 typedef Eigen::Vector2i Point2i;
 
-typedef Eigen::Vector2f Point2f;
+typedef Eigen::Vector2d Point2d;
 typedef Eigen::Vector3d Point3d;
-typedef Eigen::Vector4f Point4f;
+typedef Eigen::Vector4d Point4d;
 
-typedef Eigen::Vector2f Vector2f;
+typedef Eigen::Vector2d Vector2d;
 typedef Eigen::Vector3d Vector3d;
-typedef Eigen::Vector4f Vector4f;
+typedef Eigen::Vector4d Vector4d;
 
 typedef Eigen::Vector3d Spectrum3d;
 
 typedef Eigen::Matrix3d Matrix3d;
-typedef Eigen::Matrix4f Matrix4f;
-typedef Eigen::MatrixXf MatrixXf;
+typedef Eigen::Matrix4d Matrix4d;
+typedef Eigen::MatrixXd MatrixXd;
 
 #endif /* TypeAlias_h */

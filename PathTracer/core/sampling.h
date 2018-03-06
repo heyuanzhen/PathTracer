@@ -18,7 +18,7 @@
 //RandomSampler rsp;
 
 //pbrt: page: 775
-inline Point3d uniformSampleHemisphere(const Point2f u){
+inline Point3d uniformSampleHemisphere(const Point2d u){
     double z = u[0];
     double r = sqrt(1.0 - z * z);
     double phi = 2 * Pi * u[1];
@@ -30,7 +30,7 @@ inline double uniformSampleHemispherePDF(){
 
 
 //pbrt: page776
-inline Point3d uniformSampleSphere(const Point2f u){
+inline Point3d uniformSampleSphere(const Point2d u){
     double z = 1.0 - 2.0 * u[0];
     double r = sqrt(1.0 - z * z);
     double phi = 2 * Pi * u[1];
@@ -41,21 +41,21 @@ inline double uniformSampleSpherePDF(){
 }
 
 //pbrt: page 777. This function is not used
-inline Point2f uniformSampleDisk(const Point2f u) {
+inline Point2d uniformSampleDisk(const Point2d u) {
     double r = sqrt(u[0]);
     double theta = 2 * M_PI * u[1];
-    Point2f p = Point2f(r * cos(theta), r * sin(theta));
+    Point2d p = Point2d(r * cos(theta), r * sin(theta));
     return p;
 }
 
 //pbrt: page 778
-inline Point2f concentricSampleDisk(const Point2f u) {
+inline Point2d concentricSampleDisk(const Point2d u) {
     // Map uniform random numbers to $[-1,1]^2$
-    Point2f uMapped = 2.0 * u - Vector2f(1.0, 1.0);
+    Point2d uMapped = 2.0 * u - Vector2d(1.0, 1.0);
     
     // Handle degeneracy at the origin
     if (uMapped[0] == 0 && uMapped[1] == 0) {
-        return Point2f(0.0, 0.0);
+        return Point2d(0.0, 0.0);
     }
     
     double r, theta;
@@ -67,13 +67,13 @@ inline Point2f concentricSampleDisk(const Point2f u) {
         r = uMapped[1];
         theta = PiOver2 - PiOver4 * (uMapped[0] / uMapped[1]);
     }
-    Point2f p = Point2f(r * cos(theta), r * sin(theta));
+    Point2d p = Point2d(r * cos(theta), r * sin(theta));
     return p;
 }
 
 //pbrt: page 780
-inline Point3d cosineSampleHemisphere(const Point2f u){
-    Point2f p_disk = concentricSampleDisk(u);
+inline Point3d cosineSampleHemisphere(const Point2d u){
+    Point2d p_disk = concentricSampleDisk(u);
     double z = sqrt(1.0 - p_disk.x() * p_disk.x() - p_disk.y() - p_disk.y());
     return Point3d(p_disk.x(), p_disk.y(), z);
 }
@@ -82,7 +82,7 @@ inline double cosinSampleHemisphere(double cosTheta){
 }
 
 //pbrt: page 781
-inline Point3d uniformSampleCone(const Point2f u, const double cosThetaMax){
+inline Point3d uniformSampleCone(const Point2d u, const double cosThetaMax){
     double cosTheta = (1.0 - u[0]) + u[0] * cosThetaMax;
     double sinTheta = sqrt(1.0 - cosTheta * cosTheta);
     double phi = u[1] * 2 * Pi;

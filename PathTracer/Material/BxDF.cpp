@@ -12,7 +12,7 @@
 
 ////BxDF
 BxDF::BxDF(BxDFType tp) : type(tp) {
-    n = Spectrum3d(0.0, 1.0, 0.0);
+    n = Spectrum3d(0.0, 0.0, 1.0);
 }
 BxDF::~BxDF(){}
 
@@ -24,9 +24,9 @@ double BxDF::calcPDF(const Vector3d wo, const Vector3d wi) const {
     return isSameHemisphere(wo, wi) ? absCosTheta(wi) * InvPi : 0.0;
 }
 
-Spectrum3d BxDF::sampleWiAndEval(const Vector3d wo, Vector3d &wi, Point2f u, double &pdf) const {
+Spectrum3d BxDF::sampleWiAndEval(const Vector3d wo, Vector3d &wi, Point2d u, double &pdf) const {
     wi = uniformSampleHemisphere(u);
-    wi.y() = wi.y() < 0.0 ? wi.y() *= -1.0 : wi.y();
+    wi.z() = wi.z() < 0.0 ? wi.z() *= -1.0 : wi.z();
     pdf = calcPDF(wo, wi);
     return eval(wo, wi);
 }
@@ -71,7 +71,7 @@ BlinnPhongSpecularReflection::BlinnPhongSpecularReflection(double _ks, double _s
 BlinnPhongSpecularReflection::~BlinnPhongSpecularReflection() {}
 
 Spectrum3d BlinnPhongSpecularReflection::eval(const Vector3d wo, const Vector3d wi) const{
-    Vector3d H = wo + wi / (wo + wi).norm();
+    Vector3d H = (wo + wi) / (wo + wi).norm();
     return Spectrum3d(1.0, 1.0, 1.0) * ks * pow(H.dot(n), shininess);
 }
 

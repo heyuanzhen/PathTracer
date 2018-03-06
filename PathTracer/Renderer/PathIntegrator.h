@@ -24,10 +24,11 @@ public:
     ~PathIntegrator();
     Spectrum3d uniformSampleOneLight(const Intersection* it, const Scene* scene,
                                      Sampler* sampler, Vector3d wo, bool handleMedia);
-    Spectrum3d estimateDirectLightOnly(const Intersection* it, const Point2f uScattering,
-                                       const Light* light, const Point2f uLight,
+    Spectrum3d estimateDirectLightOnly(const Intersection* it, const Point2d uScattering,
+                                       const Light* light, const Point2d uLight,
                                        const Scene* scene, Sampler* sampler,
                                        Vector3d wo, bool handleMedia, bool specular);
+    void generateNewRay(Intersection* it, Vector3d wi);
     Spectrum3d Li();
     
 };

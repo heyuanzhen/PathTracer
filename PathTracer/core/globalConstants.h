@@ -17,7 +17,7 @@ static const double Inv4Pi = 0.07957747154594766788;
 static const double PiOver2 = 1.57079632679489661923;
 static const double PiOver4 = 0.78539816339744830961;
 static const double Sqrt2 = 1.41421356237309504880;
-static const double eps = 1e-7;
+static const double eps = 1e-14;
 
 static const double MAX_double = 1e+15;
 static const double MIN_double = -1e+15;

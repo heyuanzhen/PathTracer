@@ -58,7 +58,7 @@ inline double clamp(double val, double low, double up){
 }
 
 inline bool isSameHemisphere(const Vector3d wo, const Vector3d wi){
-    return wo[1] * wi[1] > 0 ? true : false;
+    return wo[2] * wi[2] > 0 ? true : false;
 }
 
 
@@ -81,7 +81,7 @@ public:
     virtual Spectrum3d eval(const Vector3d wo, const Vector3d wi) const = 0;
     
     //default sample method to sample wi
-    virtual Spectrum3d sampleWiAndEval(const Vector3d wo, Vector3d& wi, Point2f u, double& pdf) const;
+    virtual Spectrum3d sampleWiAndEval(const Vector3d wo, Vector3d& wi, Point2d u, double& pdf) const;
     
     //default pdf calculate method
     virtual double calcPDF(const Vector3d wo, const Vector3d wi) const;

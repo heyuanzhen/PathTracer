@@ -12,23 +12,23 @@
 #include "typeAlias.h"
 #include "Ray.h"
 
-inline Point3d worldToLocal(Matrix4f invM, Point3d pW) {
-    Point4f homoPW(pW(0), pW(1), pW(2), 1.0);
-    Point4f homoPL = invM * homoPW;
+inline Point3d worldToLocal(Matrix4d invM, Point3d pW) {
+    Point4d homoPW(pW(0), pW(1), pW(2), 1.0);
+    Point4d homoPL = invM * homoPW;
     return Point3d(homoPL(0), homoPL(1), homoPL(2));
 }
 
-inline Point3d localToWorld(Matrix4f M, Point3d pL) {
-    Point4f homoPL(pL(0), pL(1), pL(2), 1.0);
-    Point4f homoPW = M * homoPL;
+inline Point3d localToWorld(Matrix4d M, Point3d pL) {
+    Point4d homoPL(pL(0), pL(1), pL(2), 1.0);
+    Point4d homoPW = M * homoPL;
     return Point3d(homoPW(0), homoPW(1), homoPW(2));
 }
 
 class Transform {
-    Matrix4f M;
-    Matrix4f invM;
-    Matrix4f MRot;
-    Matrix4f invMRot;
+    Matrix4d M;
+    Matrix4d invM;
+    Matrix4d MRot;
+    Matrix4d invMRot;
     bool isInvMCalc;
     bool isInvMRotCalc;
 public:
@@ -44,10 +44,10 @@ public:
     void setRotateZ(double rad);
     void setIdentityM();
     
-    Matrix4f getM() const;
-    Matrix4f getMRot() const;
-    Matrix4f getInvM();
-    Matrix4f getInvMRot();
+    Matrix4d getM() const;
+    Matrix4d getMRot() const;
+    Matrix4d getInvM();
+    Matrix4d getInvMRot();
     
 
     

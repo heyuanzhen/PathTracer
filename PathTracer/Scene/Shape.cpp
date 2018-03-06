@@ -15,8 +15,8 @@ Shape::Shape(ShapeType tp) : type(tp), material(nullptr) {}
 Shape::~Shape() {}
 
 void Shape::transRayToLocal(Ray* rayW, Ray& rayL) {
-    Matrix4f invM = trans.getInvM();
-    Matrix4f invMRot = trans.getInvMRot();
+    Matrix4d invM = trans.getInvM();
+    Matrix4d invMRot = trans.getInvMRot();
     Point3d oL = worldToLocal(invM, rayW->getOrigin());
     Vector3d dL = worldToLocal(invMRot, rayW->getDirection());
     rayL.setRay(oL, dL, 0.0);
