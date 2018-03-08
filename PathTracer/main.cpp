@@ -47,7 +47,7 @@ void exapmle(){
     sphere1.setMaterial(&mat1);
     sphere2.setMaterial(&mat2);
     
-    PointLight pl1 = PointLight(Point3d(-2.0, 0.0, 2.0), Spectrum3d(1.0, 2.0, 3.0));
+    PointLight pl1 = PointLight(Point3d(-2.0, 0.0, 2.0), Spectrum3d(10.0, 20.0, 30.0));
     scene->addLight(&pl1);
 //    PointLight pl2 = PointLight(Point3d(2.0, 2.0, 0.0), Spectrum3d(3.0, 2.0, 1.0));
 //    scene->addLight(&pl2);

@@ -52,7 +52,7 @@ LambertianDiffuseReflection::~LambertianDiffuseReflection() {}
 Spectrum3d LambertianDiffuseReflection::eval(const Vector3d wo, const Vector3d wi) const {
 //    Spectrum3d f = Spectrum3d(1.0, 1.0, 1.0) * kd * n.dot(wi);
 //    std::cout<<"wi = "<<wi.transpose()<< ", n = "<<n.transpose()<<", f = "<<f.transpose()<<std::endl;
-    return Spectrum3d(1.0, 1.0, 1.0) * kd * n.dot(wi);
+    return Spectrum3d(1.0, 1.0, 1.0) * kd * n.dot(wi) * InvPi;
 }
 
 ////Constant Reflection

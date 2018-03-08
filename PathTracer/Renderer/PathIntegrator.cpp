@@ -144,7 +144,7 @@ Spectrum3d PathIntegrator::Li() {
         if (f.isZero() || pdf == 0.f)   break;
 
         beta = beta.cwiseProduct(f * abs(wi.dot(interShape->getNormal(interPoint))) / pdf);
-        std::cout<<"beta = "<<beta.transpose()<<", pdf = "<<pdf<<", f = "<<f.transpose()<<std::endl;
+//        std::cout<<"beta = "<<beta.transpose()<<", pdf = "<<pdf<<", f = "<<f.transpose()<<std::endl;
         generateNewRay(inter, wi);
         
         //⟨Account for subsurface scattering, if applicable⟩ (7)
