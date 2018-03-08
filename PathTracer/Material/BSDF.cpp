@@ -55,7 +55,7 @@ BlinnPhongBSDF::~BlinnPhongBSDF() {
 void BlinnPhongBSDF::buildBSDF() {
     BxDF* ambientReflection = new ConstantReflection(ka);
     BxDF* diffuseReflection = new LambertianDiffuseReflection(kd);
-    BxDF* blinnPhongSpecularReflection = new BlinnPhongSpecularReflection(ks, shininess);
+    BxDF* blinnPhongSpecularReflection = new SpecularReflection(ks);
     addBxDF(ambientReflection);
     addBxDF(diffuseReflection);
     addBxDF(blinnPhongSpecularReflection);

@@ -10,6 +10,11 @@
 #include "sampling.h"
 #include <iostream>
 
+inline Vector3d reflect(const Vector3d wo, const Vector3d n) {
+    return Vector3d(-wo.x(), -wo.y(), wo.z());
+;
+}
+
 ////BxDF
 BxDF::BxDF(BxDFType tp) : type(tp) {
     n = Spectrum3d(0.0, 0.0, 1.0);
@@ -33,15 +38,30 @@ Spectrum3d BxDF::sampleWiAndEval(const Vector3d wo, Vector3d &wi, Point2d u, dou
 
 
 ////Specular Reflection
-SpecularReflection::SpecularReflection(double _ks, double _shiniess) :
-ks(_ks), shininess(_shiniess), BxDF(SPECULAR){}
+SpecularReflection::SpecularReflection(double _ks) :
+ks(_ks), BxDF(SPECULAR){}
 
 SpecularReflection::~SpecularReflection(){}
 
 Spectrum3d SpecularReflection::eval(const Vector3d wo, const Vector3d wi) const {
-    Vector3d H = wo + wi / (wo + wi).norm();
-    return Spectrum3d(1.0, 1.0, 1.0) * ks * pow(H.dot(n), shininess);
+    return Spectrum3d(0.0, 0.0, 0.0);
 }
+
+Spectrum3d SpecularReflection::sampleWiAndEval(const Vector3d wo, Vector3d &wi, Point2d u, double &pdf) const {
+    pdf = 1.0;
+    wi = reflect(wo, n);
+    return Spectrum3d(1.0, 1.0, 1.0) * ks * cosTheta(wi) / absCosTheta(wi);
+}
+
+double SpecularReflection::calcPDF(const Vector3d wo, const Vector3d wi) const {
+    return 0.0;
+}
+
+//Spectrum3d SpecularReflection::sampleWiAndEval(const Vector3d wo, Vector3d &wi, Point2d u, double &pdf) const {
+//    wi = Vector3d(-wo.x(), -wo.y(), wo.z());
+//    pdf = 1.0;
+//
+//}
 
 
 ////Lambertian Diffuse Reflection
@@ -52,7 +72,7 @@ LambertianDiffuseReflection::~LambertianDiffuseReflection() {}
 Spectrum3d LambertianDiffuseReflection::eval(const Vector3d wo, const Vector3d wi) const {
 //    Spectrum3d f = Spectrum3d(1.0, 1.0, 1.0) * kd * n.dot(wi);
 //    std::cout<<"wi = "<<wi.transpose()<< ", n = "<<n.transpose()<<", f = "<<f.transpose()<<std::endl;
-    return Spectrum3d(1.0, 1.0, 1.0) * kd * n.dot(wi) * InvPi;
+    return Spectrum3d(1.0, 1.0, 1.0) * kd * InvPi;
 }
 
 ////Constant Reflection

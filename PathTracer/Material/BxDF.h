@@ -96,11 +96,13 @@ protected:
 class SpecularReflection : public BxDF {
     double ks;
 public:
-    SpecularReflection(double _ks, double _shiniess);
+    SpecularReflection(double _ks);
     ~SpecularReflection();
     
     double shininess;
     virtual Spectrum3d eval(const Vector3d wo, const Vector3d wi) const;
+    virtual Spectrum3d sampleWiAndEval(const Vector3d wo, Vector3d& wi, Point2d u, double& pdf) const;
+    virtual double calcPDF(const Vector3d wo, const Vector3d wi) const;
 };
 
 class LambertianDiffuseReflection : public BxDF {

@@ -26,7 +26,7 @@ void exapmle(){
     
     
     int reso[2] = {300, 400};
-    int sampleCount = 64;
+    int sampleCount = 1024;
     int maxDepth = 2;
     
     Scene* scene = new Scene(2, 1);
@@ -39,7 +39,7 @@ void exapmle(){
     
     BlinnPhongBSDF bpBSDF1 = BlinnPhongBSDF(0.0, 1.0, 0.0, 0.0);
     bpBSDF1.buildBSDF();
-    BlinnPhongBSDF bpBSDF2 = BlinnPhongBSDF(0.0, 1.0, 0.0, 0.0);
+    BlinnPhongBSDF bpBSDF2 = BlinnPhongBSDF(0.0, 0.0, 1.0, 0.0);
     bpBSDF2.buildBSDF();
     
     Material mat1 = Material(Material::PHONG, &bpBSDF1);
