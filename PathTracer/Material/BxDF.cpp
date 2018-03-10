@@ -38,7 +38,7 @@ Spectrum3d BxDF::sampleWiAndEval(const Vector3d wo, Vector3d &wi, Point2d u, dou
 
 
 ////Specular Reflection
-SpecularReflection::SpecularReflection(double _ks) :
+SpecularReflection::SpecularReflection(Spectrum3d _ks) :
 ks(_ks), BxDF(SPECULAR){}
 
 SpecularReflection::~SpecularReflection(){}
@@ -50,7 +50,7 @@ Spectrum3d SpecularReflection::eval(const Vector3d wo, const Vector3d wi) const 
 Spectrum3d SpecularReflection::sampleWiAndEval(const Vector3d wo, Vector3d &wi, Point2d u, double &pdf) const {
     pdf = 1.0;
     wi = reflect(wo, n);
-    return Spectrum3d(1.0, 1.0, 1.0) * ks * cosTheta(wi) / absCosTheta(wi);
+    return ks.cwiseProduct(Spectrum3d(1.0, 1.0, 1.0)) * cosTheta(wi) / absCosTheta(wi);
 }
 
 double SpecularReflection::calcPDF(const Vector3d wo, const Vector3d wi) const {
@@ -65,23 +65,23 @@ double SpecularReflection::calcPDF(const Vector3d wo, const Vector3d wi) const {
 
 
 ////Lambertian Diffuse Reflection
-LambertianDiffuseReflection::LambertianDiffuseReflection(double _kd) : kd(_kd), BxDF(DIFFUSE) {}
+LambertianDiffuseReflection::LambertianDiffuseReflection(Spectrum3d _kd) : kd(_kd), BxDF(DIFFUSE) {}
 
 LambertianDiffuseReflection::~LambertianDiffuseReflection() {}
 
 Spectrum3d LambertianDiffuseReflection::eval(const Vector3d wo, const Vector3d wi) const {
 //    Spectrum3d f = Spectrum3d(1.0, 1.0, 1.0) * kd * n.dot(wi);
 //    std::cout<<"wi = "<<wi.transpose()<< ", n = "<<n.transpose()<<", f = "<<f.transpose()<<std::endl;
-    return Spectrum3d(1.0, 1.0, 1.0) * kd * InvPi;
+    return kd.cwiseProduct(Spectrum3d(1.0, 1.0, 1.0)) * InvPi;
 }
 
 ////Constant Reflection
-ConstantReflection::ConstantReflection(double _k) : k(_k), BxDF(CONSTANT) {}
+ConstantReflection::ConstantReflection(Spectrum3d _k) : k(_k), BxDF(CONSTANT) {}
 
 ConstantReflection::~ConstantReflection() {}
 
 Spectrum3d ConstantReflection::eval(const Vector3d wo, const Vector3d wi) const {
-    return Spectrum3d(1.0, 1.0, 1.0) * k;
+    return k.cwiseProduct(Spectrum3d(1.0, 1.0, 1.0));
 }
 
 ////Blinn-Phong Specular Reflection

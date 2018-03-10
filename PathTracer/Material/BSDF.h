@@ -32,12 +32,12 @@ public:
 
 class BlinnPhongBSDF : public BSDF {
 public:
-    BlinnPhongBSDF(double _ka, double _kd, double _ks, double _sh);
+    BlinnPhongBSDF(Spectrum3d _ka, Spectrum3d _kd, Spectrum3d _ks, double _sh);
     ~BlinnPhongBSDF();
     
     virtual void buildBSDF();
 private:
-    double ka, kd, ks;
+    Spectrum3d ka, kd, ks;
     double shininess;
 };
 

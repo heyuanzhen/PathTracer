@@ -41,7 +41,7 @@ int BSDF::getBxDFCount() const {
 
 
 ////Blinn-Phong Reflection Model
-BlinnPhongBSDF::BlinnPhongBSDF(double _ka, double _kd, double _ks, double _sh):
+BlinnPhongBSDF::BlinnPhongBSDF(Spectrum3d _ka, Spectrum3d _kd, Spectrum3d _ks, double _sh):
                 ka(_ka), kd(_kd), ks(_ks), shininess(_sh){}
 
 BlinnPhongBSDF::~BlinnPhongBSDF() {

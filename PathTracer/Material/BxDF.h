@@ -94,9 +94,9 @@ protected:
 
 ////calcPDF() should be redefined according to the type of reflection model!!!
 class SpecularReflection : public BxDF {
-    double ks;
+    Spectrum3d ks;
 public:
-    SpecularReflection(double _ks);
+    SpecularReflection(Spectrum3d _ks);
     ~SpecularReflection();
     
     double shininess;
@@ -106,18 +106,18 @@ public:
 };
 
 class LambertianDiffuseReflection : public BxDF {
-    double kd;
+    Spectrum3d kd;
 public:
-    LambertianDiffuseReflection(double _kd);
+    LambertianDiffuseReflection(Spectrum3d _kd);
     ~LambertianDiffuseReflection();
     
     virtual Spectrum3d eval(const Vector3d wo, const Vector3d wi) const;
 };
 
 class ConstantReflection : public BxDF {
-    double k;
+    Spectrum3d k;
 public:
-    ConstantReflection(double _k);
+    ConstantReflection(Spectrum3d _k);
     ~ConstantReflection();
     
     virtual Spectrum3d eval(const Vector3d wo, const Vector3d wi) const;
