@@ -72,7 +72,9 @@ Spectrum3d PathIntegrator::estimateDirectLightOnly(const Intersection* it, const
         //get f, scatteringPdf, woL, wiL
         Vector3d woL, wiL;
         material->eval(wo, -wi, woL, wiL, f, scatteringPdf); //wi := -wi
+//        std::cout<<"wiL = "<<wiL.transpose()<<std::endl;
         f *= abs(wiL.dot(material->getGeometryNormal()));
+//        std::cout<<"f = 0"<<std::endl;
         
         if (!f.isZero()) {
 //            if (!visibility)    Li = Spectrum3d(0.0, 0.0, 0.0);
@@ -97,8 +99,8 @@ Spectrum3d PathIntegrator::estimateDirectLightOnly(const Intersection* it, const
     return Ld;
 }
 
-void PathIntegrator::generateNewRay(Intersection* it, Vector3d wi) {
-    Point3d newO = it->getInterPoint() + wi * eps;
+void PathIntegrator::generateNewRay(Intersection* it, Vector3d wi, Vector3d nW) {
+    Point3d newO = it->getInterPoint() + nW * eps;
     ray->setRay(newO, wi, 0.0);
 }
 
@@ -127,14 +129,13 @@ Spectrum3d PathIntegrator::Li() {
         
         //⟨Compute scattering functions and skip over medium boundaries⟩  //(4)
         Material* material = inter->getMaterial();
-        Shape* interShape = inter->getShape();
-        Point3d interPoint = inter->getInterPoint();
-        material->calcRotateMartix(interShape->getNormal(interPoint));
+        material->calcRotateMartix(inter->getLocalNormal());
         
         //⟨Sample illumination from lights to find path contribution⟩ //(5)
 //        std::cout<<"here"<<std::endl;
         Spectrum3d Ld = beta.cwiseProduct(uniformSampleOneLight(inter, scene, normalSampler,
                                                    -ray->getDirection(), false)); //wo = - ray.d
+//        std::cout<<"Ld = "<<Ld<<std::endl;
         L += Ld;
         
         //⟨Sample BSDF to get new path direction⟩ //(6)
@@ -143,9 +144,9 @@ Spectrum3d PathIntegrator::Li() {
         Spectrum3d f = material->sampleBSDF(wo, wi, pdf);
         if (f.isZero() || pdf == 0.f)   break;
 
-        beta = beta.cwiseProduct(f * abs(wi.dot(interShape->getNormal(interPoint))) / pdf);
+        beta = beta.cwiseProduct(f * abs(wi.dot(inter->getLocalNormal())) / pdf);
 //        std::cout<<"beta = "<<beta.transpose()<<", pdf = "<<pdf<<", f = "<<f.transpose()<<std::endl;
-        generateNewRay(inter, wi);
+        generateNewRay(inter, wi, inter->getLocalNormal());
         
         //⟨Account for subsurface scattering, if applicable⟩ (7)
         

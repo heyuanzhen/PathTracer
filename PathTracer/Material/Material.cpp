@@ -19,6 +19,11 @@ Material::Material(materialType mt, BSDF* bs) : mType(mt), bsdf(bs) {
 Material::~Material() {}
 
 void Material::calcRotateMartix(const Vector3d nW){
+    if ((abs(nW.x() - nG.x()) < eps) && (abs(nW.y() - nG.y()) < eps) && (abs(nW.z() - nG.z()) < eps)) {
+        M.setIdentity();
+        invM.setIdentity();
+        return;
+    }
     Vector3d v = nW.cross(nG);
     double s = v.norm();
     double c = nW.dot(nG);
@@ -65,7 +70,8 @@ void Material::eval(const Vector3d woW, const Vector3d wiW,
     }
     woL = rotateNormalToLocal(woW);
     wiL = rotateNormalToLocal(wiW);
-//    std::cout<<"wo = "<<wo.transpose()<< ", wi = "<<wi.transpose()<<std::endl;
+//    std::cout<<"M = "<<M<<std::endl;
+//    std::cout<<"woL = "<<woL.transpose()<< ", wiL = "<<wiL.transpose()<<std::endl;
     if (!isSameHemisphere(woL, wiL)) {
 //        std::cout<<"Back ray !"<<" woW = "<<woL.transpose()<< ", wiW = "<<wiL.transpose()<<std::endl;
         f = Spectrum3d(0.0, 0.0, 0.0);

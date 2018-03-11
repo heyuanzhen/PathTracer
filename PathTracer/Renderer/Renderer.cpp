@@ -104,7 +104,7 @@ void Renderer::startRendering() {
             pixels[rowi][coli * 3 + 2] = pix(2);
         }
         if ((rowi + 1) % 50 == 0) {
-            std::cout<<rowi + 1<<"lines have been rendered."<<std::endl;
+            std::cout<<"         "<<rowi + 1<<" lines have been rendered."<<std::endl;
         }
     }
     delete[] pixelBuffer;

@@ -76,7 +76,7 @@ bool Ray::brutalWayToFind(const Scene* scene) {
         std::cout<<"No shape in the scene !"<<std::endl;
     }
     Vector3d interP;
-    double t_min = MAX_double;
+    double t_min = MAX_DOUBLE;
     Intersection its_now;
     for (int i = 0; i < scene->getShapeCount(); i++) {
 //        std::cout<<i<<std::endl;
@@ -85,12 +85,19 @@ bool Ray::brutalWayToFind(const Scene* scene) {
         if (t_now < t_min && t_now > 0.0) {
             t_min = t_now;
             t = t_now;
-            its = Intersection(this, sp, calcP(), sp->getNormal(calcP()), sp->getMaterial());
+            Vector3d lN = sp->getNormal(calcP());
+            if(!isSameHemisphere(lN, -d)){
+//                std::cout<<"ln: "<<lN.transpose()<<", d: "<<d.transpose()<<std::endl;
+//                std::cout<<"Not same !"<<std::endl;
+                lN = -lN;
+            }
+            its = Intersection(this, sp, calcP(), lN, sp->getMaterial());
             isIntersected = true;
         }
     }
     return isIntersected;
 }
+
 
 bool Ray::brutalWayToFindBetween(const Scene *scene, double tmax) {
     if (!scene->getShapeCount()) {

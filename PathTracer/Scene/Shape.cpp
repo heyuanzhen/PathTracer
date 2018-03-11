@@ -71,12 +71,12 @@ double Sphere::isIntersected(Ray *rayW) {
     double c = oL(0) * oL(0) + oL(1) * oL(1) + oL(2) * oL(2) - radius * radius;
     double delta = b * b - 4.0 * a * c; //b^2-4ac
     if (delta < 0.0) {
-        return MAX_double;
+        return MAX_DOUBLE;
     }
     else{
         double t1 = (-b - sqrt(delta)) / (2.0 * a);
         if (t1 < 0.0) {
-            return MAX_double;
+            return MAX_DOUBLE;
         }
         else{
             return  t1;
@@ -85,6 +85,51 @@ double Sphere::isIntersected(Ray *rayW) {
 }
 
 
+////Triangle Shape
+Triangle::Triangle(Point3d _p0, Point3d _p1, Point3d _p2) : p0(_p0), p1(_p1), p2(_p2), Shape(TRIANGLE) {
+    e1 = p1 - p0;
+    e2 = p2 - p0;
+    n = e1.cross(e2).normalized();
+}
+
+Triangle::~Triangle() {}
+
+Point3d Triangle::getPointByUV(double uu, double vv) const {
+    return (1.0 - uu - vv) * p0 + uu * p1 + vv * p2;
+}
+
+Vector3d Triangle::getNormal(Point3d pWorld) {
+    return n;
+}
+
+double Triangle::isIntersected(Ray *ray) {
+    Vector3d q = ray->getDirection().cross(e2);
+    double a = e1.dot(q);
+//    std::cout<<"test point 1"<<std::endl;
+    if (abs(a) < eps) {
+        return MAX_DOUBLE;
+    }
+    double f = 1.0 / a;
+    Vector3d s = ray->getOrigin() - p0;
+    double u = f * (s.dot(q));
+//    std::cout<<"test point 2"<<std::endl;
+    if (u < 0.0) {
+        return MAX_DOUBLE;
+    }
+    Vector3d r = s.cross(e1);
+    double v = f * (ray->getDirection().dot(r));
+//    std::cout<<"test point 3"<<std::endl;
+    if (v < 0.0 || (u + v) > 1.0) {
+        return MAX_DOUBLE;
+    }
+//    std::cout<<f<<", "<<e2.transpose()<<", "<<q.transpose()<<std::endl;
+    double t = f * (e2.dot(r));
+    if (t < 0.0) {
+        return MAX_DOUBLE;
+    }
+//    std::cout<<t<<std::endl;
+    return t;
+}
 
 
 
