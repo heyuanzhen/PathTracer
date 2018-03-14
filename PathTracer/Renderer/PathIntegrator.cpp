@@ -140,6 +140,7 @@ Spectrum3d PathIntegrator::Li() {
         
         //⟨Sample BSDF to get new path direction⟩ //(6)
         Vector3d wi, wo = -ray->getDirection();
+//        std::cout<<"woW = "<<wo.transpose()<<std::endl;
         double pdf;
         Spectrum3d f = material->sampleBSDF(wo, wi, pdf);
         if (f.isZero() || pdf == 0.f)   break;

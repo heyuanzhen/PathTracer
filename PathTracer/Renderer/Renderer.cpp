@@ -78,13 +78,14 @@ void Renderer::startRendering() {
         for (int coli = 0; coli < xres; coli++) {
 //    for (int rowi = 149; rowi < 152; rowi++) {
 //        for (int coli = 199; coli < 202; coli++) {
-//            #pragma omp parallel for schedule(dynamic)
+            #pragma omp parallel for schedule(dynamic)
             for (int spi = 0; spi < sampleCount; spi++) {
                 int offset = (rowi * xres + coli) * sampleCount + spi;
                 if (!rays[offset].isInit()) {
                     std::cout<<"This ray has not been initialized !"<<std::endl;
                     continue;
                 }
+//                std::cout<<rays[offset].getDirection().transpose()<<std::endl;
                 PathIntegrator path = PathIntegrator(&rays[offset], scene, normalSampler, maxDepth);
                 Spectrum3d rad = path.Li();
                 pixelBuffer[spi * 3] = rad(0);

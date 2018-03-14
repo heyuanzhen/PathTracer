@@ -60,6 +60,18 @@ Matrix3d Material::getM() const {
     return M;
 }
 
+int Material::decideWhichBxDFToSample() const {
+    double u = (rand() * 1.0) / (RAND_MAX * 1.0);
+    int ind = 0;
+    while(u > 0) {
+        u -= bsdf->bxdfs[ind]->getWeight() / bsdf->getWeightSum();
+        if (u > 0) {
+            ind++;
+        }
+    }
+    return ind;
+}
+
 
 void Material::eval(const Vector3d woW, const Vector3d wiW,
                     Vector3d& woL, Vector3d& wiL,
@@ -112,26 +124,35 @@ Spectrum3d Material::sampleBSDF(const Vector3d woW, Vector3d& wiW, double &pdf) 
         std::cout<<"Empty material !"<<std::endl;
         return f;
     }
+    
     RandomSampler rsp;
     int BxDFCount = bsdf->getBxDFCount();
-    int bxdfNum = std::min((int)(rsp.get1D() * BxDFCount), BxDFCount - 1);
-    BxDF* bxdf = bsdf->bxdfs[bxdfNum];
+    int bxdfNum = decideWhichBxDFToSample();
+    BxDF *bxdf = bsdf->bxdfs[bxdfNum];
+    
+    
+    if (!bxdf) {
+        std::cout<<bxdfNum<<std::endl;
+        std::cout<<"NULL BxDF !"<<std::endl;
+        exit(0);
+    }
+    
     Vector3d wiL;
     f = bxdf->sampleWiAndEval(woL, wiL, rsp.get2D(), pdf);
+    pdf *= bxdf->getWeight() / bsdf->getWeightSum();
     wiW = rotateNormalToWorld(wiL);
+//    if (bxdf->getType() == BxDF::SPECULAR) {
+//        std::cout<<"wiW = "<<wiW.transpose()<<std::endl<<std::endl;
+//    }
     
-    int pdfCount = 0;
     for (int i = 0; i < BxDFCount; i++) {
         if (bsdf->bxdfs[i] != bxdf) {
-            pdf += bsdf->bxdfs[i]->calcPDF(woL, wiL);
-            pdfCount++;
+            pdf += bsdf->bxdfs[i]->calcPDF(woL, wiL) / bsdf->getWeightSum();
             if (bsdf->bxdfs[i]->getType() != BxDF::TRANSMISSION) {
                 f += bsdf->bxdfs[i]->eval(woL, wiL);
             }
         }
     }
-    pdf /= (1.0 * pdfCount);
-    
     return f;
 }
 

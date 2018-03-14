@@ -105,20 +105,17 @@ Vector3d Triangle::getNormal(Point3d pWorld) {
 double Triangle::isIntersected(Ray *ray) {
     Vector3d q = ray->getDirection().cross(e2);
     double a = e1.dot(q);
-//    std::cout<<"test point 1"<<std::endl;
     if (abs(a) < eps) {
         return MAX_DOUBLE;
     }
     double f = 1.0 / a;
     Vector3d s = ray->getOrigin() - p0;
     double u = f * (s.dot(q));
-//    std::cout<<"test point 2"<<std::endl;
     if (u < 0.0) {
         return MAX_DOUBLE;
     }
     Vector3d r = s.cross(e1);
     double v = f * (ray->getDirection().dot(r));
-//    std::cout<<"test point 3"<<std::endl;
     if (v < 0.0 || (u + v) > 1.0) {
         return MAX_DOUBLE;
     }

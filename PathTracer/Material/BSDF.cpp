@@ -39,10 +39,20 @@ int BSDF::getBxDFCount() const {
     return BxDFCount;
 }
 
+double BSDF::getWeightSum() const {
+    return weightSum;
+}
+
 
 ////Blinn-Phong Reflection Model
 BlinnPhongBSDF::BlinnPhongBSDF(Spectrum3d _ka, Spectrum3d _kd, Spectrum3d _ks, double _sh):
-                ka(_ka), kd(_kd), ks(_ks), shininess(_sh){}
+                ka(_ka), kd(_kd), ks(_ks), shininess(_sh){
+                    buildBSDF();
+                    weightSum = 0.0;
+                    for (int i = 0; i < getBxDFCount(); i++) {
+                        weightSum += bxdfs[i]->getWeight();
+                    }
+                }
 
 BlinnPhongBSDF::~BlinnPhongBSDF() {
     if (isBuilt) {
@@ -53,6 +63,9 @@ BlinnPhongBSDF::~BlinnPhongBSDF() {
 }
 
 void BlinnPhongBSDF::buildBSDF() {
+    if (isBuilt) {
+        return;
+    }
     BxDF* ambientReflection = new ConstantReflection(ka);
     BxDF* diffuseReflection = new LambertianDiffuseReflection(kd);
     BxDF* blinnPhongSpecularReflection = new SpecularReflection(ks);

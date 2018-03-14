@@ -25,6 +25,7 @@ public:
     Vector3d rotateNormalToWorld(const Vector3d vL) const;
     Vector3d getGeometryNormal() const;
     Matrix3d getM() const;
+    int decideWhichBxDFToSample() const;
     virtual void eval(const Vector3d wo, const Vector3d wi,
                       Vector3d& woL, Vector3d& wiL,
                       Spectrum3d& f, double& pdf) const;

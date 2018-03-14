@@ -50,11 +50,16 @@ Spectrum3d SpecularReflection::eval(const Vector3d wo, const Vector3d wi) const 
 Spectrum3d SpecularReflection::sampleWiAndEval(const Vector3d wo, Vector3d &wi, Point2d u, double &pdf) const {
     pdf = 1.0;
     wi = reflect(wo, n);
-    return ks.cwiseProduct(Spectrum3d(1.0, 1.0, 1.0)) * cosTheta(wi) / absCosTheta(wi);
+//    return ks.cwiseProduct(Spectrum3d(1.0, 1.0, 1.0)) * cosTheta(wi) / absCosTheta(wi);
+    return ks.cwiseProduct(Spectrum3d(1.0, 1.0, 1.0)) / absCosTheta(wi);
 }
 
 double SpecularReflection::calcPDF(const Vector3d wo, const Vector3d wi) const {
     return 0.0;
+}
+
+double SpecularReflection::getWeight() const {
+    return ks.norm();
 }
 
 //Spectrum3d SpecularReflection::sampleWiAndEval(const Vector3d wo, Vector3d &wi, Point2d u, double &pdf) const {
@@ -70,9 +75,11 @@ LambertianDiffuseReflection::LambertianDiffuseReflection(Spectrum3d _kd) : kd(_k
 LambertianDiffuseReflection::~LambertianDiffuseReflection() {}
 
 Spectrum3d LambertianDiffuseReflection::eval(const Vector3d wo, const Vector3d wi) const {
-//    Spectrum3d f = Spectrum3d(1.0, 1.0, 1.0) * kd * n.dot(wi);
-//    std::cout<<"wi = "<<wi.transpose()<< ", n = "<<n.transpose()<<", f = "<<f.transpose()<<std::endl;
     return kd.cwiseProduct(Spectrum3d(1.0, 1.0, 1.0)) * InvPi;
+}
+
+double LambertianDiffuseReflection::getWeight() const {
+    return kd.norm();
 }
 
 ////Constant Reflection
@@ -84,16 +91,20 @@ Spectrum3d ConstantReflection::eval(const Vector3d wo, const Vector3d wi) const 
     return k.cwiseProduct(Spectrum3d(1.0, 1.0, 1.0));
 }
 
-////Blinn-Phong Specular Reflection
-BlinnPhongSpecularReflection::BlinnPhongSpecularReflection(double _ks, double _sh) :
-                                ks(_ks), shininess(_sh), BxDF(BFSPECULAR) {}
-
-BlinnPhongSpecularReflection::~BlinnPhongSpecularReflection() {}
-
-Spectrum3d BlinnPhongSpecularReflection::eval(const Vector3d wo, const Vector3d wi) const{
-    Vector3d H = (wo + wi) / (wo + wi).norm();
-    return Spectrum3d(1.0, 1.0, 1.0) * ks * pow(H.dot(n), shininess);
+double ConstantReflection::getWeight() const {
+    return k.norm();
 }
+
+//////Blinn-Phong Specular Reflection
+//BlinnPhongSpecularReflection::BlinnPhongSpecularReflection(double _ks, double _sh) :
+//                                ks(_ks), shininess(_sh), BxDF(BFSPECULAR) {}
+//
+//BlinnPhongSpecularReflection::~BlinnPhongSpecularReflection() {}
+//
+//Spectrum3d BlinnPhongSpecularReflection::eval(const Vector3d wo, const Vector3d wi) const{
+//    Vector3d H = (wo + wi) / (wo + wi).norm();
+//    return Spectrum3d(1.0, 1.0, 1.0) * ks * pow(H.dot(n), shininess);
+//}
 
 ////Blinn-Phong
 //BlinnPhong::BlinnPhong(double _ka, double _kd, double _ks, double _shininess) :

@@ -17,6 +17,7 @@ protected:
     static const int maxBxDFs = 5;
     int BxDFCount;
     bool isBuilt;
+    double weightSum;
 public:
     BxDF* bxdfs[maxBxDFs];
     
@@ -27,6 +28,7 @@ public:
     void setBuilt(bool ib);
     bool getBuilt() const;
     int getBxDFCount() const;
+    double getWeightSum() const;
     virtual void buildBSDF() = 0;
 };
 

@@ -85,6 +85,10 @@ public:
     
     //default pdf calculate method
     virtual double calcPDF(const Vector3d wo, const Vector3d wi) const;
+    
+    //every BxDF needs to give a weight when sampled
+    virtual double getWeight() const = 0;
+    
 private:
     const BxDFType type;
 protected:
@@ -103,6 +107,7 @@ public:
     virtual Spectrum3d eval(const Vector3d wo, const Vector3d wi) const;
     virtual Spectrum3d sampleWiAndEval(const Vector3d wo, Vector3d& wi, Point2d u, double& pdf) const;
     virtual double calcPDF(const Vector3d wo, const Vector3d wi) const;
+    virtual double getWeight() const;
 };
 
 class LambertianDiffuseReflection : public BxDF {
@@ -112,6 +117,7 @@ public:
     ~LambertianDiffuseReflection();
     
     virtual Spectrum3d eval(const Vector3d wo, const Vector3d wi) const;
+    virtual double getWeight() const;
 };
 
 class ConstantReflection : public BxDF {
@@ -121,16 +127,18 @@ public:
     ~ConstantReflection();
     
     virtual Spectrum3d eval(const Vector3d wo, const Vector3d wi) const;
+    virtual double getWeight() const;
 };
 
-class BlinnPhongSpecularReflection : public BxDF{
-    double ks;
-    double shininess;
-public:
-    BlinnPhongSpecularReflection(double _ks, double _sh);
-    ~BlinnPhongSpecularReflection();
-    virtual Spectrum3d eval(const Vector3d wo, const Vector3d wi) const;
-};
+//class BlinnPhongSpecularReflection : public BxDF{
+//    double ks;
+//    double shininess;
+//public:
+//    BlinnPhongSpecularReflection(double _ks, double _sh);
+//    ~BlinnPhongSpecularReflection();
+//    virtual Spectrum3d eval(const Vector3d wo, const Vector3d wi) const;
+//    virtual double getWeight() const;
+//};
 
 //class BlinnPhong : public BSDF{
 //private:
