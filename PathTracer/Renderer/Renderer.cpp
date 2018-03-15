@@ -73,11 +73,11 @@ void Renderer::showImage() const {
 
 void Renderer::startRendering() {
     std::cout<<"–––––––––––––––––––Start Rendering––––––––––––––––––"<<std::endl;
-    double* pixelBuffer = new double[sampleCount * 3]();
     for (int rowi = 0; rowi < yres; rowi++) {
         for (int coli = 0; coli < xres; coli++) {
 //    for (int rowi = 250; rowi < 251; rowi++) {
 //        for (int coli = 200; coli < 201; coli++) {
+            double* pixelBuffer = new double[sampleCount * 3]();
             #pragma omp parallel for schedule(dynamic)
             for (int spi = 0; spi < sampleCount; spi++) {
                 int offset = (rowi * xres + coli) * sampleCount + spi;
@@ -104,12 +104,13 @@ void Renderer::startRendering() {
             pixels[rowi][coli * 3] = pix(0);
             pixels[rowi][coli * 3 + 1] = pix(1);
             pixels[rowi][coli * 3 + 2] = pix(2);
+            delete[] pixelBuffer;
         }
         if ((rowi + 1) % 50 == 0) {
             std::cout<<"         "<<rowi + 1<<" lines have been rendered."<<std::endl;
         }
     }
-    delete[] pixelBuffer;
+    
     std::cout<<"––––––––––––––––––Finish Rendering––––––––––––––––––"<<std::endl;
 }
 

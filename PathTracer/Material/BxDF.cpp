@@ -88,7 +88,7 @@ ConstantReflection::ConstantReflection(Spectrum3d _k) : k(_k), BxDF(CONSTANT) {}
 ConstantReflection::~ConstantReflection() {}
 
 Spectrum3d ConstantReflection::eval(const Vector3d wo, const Vector3d wi) const {
-    return k; //????
+    return k * InvPi; //????
 }
 
 double ConstantReflection::getWeight() const {

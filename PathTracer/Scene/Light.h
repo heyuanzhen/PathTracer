@@ -67,6 +67,7 @@ public:
     ~AreaLight();
     virtual Spectrum3d Sample_Li(const Intersection* inter, const Point2d u, Vector3d& wi,
                                  double& pdf, bool& vis, const Scene* scene) const;
+    Spectrum3d L(Point3d lightP, Vector3d wi) const;
 };
 
 #endif /* Light_h */

@@ -14,6 +14,7 @@
 #include "Intersection.h"
 #include "Transform.h"
 
+class AreaLight;
 
 class Shape {
 public:
@@ -24,12 +25,16 @@ public:
     const ShapeType type;
     Transform trans;
     Material* material;
+    bool isEmmit;
+    AreaLight* areaLight;
     
-    Shape(ShapeType tp);
+    Shape(ShapeType tp, bool isE);
     ~Shape();
     
     void transRayToLocal(Ray* rayW, Ray& rayL);
+    void setAreaLight(AreaLight* al);
     Material* getMaterial() const;
+    AreaLight* getAreaLight() const;
     void setMaterial(Material* material);
     virtual Vector3d getNormal(Point3d pWorld) = 0;
     virtual double isIntersected(Ray* ray) = 0;
@@ -42,7 +47,7 @@ class Sphere : public Shape {
     Point3d center;
     
 public:
-    Sphere(double _r, Point3d _cenPos);
+    Sphere(double _r, Point3d _cenPos, bool isE);
     ~Sphere();
     
     Point3d getCenPos() const;
@@ -57,7 +62,7 @@ class Triangle : public Shape {
     Point3d p0, p1, p2;
     Vector3d e1, e2, n;
 public:
-    Triangle(Point3d _p0, Point3d _p1, Point3d _p2);
+    Triangle(Point3d _p0, Point3d _p1, Point3d _p2, bool isE);
     ~Triangle();
     
     Point3d getPointByUV(double uu, double vv) const;

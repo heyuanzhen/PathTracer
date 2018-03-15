@@ -7,10 +7,11 @@
 //
 
 #include "Shape.h"
+#include "Light.h"
 #include <iostream>
 
 ////Shape class
-Shape::Shape(ShapeType tp) : type(tp), material(nullptr) {}
+Shape::Shape(ShapeType tp, bool isE) : type(tp), isEmmit(isE), material(nullptr), areaLight(nullptr) {}
 
 Shape::~Shape() {}
 
@@ -22,8 +23,20 @@ void Shape::transRayToLocal(Ray* rayW, Ray& rayL) {
     rayL.setRay(oL, dL, 0.0);
 }
 
+void Shape::setAreaLight(AreaLight *al) {
+    if (al->type != Light::AREA) {
+        std::cout<<"This light source is not area light !"<<std::endl;
+        return;
+    }
+    areaLight = al;
+}
+
 Material* Shape::getMaterial() const {
     return material;
+}
+
+AreaLight* Shape::getAreaLight() const {
+    return areaLight;
 }
 
 void Shape::setMaterial(Material *material) {
@@ -36,7 +49,7 @@ Point3d Shape::sample(Point2d u, double &pdf) const {
 }
 
 ////Sphere class
-Sphere::Sphere(double _r, Vector3d _cenPos) : radius(_r), center(_cenPos), Shape(SPHERE) {
+Sphere::Sphere(double _r, Vector3d _cenPos, bool isE) : radius(_r), center(_cenPos), Shape(SPHERE, isE) {
     double ds[3] = {_cenPos(0), _cenPos(1), _cenPos(2)};
     trans.setTranslation(ds);
 }
@@ -53,7 +66,7 @@ double Sphere::getR() const {
 
 Vector3d Sphere::getNormal(Vector3d pWorld) {
     Vector3d normal = pWorld - center;
-    if (normal.norm() - radius > eps) {
+    if (normal.norm() - radius > eps * 10) {
         std::cout<<normal.transpose()<<", "<<normal.norm() - radius<<std::endl;
         std::cout<<"This point is not on the sphere's surface !"<<std::endl;
         return Vector3d(0.0, 0.0, 0.0);
@@ -94,7 +107,7 @@ double Sphere::Area() const {
 }
 
 ////Triangle Shape
-Triangle::Triangle(Point3d _p0, Point3d _p1, Point3d _p2) : p0(_p0), p1(_p1), p2(_p2), Shape(TRIANGLE) {
+Triangle::Triangle(Point3d _p0, Point3d _p1, Point3d _p2, bool isE) : p0(_p0), p1(_p1), p2(_p2), Shape(TRIANGLE, isE) {
     e1 = p1 - p0;
     e2 = p2 - p0;
     n = e1.cross(e2).normalized();
@@ -142,10 +155,6 @@ Point3d Triangle::sample(Point2d u, double &pdf) const {
 }
 
 double Triangle::Area() const {
-//    double x1 = p0.x(), y1 = p0.y(), z1 = p0.z();
-//    double x2 = p1.x(), y2 = p1.y(), z2 = p1.z();
-//    double x3 = p2.x(), y3 = p2.y(), z3 = p2.z();
-//    return 0.5 * abs((x1 * y2 - x2 * y1)+(x2 * y3 - x3 * y2) + (x3 * y1 - x1 * y3));
     return 0.5 * e1.cross(e2).norm();
 }
 

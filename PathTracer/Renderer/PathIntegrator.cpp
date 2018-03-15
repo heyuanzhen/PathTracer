@@ -109,6 +109,7 @@ void PathIntegrator::generateNewRay(Intersection* it, Vector3d wi, Vector3d nW) 
 Spectrum3d PathIntegrator::Li() {
     Spectrum3d L(0.0, 0.0, 0.0), beta(1.0, 1.0, 1.0);
     bool specularBounce = false;
+    Spectrum3d betaList[10];
     for (int bounces = 0; ; bounces++) {
 //        (1)⟨Intersect ray with scene and store intersection in isect 877⟩
 //        (2)⟨Possibly add emitted light at intersection 877⟩
@@ -122,6 +123,10 @@ Spectrum3d PathIntegrator::Li() {
         Intersection* inter = ray->getIntersection();   //--(1)
         
         if (bounces == 0 || specularBounce) {
+            if (isInter && inter->getShape()->isEmmit) {
+                Spectrum3d Le = inter->getShape()->getAreaLight()->L(inter->getInterPoint(), -ray->getDirection());
+                L += beta.cwiseProduct(Le);
+            }
             //⟨Addemittedlightatpathvertexorfromtheenvironment 877⟩ //(2)c
         }
 //        if( bounces > 0)    std::cout<<bounces<<std::endl;
@@ -148,7 +153,7 @@ Spectrum3d PathIntegrator::Li() {
         if (f.isZero() || pdf == 0.f)   break;
         
 //        bool judge = bounces == 1;
-        bool judge = false;
+        bool judge = beta.norm() > sqrt(3);
         if(judge){
             std::cout<<bounces<<std::endl;
             std::cout<<"beta = "<<beta.transpose()<<", pdf = "<<pdf<<", f = "<<f.transpose()<<
@@ -159,6 +164,7 @@ Spectrum3d PathIntegrator::Li() {
             std::cout<<"beta = "<<beta.transpose()<<", pdf = "<<pdf<<", f = "<<f.transpose()<<
             ", dot = "<<abs(wi.dot(inter->getLocalNormal()))<<", L = "<<L.transpose()<<std::endl<<std::endl;
         }
+        betaList[bounces] = beta;
         generateNewRay(inter, wi, inter->getLocalNormal());
         
         //⟨Account for subsurface scattering, if applicable⟩ (7)
@@ -167,6 +173,9 @@ Spectrum3d PathIntegrator::Li() {
         
 //        L = Spectrum3d(1.0, 1.0, 1.0); // for test
     }
+//    if (L.norm() > 10.0) {
+//        std::cout<<"Big L = "<<L.transpose()<<std::endl;
+//    }
     ray->setRadiance(L);
     return ray->getRadiance();
 }
