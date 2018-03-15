@@ -26,16 +26,16 @@ void exapmle(){
     
     
     int reso[2] = {300, 400};
-    int sampleCount = 4096;
+    int sampleCount = 64;
     int maxDepth = 10;
     
     Scene scene = Scene(10, 1);
     
     Spectrum3d zero = Spectrum3d(0.0, 0.0, 0.0);
     Spectrum3d one = Spectrum3d(1.0, 1.0, 1.0);
-    Spectrum3d half = Spectrum3d(0.5, 0.5, 0.5);
-    Spectrum3d red = Spectrum3d(0.0, 0.01, 1.0);
-    Spectrum3d blue = Spectrum3d(1.0, 0.0, 0.0);
+    Spectrum3d half = Spectrum3d(0.75, 0.75, 0.75);
+    Spectrum3d red = Spectrum3d(0.25, 0.25, 0.75);
+    Spectrum3d blue = Spectrum3d(0.75, 0.25, 0.25);
     
 //    Sphere sphere1 = Sphere(0.5, Point3d(0.3, 0.0, 0.0));
 //    scene.addShape(&sphere1);
@@ -54,16 +54,16 @@ void exapmle(){
     Point3d pt0(-5, 0.0, -5.0), pt1(0, 5, -5.0), pt2(0, -5, -5.0);
 //    Triangle tri1 = Triangle(pt0, pt2, pt1);
 //    scene.addShape(&tri1);
-    BlinnPhongBSDF bpBSDFCeil1 = BlinnPhongBSDF(zero, one, zero, 0.0);
+    BlinnPhongBSDF bpBSDFCeil1 = BlinnPhongBSDF(zero, half, zero, 0.0);
     Material matCeil1 = Material(Material::PHONG, &bpBSDFCeil1);
     
-    BlinnPhongBSDF bpBSDFCeil2 = BlinnPhongBSDF(zero, one, zero, 0.0);
+    BlinnPhongBSDF bpBSDFCeil2 = BlinnPhongBSDF(zero, half, zero, 0.0);
     Material matCeil2 = Material(Material::PHONG, &bpBSDFCeil2);
     
-    BlinnPhongBSDF bpBSDFBack1 = BlinnPhongBSDF(zero, one, zero, 0.0);
+    BlinnPhongBSDF bpBSDFBack1 = BlinnPhongBSDF(zero, half, zero, 0.0);
     Material matBack1 = Material(Material::PHONG, &bpBSDFBack1);
     
-    BlinnPhongBSDF bpBSDFBack2 = BlinnPhongBSDF(zero, one, zero, 0.0);
+    BlinnPhongBSDF bpBSDFBack2 = BlinnPhongBSDF(zero, half, zero, 0.0);
     Material matBack2 = Material(Material::PHONG, &bpBSDFBack2);
     
     BlinnPhongBSDF bpBSDFLeft1 = BlinnPhongBSDF(zero, red, zero, 0.0);
@@ -78,10 +78,10 @@ void exapmle(){
     BlinnPhongBSDF bpBSDFRight2 = BlinnPhongBSDF(zero, blue, zero, 0.0);
     Material matRight2 = Material(Material::PHONG, &bpBSDFRight2);
     
-    BlinnPhongBSDF bpBSDFFloor1 = BlinnPhongBSDF(zero, one, zero, 0.0);
+    BlinnPhongBSDF bpBSDFFloor1 = BlinnPhongBSDF(zero, half, zero, 0.0);
     Material matFloor1 = Material(Material::PHONG, &bpBSDFFloor1);
     
-    BlinnPhongBSDF bpBSDFFloor2 = BlinnPhongBSDF(zero, one, zero, 0.0);
+    BlinnPhongBSDF bpBSDFFloor2 = BlinnPhongBSDF(zero, half, zero, 0.0);
     Material matFloor2 = Material(Material::PHONG, &bpBSDFFloor2);
 //    tri1.setMaterial(&mat3);
     
@@ -126,10 +126,14 @@ void exapmle(){
     left1.setMaterial(&matLeft1);
     left2.setMaterial(&matLeft2);
     
-    PointLight pl1 = PointLight(Point3d(0.0, 8.0, 0.0), Spectrum3d(40.0, 40.0, 40.0));
-    scene.addLight(&pl1);
+//    PointLight pl1 = PointLight(Point3d(0.0, 8.0, 0.0), Spectrum3d(40.0, 40.0, 40.0));
+//    scene.addLight(&pl1);
 //    PointLight pl2 = PointLight(Point3d(2.0, 2.0, 0.0), Spectrum3d(3.0, 2.0, 1.0));
 //    scene->addLight(&pl2);
+    Point3d lA(-2.0, 10.0, 0.0), lB(0.0, 10.0, -1.0), lC(2.0, 10.0, 0.0);
+    Triangle triLightShape1 = Triangle(lA, lB, lC);
+    AreaLight triLight = AreaLight(Spectrum3d(1.0, 1.0, 1.0), &triLightShape1);
+    scene.addLight(&triLight);
     
     StratifiedSampler pixelSampler = StratifiedSampler(sampleCount);
     RandomSampler normalSampler = RandomSampler();
@@ -141,13 +145,9 @@ void exapmle(){
 }
 
 void test() {
-    Point3d p0(-0.3, 0.0, 0.0), p1(-0.1, -0.3, 0.0), p2(-0.1, 0.3, 0.0);
+    Point3d p0(-3, 0.0, 0.0), p1(0, -3, 0.0), p2(0, 3, 0.0);
     Triangle tri1 = Triangle(p0, p1, p2);
-    Point3d o(0.0, 0.0, 2.0), p(-0.1, 0.0, 0.0);
-    Vector3d d = (p - o).normalized();
-    Ray ray = Ray(o, d, 0.0);
-    double t = tri1.isIntersected(&ray);
-    cout<<"t = "<<t<<"n = "<<tri1.getNormal(p).transpose()<<endl;
+    cout<<tri1.Area()<<endl;
 }
 
 void parallelTest(){

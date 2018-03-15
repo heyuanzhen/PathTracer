@@ -54,6 +54,7 @@ Spectrum3d PathIntegrator::estimateDirectLightOnly(const Intersection* it, const
     
     //get Li, wi, lightPdf, visibility
     Spectrum3d Li = light->Sample_Li(it, uLight, wi, lightPdf, visibility, scene);
+//    std::cout<<"Li = "<<Li.transpose()<<", pdf = "<<lightPdf<<std::endl;
     
     if (!visibility) {
 //        std::cout<<"occ"<<std::endl;
@@ -123,7 +124,7 @@ Spectrum3d PathIntegrator::Li() {
         if (bounces == 0 || specularBounce) {
             //⟨Addemittedlightatpathvertexorfromtheenvironment 877⟩ //(2)c
         }
-        
+//        if( bounces > 0)    std::cout<<bounces<<std::endl;
         if (!isInter || bounces >= maxDepth)  break; //(3)
         
         
@@ -133,7 +134,8 @@ Spectrum3d PathIntegrator::Li() {
         
         //⟨Sample illumination from lights to find path contribution⟩ //(5)
 //        std::cout<<"here"<<std::endl;
-        Spectrum3d Ld = beta.cwiseProduct(uniformSampleOneLight(inter, scene, normalSampler,
+        Spectrum3d beta_temp = beta;
+        Spectrum3d Ld = beta_temp.cwiseProduct(uniformSampleOneLight(inter, scene, normalSampler,
                                                    -ray->getDirection(), false)); //wo = - ray.d
 //        std::cout<<"Ld = "<<Ld<<std::endl;
         L += Ld;
@@ -144,9 +146,19 @@ Spectrum3d PathIntegrator::Li() {
         double pdf;
         Spectrum3d f = material->sampleBSDF(wo, wi, pdf);
         if (f.isZero() || pdf == 0.f)   break;
-
-        beta = beta.cwiseProduct(f * abs(wi.dot(inter->getLocalNormal())) / pdf);
-//        std::cout<<"beta = "<<beta.transpose()<<", pdf = "<<pdf<<", f = "<<f.transpose()<<std::endl;
+        
+//        bool judge = bounces == 1;
+        bool judge = false;
+        if(judge){
+            std::cout<<bounces<<std::endl;
+            std::cout<<"beta = "<<beta.transpose()<<", pdf = "<<pdf<<", f = "<<f.transpose()<<
+            ", dot = "<<abs(wi.dot(inter->getLocalNormal()))<<std::endl;
+        }
+        beta = beta.cwiseProduct(f * abs(wi.dot(inter->getLocalNormal()))) / pdf;
+        if(judge){
+            std::cout<<"beta = "<<beta.transpose()<<", pdf = "<<pdf<<", f = "<<f.transpose()<<
+            ", dot = "<<abs(wi.dot(inter->getLocalNormal()))<<", L = "<<L.transpose()<<std::endl<<std::endl;
+        }
         generateNewRay(inter, wi, inter->getLocalNormal());
         
         //⟨Account for subsurface scattering, if applicable⟩ (7)

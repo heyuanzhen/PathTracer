@@ -7,6 +7,7 @@
 //
 
 #include "Light.h"
+#include "Shape.h"
 #include "Ray.h"
 #include "operation.h"
 #include <iostream>
@@ -66,6 +67,23 @@ Spectrum3d DirectionalLight::Sample_Li(const Intersection* inter, const Point2d 
     vis = testVisibility(pOutside, pS, scene);
     return I;
 }
+
+////Area Light source
+AreaLight::AreaLight(Spectrum3d Le, Shape* sp) : Lemit(Le), shape(sp), Light(AREA) {}
+
+AreaLight::~AreaLight() {}
+
+Spectrum3d AreaLight::Sample_Li(const Intersection *inter, const Point2d u, Vector3d &wi,
+                                double &pdf, bool &vis, const Scene *scene) const {
+    Point3d lightP = shape->sample(u, pdf), surP = inter->getInterPoint();
+    wi = (surP - lightP).normalized();
+    vis = testVisibility(lightP, surP, scene);
+//    return shape->getNormal(lightP).dot(wi) > 0 ? Lemit : Spectrum3d(0.0, 0.0, 0.0);
+    return Lemit;
+}
+
+
+
 
 
 

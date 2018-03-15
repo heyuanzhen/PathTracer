@@ -76,8 +76,8 @@ void Renderer::startRendering() {
     double* pixelBuffer = new double[sampleCount * 3]();
     for (int rowi = 0; rowi < yres; rowi++) {
         for (int coli = 0; coli < xres; coli++) {
-//    for (int rowi = 149; rowi < 152; rowi++) {
-//        for (int coli = 199; coli < 202; coli++) {
+//    for (int rowi = 250; rowi < 251; rowi++) {
+//        for (int coli = 200; coli < 201; coli++) {
             #pragma omp parallel for schedule(dynamic)
             for (int spi = 0; spi < sampleCount; spi++) {
                 int offset = (rowi * xres + coli) * sampleCount + spi;
@@ -100,6 +100,7 @@ void Renderer::startRendering() {
                 pix += Spectrum3d(pixelBuffer[spi * 3], pixelBuffer[spi * 3 + 1], pixelBuffer[spi * 3 + 2]);
             }
             pix /= (sampleCount * 1.0);
+//            std::cout<<"("<<rowi<<", "<<coli<<"), pix = "<<pix.transpose()<<std::endl;
             pixels[rowi][coli * 3] = pix(0);
             pixels[rowi][coli * 3 + 1] = pix(1);
             pixels[rowi][coli * 3 + 2] = pix(2);

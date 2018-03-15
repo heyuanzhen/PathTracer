@@ -11,6 +11,7 @@
 
 #include "typeAlias.h"
 #include "Intersection.h"
+#include "Sampler.h"
 
 class Scene;
 
@@ -18,7 +19,8 @@ class Light {
 public:
     enum LightType{
         POINT = 1,
-        DIRECTIONAL = 2
+        DIRECTIONAL = 2,
+        AREA = 3
     };
     const LightType type;
     
@@ -51,6 +53,18 @@ class DirectionalLight : public Light{
 public:
     DirectionalLight(Vector3d _dir, Spectrum3d _I, Point3d wC, double wR);
     ~DirectionalLight();
+    virtual Spectrum3d Sample_Li(const Intersection* inter, const Point2d u, Vector3d& wi,
+                                 double& pdf, bool& vis, const Scene* scene) const;
+};
+
+
+class AreaLight : public Light {
+private:
+    Spectrum3d Lemit;
+    Shape* shape;
+public:
+    AreaLight(Spectrum3d Le, Shape* sp);
+    ~AreaLight();
     virtual Spectrum3d Sample_Li(const Intersection* inter, const Point2d u, Vector3d& wi,
                                  double& pdf, bool& vis, const Scene* scene) const;
 };

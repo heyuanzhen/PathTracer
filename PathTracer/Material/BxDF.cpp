@@ -75,7 +75,7 @@ LambertianDiffuseReflection::LambertianDiffuseReflection(Spectrum3d _kd) : kd(_k
 LambertianDiffuseReflection::~LambertianDiffuseReflection() {}
 
 Spectrum3d LambertianDiffuseReflection::eval(const Vector3d wo, const Vector3d wi) const {
-    return kd.cwiseProduct(Spectrum3d(1.0, 1.0, 1.0)) * InvPi;
+    return kd * InvPi;
 }
 
 double LambertianDiffuseReflection::getWeight() const {
@@ -88,7 +88,7 @@ ConstantReflection::ConstantReflection(Spectrum3d _k) : k(_k), BxDF(CONSTANT) {}
 ConstantReflection::~ConstantReflection() {}
 
 Spectrum3d ConstantReflection::eval(const Vector3d wo, const Vector3d wi) const {
-    return k.cwiseProduct(Spectrum3d(1.0, 1.0, 1.0));
+    return k; //????
 }
 
 double ConstantReflection::getWeight() const {

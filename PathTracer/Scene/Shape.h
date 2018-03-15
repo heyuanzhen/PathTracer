@@ -33,6 +33,8 @@ public:
     void setMaterial(Material* material);
     virtual Vector3d getNormal(Point3d pWorld) = 0;
     virtual double isIntersected(Ray* ray) = 0;
+    virtual double Area() const = 0;
+    virtual Point3d sample(Point2d u, double& pdf) const;
 };
 
 class Sphere : public Shape {
@@ -47,6 +49,7 @@ public:
     double getR() const;
     virtual Vector3d getNormal(Vector3d pWorld);
     virtual double isIntersected(Ray* rayW);
+    virtual double Area() const;
 };
 
 
@@ -60,6 +63,8 @@ public:
     Point3d getPointByUV(double uu, double vv) const;
     virtual Vector3d getNormal(Point3d pWorld);
     virtual double isIntersected(Ray* ray);
+    virtual Point3d sample(Point2d u, double& pdf) const;
+    virtual double Area() const;
 };
 
 #endif /* Shape_h */

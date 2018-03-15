@@ -30,6 +30,11 @@ void Shape::setMaterial(Material *material) {
     this->material = material;
 }
 
+Point3d Shape::sample(Point2d u, double &pdf) const {
+    std::cout<<"This shape cannot be sampled !"<<std::endl;
+    return Point3d(0.0, 0.0, 0.0);
+}
+
 ////Sphere class
 Sphere::Sphere(double _r, Vector3d _cenPos) : radius(_r), center(_cenPos), Shape(SPHERE) {
     double ds[3] = {_cenPos(0), _cenPos(1), _cenPos(2)};
@@ -84,6 +89,9 @@ double Sphere::isIntersected(Ray *rayW) {
     }
 }
 
+double Sphere::Area() const {
+    return 4 * M_PI * radius * radius;
+}
 
 ////Triangle Shape
 Triangle::Triangle(Point3d _p0, Point3d _p1, Point3d _p2) : p0(_p0), p1(_p1), p2(_p2), Shape(TRIANGLE) {
@@ -128,5 +136,16 @@ double Triangle::isIntersected(Ray *ray) {
     return t;
 }
 
+Point3d Triangle::sample(Point2d u, double &pdf) const {
+    pdf = 1.0 / Area();
+    return getPointByUV(u[0], u[1]);
+}
 
+double Triangle::Area() const {
+//    double x1 = p0.x(), y1 = p0.y(), z1 = p0.z();
+//    double x2 = p1.x(), y2 = p1.y(), z2 = p1.z();
+//    double x3 = p2.x(), y3 = p2.y(), z3 = p2.z();
+//    return 0.5 * abs((x1 * y2 - x2 * y1)+(x2 * y3 - x3 * y2) + (x3 * y1 - x1 * y3));
+    return 0.5 * e1.cross(e2).norm();
+}
 

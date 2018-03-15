@@ -100,8 +100,10 @@ void Material::eval(const Vector3d woW, const Vector3d wiW,
     }
 
     int pdfCount = 0;
+//    std::cout<<bsdf->getBxDFCount()<<std::endl;
     for (int i = 0; i < bsdf->getBxDFCount(); i++) {
-        pdf += bsdf->bxdfs[i]->calcPDF(woL, wiL);
+//        pdf += bsdf->bxdfs[i]->calcPDF(woL, wiL);
+        pdf += bsdf->bxdfs[i]->getWeight() * bsdf->bxdfs[i]->calcPDF(woL, wiL) / bsdf->getWeightSum();
         pdfCount++;
         if (bsdf->bxdfs[i]->getType() != BxDF::TRANSMISSION) {
             f += bsdf->bxdfs[i]->eval(woL, wiL);
@@ -147,7 +149,7 @@ Spectrum3d Material::sampleBSDF(const Vector3d woW, Vector3d& wiW, double &pdf) 
     
     for (int i = 0; i < BxDFCount; i++) {
         if (bsdf->bxdfs[i] != bxdf) {
-            pdf += bsdf->bxdfs[i]->calcPDF(woL, wiL) / bsdf->getWeightSum();
+            pdf += bsdf->bxdfs[i]->getWeight() * bsdf->bxdfs[i]->calcPDF(woL, wiL) / bsdf->getWeightSum();
             if (bsdf->bxdfs[i]->getType() != BxDF::TRANSMISSION) {
                 f += bsdf->bxdfs[i]->eval(woL, wiL);
             }
