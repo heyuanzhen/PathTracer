@@ -20,21 +20,18 @@ public:
     Material(materialType mt, BSDF* bs);
     virtual ~Material();
     
-    void calcRotateMartix(const Vector3d nW);
-    Vector3d rotateNormalToLocal(const Vector3d vW) const;
-    Vector3d rotateNormalToWorld(const Vector3d vL) const;
+    Vector3d rotateNormalToLocal(const Vector3d vW, const Matrix3d M) const;
+    Vector3d rotateNormalToWorld(const Vector3d vL, const Matrix3d invM) const;
     Vector3d getGeometryNormal() const;
     Matrix3d getM() const;
     int decideWhichBxDFToSample() const;
     virtual void eval(const Vector3d wo, const Vector3d wi,
-                      Vector3d& woL, Vector3d& wiL,
+                      Vector3d& woL, Vector3d& wiL, const Matrix3d M,
                       Spectrum3d& f, double& pdf) const;
-    virtual Spectrum3d sampleBSDF(const Vector3d woW, Vector3d& wiW,
-                                  double& pdf) const;
+    virtual Spectrum3d sampleBSDF(const Vector3d woW, Vector3d& wiW, const Matrix3d M,
+                                  const Matrix3d invM, double& pdf, bool& specularBounces) const;
 protected:
     materialType mType;
-    Matrix3d M; //M is a matrix that transform a normal to (0, 0, 1)
-    Matrix3d invM;
     const Vector3d nG = Vector3d(0.0, 0.0, 1.0); //geometry normal in local cordinate
     BSDF* bsdf;
 };

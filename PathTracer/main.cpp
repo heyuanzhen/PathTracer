@@ -26,10 +26,10 @@ void exapmle(){
     
     
     int reso[2] = {300, 400};
-    int sampleCount = 64;
+    int sampleCount = 400;
     int maxDepth = 10;
     
-    Scene scene = Scene(13, 2);
+    Scene scene = Scene(5, 2);
     
     Spectrum3d zero = Spectrum3d(0.0, 0.0, 0.0);
     Spectrum3d one = Spectrum3d(0.999, 0.999, 0.999);
@@ -39,7 +39,7 @@ void exapmle(){
     Spectrum3d red = Spectrum3d(0.25, 0.25, 0.75);
     Spectrum3d blue = Spectrum3d(0.75, 0.25, 0.25);
     
-    Sphere sphere1 = Sphere(1.58, Point3d(0.6, 1.585, 0.4), false);
+    Sphere sphere1 = Sphere(1.58, Point3d(-3.5, 1.585, -2.0), false);
     scene.addShape(&sphere1);
     BlinnPhongBSDF bpBSDF1 = BlinnPhongBSDF(zero, zero, one, 0.0);
     bpBSDF1.buildBSDF();
@@ -48,9 +48,9 @@ void exapmle(){
 //
 //    Sphere sphere2 = Sphere(0.2, Point3d(-0.5, 0.0, 0.0));
 //    scene.addShape(&sphere2);
-    BlinnPhongBSDF bpBSDF2 = BlinnPhongBSDF(zero, zero, one, 0.0);
-    bpBSDF2.buildBSDF();
-    Material mat2 = Material(Material::PHONG, &bpBSDF2);
+//    BlinnPhongBSDF bpBSDF2 = BlinnPhongBSDF(zero, zero, one, 0.0);
+//    bpBSDF2.buildBSDF();
+//    Material mat2 = Material(Material::PHONG, &bpBSDF2);
 //    sphere2.setMaterial(&mat2);
     
     
@@ -93,36 +93,36 @@ void exapmle(){
     Point3d p6(5.763970, 10.000000, -5.000000);
     Point3d p7(-5.763970, 0.000000, -5.000000);
     Point3d p8(5.763970, 0.000000, -5.000000);
-    Triangle ceil1 = Triangle(p3, p4, p6, false);
-    Triangle ceil2 = Triangle(p6, p5, p3, false);
-    Triangle back1 = Triangle(p5, p6, p8, false);
-    Triangle back2 = Triangle(p8, p7, p5, false);
-    Triangle floor1 = Triangle(p7, p8, p2, false);
-    Triangle floor2 = Triangle(p2, p1, p7, false);
-    Triangle right1 = Triangle(p2, p8, p6, false);
-    Triangle right2 = Triangle(p6, p4, p2, false);
+//    Triangle ceil1 = Triangle(p3, p4, p6, false);
+//    Triangle ceil2 = Triangle(p6, p5, p3, false);
+//    Triangle back1 = Triangle(p5, p6, p8, false);
+//    Triangle back2 = Triangle(p8, p7, p5, false);
+//    Triangle floor1 = Triangle(p7, p8, p2, false);
+//    Triangle floor2 = Triangle(p2, p1, p7, false);
+//    Triangle right1 = Triangle(p2, p8, p6, false);
+//    Triangle right2 = Triangle(p6, p4, p2, false);
     Triangle left1 = Triangle(p7, p1, p3, false);
     Triangle left2 = Triangle(p3, p5, p7, false);
     
-    scene.addShape(&ceil1);
-    scene.addShape(&ceil2);
-    scene.addShape(&back1);
-    scene.addShape(&back2);
-    scene.addShape(&floor1);
-    scene.addShape(&floor2);
-    scene.addShape(&right1);
-    scene.addShape(&right2);
+//    scene.addShape(&ceil1);
+//    scene.addShape(&ceil2);
+//    scene.addShape(&back1);
+//    scene.addShape(&back2);
+//    scene.addShape(&floor1);
+//    scene.addShape(&floor2);
+//    scene.addShape(&right1);
+//    scene.addShape(&right2);
     scene.addShape(&left1);
     scene.addShape(&left2);
     
-    ceil1.setMaterial(&matCeil1);
-    ceil2.setMaterial(&matCeil2);
-    back1.setMaterial(&matBack1);
-    back2.setMaterial(&matBack2);
-    floor1.setMaterial(&matFloor1);
-    floor2.setMaterial(&matFloor2);
-    right1.setMaterial(&matRight1);
-    right2.setMaterial(&matRight2);
+//    ceil1.setMaterial(&matCeil1);
+//    ceil2.setMaterial(&matCeil2);
+//    back1.setMaterial(&matBack1);
+//    back2.setMaterial(&matBack2);
+//    floor1.setMaterial(&matFloor1);
+//    floor2.setMaterial(&matFloor2);
+//    right1.setMaterial(&matRight1);
+//    right2.setMaterial(&matRight2);
     left1.setMaterial(&matLeft1);
     left2.setMaterial(&matLeft2);
     
@@ -136,19 +136,20 @@ void exapmle(){
     BlinnPhongBSDF bsdfTriLight2 = BlinnPhongBSDF(zero, one, zero, 0.0);
     Material matTriLight2 = Material(Material::PHONG, &bsdfTriLight2);
     
-    Point3d lA(-1.05, 9.95, -1.05), lB(1.05, 9.95, -1.05), lC(1.05, 9.95, 1.05), lD(-1.05, 9.95, 1.05);
+    Point3d lA(-1.05, 4.95, -1.05), lB(1.05, 4.95, -1.05), lC(1.05, 4.95, 1.05), lD(-1.05, 4.95, 1.05);
     
+    Spectrum3d li(1.0, 1.0, 1.0);
     Triangle triLightShape1 = Triangle(lA, lB, lC, true);
     scene.addShape(&triLightShape1);
     triLightShape1.setMaterial(&matTriLight1);
-    AreaLight triLight1 = AreaLight(half, &triLightShape1);
+    AreaLight triLight1 = AreaLight(li, &triLightShape1);
     triLightShape1.setAreaLight(&triLight1);
     scene.addLight(&triLight1);
     
     Triangle triLightShape2 = Triangle(lA, lC, lD, true);
     scene.addShape(&triLightShape2);
     triLightShape2.setMaterial(&matTriLight2);
-    AreaLight triLight2 = AreaLight(half, &triLightShape2);
+    AreaLight triLight2 = AreaLight(li, &triLightShape2);
     triLightShape2.setAreaLight(&triLight2);
     scene.addLight(&triLight2);
     

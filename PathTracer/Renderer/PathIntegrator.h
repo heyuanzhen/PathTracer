@@ -18,16 +18,19 @@ class PathIntegrator{
     const Scene* scene;
     Sampler* normalSampler;
     int maxDepth;
+    Matrix3d M; //M is a matrix that transform a normal to (0, 0, 1)
+    Matrix3d invM;
 public:
 //    PathIntegrator();
     PathIntegrator(Ray* r, const Scene* sce, Sampler* nsp, int mD);
     ~PathIntegrator();
+    void calcRotateMartix(const Vector3d nW, const Vector3d nG);
     Spectrum3d uniformSampleOneLight(const Intersection* it, const Scene* scene,
                                      Sampler* sampler, Vector3d wo, bool handleMedia);
     Spectrum3d estimateDirectLightOnly(const Intersection* it, const Point2d uScattering,
                                        const Light* light, const Point2d uLight,
-                                       const Scene* scene, Sampler* sampler,
-                                       Vector3d wo, bool handleMedia, bool specular);
+                                       const Scene* scene, Sampler* sampler, Vector3d wo,
+                                       bool handleMedia, bool specular);
     void generateNewRay(Intersection* it, Vector3d wi, Vector3d nW);
     Spectrum3d Li();
     

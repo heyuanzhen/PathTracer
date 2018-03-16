@@ -20,8 +20,10 @@ Renderer::Renderer(int* reso, int spc, int mD, Scene* sc, Sampler* psp,
     sampleCount = spc;
     maxDepth = mD;
     pixels = new double*[yres]();
+//    pixels_uint8 = new int*[yres]();
     for (int i = 0; i < yres; i++) {
         pixels[i] = new double[xres * 3](); //3 channels
+//        pixels_uint8[i] = new int[xres * 3]();
     }
     scene = sc;
     pixelSampler = psp;
@@ -34,8 +36,10 @@ Renderer::Renderer(int* reso, int spc, int mD, Scene* sc, Sampler* psp,
 Renderer::~Renderer() {
     for (int i = 0; i < yres; i++) {
         delete[] pixels[i];
+//        delete[] pixels_uint8[i]
     }
     delete[] pixels;
+//    delete[] pixels_uint8;
     delete[] rays;
 }
 
@@ -55,15 +59,15 @@ void Renderer::printPixels() const {
 }
 
 void Renderer::showImage() const {
-    cv::Mat img = cv::Mat::zeros(yres, xres, CV_64FC3);
+    cv::Mat img = cv::Mat::zeros(yres, xres, CV_8UC3);
     for (int i = 0; i < yres; i++) {
         for (int j = 0; j < xres; j++) {
-            img.at<cv::Vec3d>(i, j)[0] = pixels[i][j * 3];
-            img.at<cv::Vec3d>(i, j)[1] = pixels[i][j * 3 + 1];
-            img.at<cv::Vec3d>(i, j)[2] = pixels[i][j * 3 + 2];
+            img.at<cv::Vec3b>(i, j)[0] = toRBGUint8(pixels[i][j * 3]);
+            img.at<cv::Vec3b>(i, j)[1] = toRBGUint8(pixels[i][j * 3 + 1]);
+            img.at<cv::Vec3b>(i, j)[2] = toRBGUint8(pixels[i][j * 3 + 2]);
         }
     }
-    cv::imwrite("resul/img.png", img * 255.0);
+    cv::imwrite("result/img.png", img);
     cv::imshow("window", img);
     cv::waitKey(0);
 }
@@ -72,6 +76,7 @@ void Renderer::showImage() const {
 
 
 void Renderer::startRendering() {
+    std::cout<<"sampleCount = "<<sampleCount<<std::endl;
     std::cout<<"–––––––––––––––––––Start Rendering––––––––––––––––––"<<std::endl;
     for (int rowi = 0; rowi < yres; rowi++) {
         for (int coli = 0; coli < xres; coli++) {
@@ -88,22 +93,34 @@ void Renderer::startRendering() {
 //                std::cout<<rays[offset].getDirection().transpose()<<std::endl;
                 PathIntegrator path = PathIntegrator(&rays[offset], scene, normalSampler, maxDepth);
                 Spectrum3d rad = path.Li();
-                pixelBuffer[spi * 3] = rad(0);
-                pixelBuffer[spi * 3 + 1] = rad(1);
-                pixelBuffer[spi * 3 + 2] = rad(2);
-//                pixels[rowi][coli * 3] = rad(0);
-//                pixels[rowi][coli * 3 + 1] = rad(1);
-//                pixels[rowi][coli * 3 + 2] = rad(2);
+//                if (rad.norm() > eps) {
+//                    std::cout<<"("<<rowi<<", "<<coli<<"), rad = "<<rad.transpose()<<std::endl;
+//                }
+                pixelBuffer[spi * 3] = rad[0];
+                pixelBuffer[spi * 3 + 1] = rad[1];
+                pixelBuffer[spi * 3 + 2] = rad[2];
             }
-            Spectrum3d pix;
+            Spectrum3d pix(0.0, 0.0, 0.0), pix_temp(0.0, 0.0, 0.0);
             for (int spi = 0; spi < sampleCount; spi++) {
-                pix += Spectrum3d(pixelBuffer[spi * 3], pixelBuffer[spi * 3 + 1], pixelBuffer[spi * 3 + 2]);
+//                std::cout<<"pixelBuffer("<<spi<<") = "<<pixelBuffer[spi * 3]<<", "
+//                <<pixelBuffer[spi * 3 + 1]<<", "<<pixelBuffer[spi * 3 + 2]<<std::endl;
+                pix_temp = Spectrum3d(pixelBuffer[spi * 3], pixelBuffer[spi * 3 + 1], pixelBuffer[spi * 3 + 2]);
+                pix = pix + pix_temp;
+//                if (pix_temp.norm() > eps) {
+//                    std::cout<<"("<<rowi<<", "<<coli<<"), pix_temp = "<<pix_temp.transpose()<<std::endl;
+//                }
             }
+            
+//            std::cout<<"("<<rowi<<", "<<coli<<"), pix = "<<pix.transpose()<<std::endl<<std::endl;
             pix /= (sampleCount * 1.0);
-//            std::cout<<"("<<rowi<<", "<<coli<<"), pix = "<<pix.transpose()<<std::endl;
             pixels[rowi][coli * 3] = pix(0);
             pixels[rowi][coli * 3 + 1] = pix(1);
             pixels[rowi][coli * 3 + 2] = pix(2);
+            
+            if (coli == 70) {
+                std::cout<<"("<<rowi<<", "<<coli<<"), pix = "<<pix.transpose()<<std::endl<<std::endl;
+            }
+            
             delete[] pixelBuffer;
         }
         if ((rowi + 1) % 50 == 0) {
@@ -113,6 +130,7 @@ void Renderer::startRendering() {
     
     std::cout<<"––––––––––––––––––Finish Rendering––––––––––––––––––"<<std::endl;
 }
+
 
 void Renderer::test() {
     camera->generateRays();

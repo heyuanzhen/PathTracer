@@ -51,7 +51,11 @@ Spectrum3d SpecularReflection::sampleWiAndEval(const Vector3d wo, Vector3d &wi, 
     pdf = 1.0;
     wi = reflect(wo, n);
 //    return ks.cwiseProduct(Spectrum3d(1.0, 1.0, 1.0)) * cosTheta(wi) / absCosTheta(wi);
-    return ks.cwiseProduct(Spectrum3d(1.0, 1.0, 1.0)) / absCosTheta(wi);
+//    Spectrum3d r = ks.cwiseProduct(Spectrum3d(1.0, 1.0, 1.0)) / std::max(absCosTheta(wi), 0.00001);
+//    if (r.norm() > sqrt(3.001)) {
+//        std::cout<<"r = "<<r.transpose()<<std::endl;
+//    }
+    return ks.cwiseProduct(Spectrum3d(1.0, 1.0, 1.0)) / std::max(absCosTheta(wi), 0.00001);
 }
 
 double SpecularReflection::calcPDF(const Vector3d wo, const Vector3d wi) const {

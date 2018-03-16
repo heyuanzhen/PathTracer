@@ -11,32 +11,11 @@
 #include <iostream>
 
 ////Material
-Material::Material(materialType mt, BSDF* bs) : mType(mt), bsdf(bs) {
-    M.setZero();
-    invM.setZero();
-}
+Material::Material(materialType mt, BSDF* bs) : mType(mt), bsdf(bs) {}
 
 Material::~Material() {}
 
-void Material::calcRotateMartix(const Vector3d nW){
-    if ((abs(nW.x() - nG.x()) < eps) && (abs(nW.y() - nG.y()) < eps) && (abs(nW.z() - nG.z()) < eps)) {
-        M.setIdentity();
-        invM.setIdentity();
-        return;
-    }
-    Vector3d v = nW.cross(nG);
-    double s = v.norm();
-    double c = nW.dot(nG);
-    Matrix3d vx;
-    vx << 0.0, -v.z(), v.y(),
-          v.z(), 0.0, -v.x(),
-          -v.y(), v.x(), 0.0;
-    Matrix3d I = Eigen::Matrix3d::Identity();
-    M = I + vx + vx * vx * (1.0 - c) / (s * s);
-    invM = M.inverse();
-}
-
-Vector3d Material::rotateNormalToLocal(const Vector3d vW) const {
+Vector3d Material::rotateNormalToLocal(const Vector3d vW, const Matrix3d M) const {
     if (M.isZero()) {
         std::cout<<"M is a zero matrix !"<<std::endl;
         exit(0);
@@ -44,7 +23,7 @@ Vector3d Material::rotateNormalToLocal(const Vector3d vW) const {
     return M * vW;
 }
 
-Vector3d Material::rotateNormalToWorld(const Vector3d vL) const {
+Vector3d Material::rotateNormalToWorld(const Vector3d vL, const Matrix3d invM) const {
     if (invM.isZero()) {
         std::cout<<"invM is a zero matrix !"<<std::endl;
         exit(0);
@@ -56,9 +35,6 @@ Vector3d Material::getGeometryNormal() const {
     return nG;
 }
 
-Matrix3d Material::getM() const {
-    return M;
-}
 
 int Material::decideWhichBxDFToSample() const {
     double u = (rand() * 1.0) / (RAND_MAX * 1.0);
@@ -74,14 +50,14 @@ int Material::decideWhichBxDFToSample() const {
 
 
 void Material::eval(const Vector3d woW, const Vector3d wiW,
-                    Vector3d& woL, Vector3d& wiL,
+                    Vector3d& woL, Vector3d& wiL, const Matrix3d M,
                     Spectrum3d& f, double& pdf) const {
     if (!bsdf->getBuilt()) {
         std::cout<<"The BSDF is not build !"<<std::endl;
         return;
     }
-    woL = rotateNormalToLocal(woW);
-    wiL = rotateNormalToLocal(wiW);
+    woL = rotateNormalToLocal(woW, M);
+    wiL = rotateNormalToLocal(wiW, M);
 //    std::cout<<"M = "<<M<<std::endl;
 //    std::cout<<"woL = "<<woL.transpose()<< ", wiL = "<<wiL.transpose()<<std::endl;
     if (!isSameHemisphere(woL, wiL)) {
@@ -114,8 +90,9 @@ void Material::eval(const Vector3d woW, const Vector3d wiW,
 //    std::cout<<"f = "<<f.transpose()<< ", pdf = "<<pdf<<std::endl;
 }
 
-Spectrum3d Material::sampleBSDF(const Vector3d woW, Vector3d& wiW, double &pdf) const {
-    Vector3d woL = rotateNormalToLocal(woW);
+Spectrum3d Material::sampleBSDF(const Vector3d woW, Vector3d& wiW, const Matrix3d M,
+                                const Matrix3d invM, double &pdf, bool& specularBounces) const {
+    Vector3d woL = rotateNormalToLocal(woW, M);
     Spectrum3d f = Spectrum3d(0.0, 0.0, 0.0);
     pdf = 0.0;
     if (!bsdf->getBuilt()) {
@@ -132,7 +109,6 @@ Spectrum3d Material::sampleBSDF(const Vector3d woW, Vector3d& wiW, double &pdf) 
     int bxdfNum = decideWhichBxDFToSample();
     BxDF *bxdf = bsdf->bxdfs[bxdfNum];
     
-    
     if (!bxdf) {
         std::cout<<bxdfNum<<std::endl;
         std::cout<<"NULL BxDF !"<<std::endl;
@@ -142,10 +118,12 @@ Spectrum3d Material::sampleBSDF(const Vector3d woW, Vector3d& wiW, double &pdf) 
     Vector3d wiL;
     f = bxdf->sampleWiAndEval(woL, wiL, rsp.get2D(), pdf);
     pdf *= bxdf->getWeight() / bsdf->getWeightSum();
-    wiW = rotateNormalToWorld(wiL);
+    wiW = rotateNormalToWorld(wiL, invM);
 //    if (bxdf->getType() == BxDF::SPECULAR) {
 //        std::cout<<"wiW = "<<wiW.transpose()<<std::endl<<std::endl;
 //    }
+    
+    specularBounces = bxdf->getType() == BxDF::SPECULAR ? true : false;
     
     for (int i = 0; i < BxDFCount; i++) {
         if (bsdf->bxdfs[i] != bxdf) {

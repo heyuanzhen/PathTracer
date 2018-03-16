@@ -18,6 +18,7 @@ static const double PiOver2 = 1.57079632679489661923;
 static const double PiOver4 = 0.78539816339744830961;
 static const double Sqrt2 = 1.41421356237309504880;
 static const double eps = 1e-14;
+static const double gammaCoefficient = 1.0 / 2.2;
 
 static const double MAX_DOUBLE = 1e+15;
 static const double MIN_DOUBLE = -1e+15;

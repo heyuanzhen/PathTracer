@@ -15,12 +15,27 @@
 #include "PathIntegrator.h"
 
 
+inline double clamp01(double value) {
+    double newValue = value < 0.0 ? 0.0 : value;
+    return newValue = newValue > 1.0 ? 1.0 : newValue;
+}
+
+inline double gammaCorrect(double value) {
+    return pow(value, gammaCoefficient);
+}
+
+inline int toRBGUint8(double value) {
+    return (int)(gammaCorrect(clamp01(value)) * 255.0 + 0.5);
+}
+
+
 class Renderer {
 protected:
     int xres, yres;
     int sampleCount;
     int maxDepth;
     double** pixels;
+//    int** pixels_uint8;
     Scene* scene;
     Camera* camera;
     Sampler* pixelSampler;
@@ -31,7 +46,9 @@ public:
              Sampler* nsp, double* lookAt, double fov);
     ~Renderer();
     void printPixels() const;
+    void modifyPixels();
     void showImage() const;
+    void showImage_uint8() const;
     void startRendering();
     void test();
 };
