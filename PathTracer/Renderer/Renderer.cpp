@@ -80,10 +80,10 @@ void Renderer::startRendering() {
     std::cout<<"–––––––––––––––––––Start Rendering––––––––––––––––––"<<std::endl;
     for (int rowi = 0; rowi < yres; rowi++) {
         for (int coli = 0; coli < xres; coli++) {
-//    for (int rowi = 250; rowi < 251; rowi++) {
-//        for (int coli = 200; coli < 201; coli++) {
+//    for (int rowi = 120; rowi < 121; rowi++) {
+//        for (int coli = 70; coli < 71; coli++) {
             double* pixelBuffer = new double[sampleCount * 3]();
-            #pragma omp parallel for schedule(dynamic)
+//            #pragma omp parallel for schedule(dynamic)
             for (int spi = 0; spi < sampleCount; spi++) {
                 int offset = (rowi * xres + coli) * sampleCount + spi;
                 if (!rays[offset].isInit()) {
@@ -117,9 +117,9 @@ void Renderer::startRendering() {
             pixels[rowi][coli * 3 + 1] = pix(1);
             pixels[rowi][coli * 3 + 2] = pix(2);
             
-            if (coli == 70) {
-                std::cout<<"("<<rowi<<", "<<coli<<"), pix = "<<pix.transpose()<<std::endl<<std::endl;
-            }
+//            if (coli == 70) {
+//                std::cout<<"("<<rowi<<", "<<coli<<"), pix = "<<pix.transpose()<<std::endl<<std::endl;
+//            }
             
             delete[] pixelBuffer;
         }

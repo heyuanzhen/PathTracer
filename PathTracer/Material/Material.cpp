@@ -35,6 +35,11 @@ Vector3d Material::getGeometryNormal() const {
     return nG;
 }
 
+BSDF* Material::getBSDF() const {
+    return bsdf;
+}
+
+
 
 int Material::decideWhichBxDFToSample() const {
     double u = (rand() * 1.0) / (RAND_MAX * 1.0);
@@ -81,9 +86,7 @@ void Material::eval(const Vector3d woW, const Vector3d wiW,
 //        pdf += bsdf->bxdfs[i]->calcPDF(woL, wiL);
         pdf += bsdf->bxdfs[i]->getWeight() * bsdf->bxdfs[i]->calcPDF(woL, wiL) / bsdf->getWeightSum();
         pdfCount++;
-        if (bsdf->bxdfs[i]->getType() != BxDF::TRANSMISSION) {
-            f += bsdf->bxdfs[i]->eval(woL, wiL);
-        }
+        f += bsdf->bxdfs[i]->eval(woL, wiL);
     }
 //    std::cout<<"pdfCount = "<<pdfCount<<std::endl;
 //    pdf /= (1.0 * pdfCount);
@@ -91,7 +94,8 @@ void Material::eval(const Vector3d woW, const Vector3d wiW,
 }
 
 Spectrum3d Material::sampleBSDF(const Vector3d woW, Vector3d& wiW, const Matrix3d M,
-                                const Matrix3d invM, double &pdf, bool& specularBounces) const {
+                                const Matrix3d invM, double &pdf, bool& specularBounces,
+                                bool& isEnter) const {
     Vector3d woL = rotateNormalToLocal(woW, M);
     Spectrum3d f = Spectrum3d(0.0, 0.0, 0.0);
     pdf = 0.0;
@@ -122,17 +126,20 @@ Spectrum3d Material::sampleBSDF(const Vector3d woW, Vector3d& wiW, const Matrix3
 //    if (bxdf->getType() == BxDF::SPECULAR) {
 //        std::cout<<"wiW = "<<wiW.transpose()<<std::endl<<std::endl;
 //    }
+
     
     specularBounces = bxdf->getType() == BxDF::SPECULAR ? true : false;
+    isEnter = bxdf->getType() == BxDF::TRANSMISSION && wiL[2] < 0.0 ? true : false;
     
     for (int i = 0; i < BxDFCount; i++) {
         if (bsdf->bxdfs[i] != bxdf) {
             pdf += bsdf->bxdfs[i]->getWeight() * bsdf->bxdfs[i]->calcPDF(woL, wiL) / bsdf->getWeightSum();
-            if (bsdf->bxdfs[i]->getType() != BxDF::TRANSMISSION) {
-                f += bsdf->bxdfs[i]->eval(woL, wiL);
-            }
+            f += bsdf->bxdfs[i]->eval(woL, wiL);
         }
     }
+//    if (bxdf->getType() == BxDF::TRANSMISSION && bsdf->bxdfs[3]->getWeight() > 0.0) {
+//        std::cout<<"f = "<<f.transpose()<<std::endl;
+//    }
     return f;
 }
 

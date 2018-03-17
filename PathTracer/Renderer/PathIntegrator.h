@@ -31,7 +31,7 @@ public:
                                        const Light* light, const Point2d uLight,
                                        const Scene* scene, Sampler* sampler, Vector3d wo,
                                        bool handleMedia, bool specular);
-    void generateNewRay(Intersection* it, Vector3d wi, Vector3d nW);
+    void generateNewRay(Intersection* it, Vector3d wi, Vector3d nW, bool isEnter);
     Spectrum3d Li();
     
 };

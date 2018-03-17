@@ -66,7 +66,7 @@ double Sphere::getR() const {
 
 Vector3d Sphere::getNormal(Vector3d pWorld) {
     Vector3d normal = pWorld - center;
-    if (normal.norm() - radius > eps * 10) {
+    if (normal.norm() - radius > eps * 1e5) {
         std::cout<<normal.transpose()<<", "<<normal.norm() - radius<<std::endl;
         std::cout<<"This point is not on the sphere's surface !"<<std::endl;
         return Vector3d(0.0, 0.0, 0.0);
@@ -93,8 +93,14 @@ double Sphere::isIntersected(Ray *rayW) {
     }
     else{
         double t1 = (-b - sqrt(delta)) / (2.0 * a);
+        double t2 = (-b + sqrt(delta)) / (2.0 * a);
         if (t1 < 0.0) {
-            return MAX_DOUBLE;
+            if (t2 < 0.0) {
+                return MAX_DOUBLE;
+            }
+            else {
+                return t2;
+            }
         }
         else{
             return  t1;
@@ -110,7 +116,7 @@ double Sphere::Area() const {
 Triangle::Triangle(Point3d _p0, Point3d _p1, Point3d _p2, bool isE) : p0(_p0), p1(_p1), p2(_p2), Shape(TRIANGLE, isE) {
     e1 = p1 - p0;
     e2 = p2 - p0;
-    n = e1.cross(e2).normalized();
+    n = -e1.cross(e2).normalized();
 }
 
 Triangle::~Triangle() {}

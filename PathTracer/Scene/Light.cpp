@@ -84,8 +84,8 @@ Spectrum3d AreaLight::Sample_Li(const Intersection *inter, const Point2d u, Vect
 }
 
 Spectrum3d AreaLight::L(Point3d lightP, Vector3d wi) const {
-//    return shape->getNormal(lightP).dot(wi) > 0 ? Lemit : Spectrum3d(0.0, 0.0, 0.0);
-    return Lemit;
+    return shape->getNormal(lightP).dot(wi) > 0 ? Lemit : Spectrum3d(0.0, 0.0, 0.0);
+//    return Lemit;
 }
 
 

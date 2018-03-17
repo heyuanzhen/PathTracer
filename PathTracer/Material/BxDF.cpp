@@ -12,7 +12,6 @@
 
 inline Vector3d reflect(const Vector3d wo, const Vector3d n) {
     return Vector3d(-wo.x(), -wo.y(), wo.z());
-;
 }
 
 ////BxDF
@@ -47,7 +46,8 @@ Spectrum3d SpecularReflection::eval(const Vector3d wo, const Vector3d wi) const 
     return Spectrum3d(0.0, 0.0, 0.0);
 }
 
-Spectrum3d SpecularReflection::sampleWiAndEval(const Vector3d wo, Vector3d &wi, Point2d u, double &pdf) const {
+Spectrum3d SpecularReflection::sampleWiAndEval(const Vector3d wo, Vector3d &wi, Point2d u,
+                                               double &pdf) const {
     pdf = 1.0;
     wi = reflect(wo, n);
 //    return ks.cwiseProduct(Spectrum3d(1.0, 1.0, 1.0)) * cosTheta(wi) / absCosTheta(wi);
@@ -55,7 +55,7 @@ Spectrum3d SpecularReflection::sampleWiAndEval(const Vector3d wo, Vector3d &wi, 
 //    if (r.norm() > sqrt(3.001)) {
 //        std::cout<<"r = "<<r.transpose()<<std::endl;
 //    }
-    return ks.cwiseProduct(Spectrum3d(1.0, 1.0, 1.0)) / std::max(absCosTheta(wi), 0.00001);
+    return ks / std::max(absCosTheta(wi), 0.00001);
 }
 
 double SpecularReflection::calcPDF(const Vector3d wo, const Vector3d wi) const {
@@ -66,12 +66,43 @@ double SpecularReflection::getWeight() const {
     return ks.norm();
 }
 
-//Spectrum3d SpecularReflection::sampleWiAndEval(const Vector3d wo, Vector3d &wi, Point2d u, double &pdf) const {
-//    wi = Vector3d(-wo.x(), -wo.y(), wo.z());
-//    pdf = 1.0;
-//
-//}
+////Specular Transmission
+SpecularTransmission::SpecularTransmission(Spectrum3d _T, double eA, double eB) :
+                                            T(_T), etaA(eA), etaB(eB), BxDF(TRANSMISSION) {}
 
+SpecularTransmission::~SpecularTransmission() {}
+
+Spectrum3d SpecularTransmission::eval(const Vector3d wo, const Vector3d wi) const {
+    return Spectrum3d(0.0, 0.0, 0.0);
+}
+
+Spectrum3d SpecularTransmission::sampleWiAndEval(const Vector3d wo, Vector3d &wi, Point2d u,
+                                                 double &pdf) const {
+    bool entering = cosTheta(wo) > 0.0;
+    double etaI = entering ? etaA : etaB;
+    double etaT = entering ? etaB : etaA;
+    Vector3d nn = n;
+    nn = wo.dot(nn) > 0.0 ? nn : -nn;
+    if (!refract(wo, nn, etaI / etaT, wi)){
+        pdf = 1.0;
+        wi = reflect(wo, n);
+        std::cout<<"total internal reflection!"<<std::endl;
+        return T / std::max(absCosTheta(wi), 0.00001);
+    }
+//    if (!entering) {
+//        std::cout<<"wo = "<<wo.transpose()<<", wi = "<<wi.transpose()<<std::endl;
+//    }
+    pdf = 1.0;
+    return T / std::max(absCosTheta(wi), 0.000001);
+}
+
+double SpecularTransmission::calcPDF(const Vector3d wo, const Vector3d wi) const {
+    return 0.0;
+}
+
+double SpecularTransmission::getWeight() const {
+    return T.norm();
+}
 
 ////Lambertian Diffuse Reflection
 LambertianDiffuseReflection::LambertianDiffuseReflection(Spectrum3d _kd) : kd(_kd), BxDF(DIFFUSE) {}
@@ -98,6 +129,80 @@ Spectrum3d ConstantReflection::eval(const Vector3d wo, const Vector3d wi) const 
 double ConstantReflection::getWeight() const {
     return k.norm();
 }
+
+
+////Fresnel Specular Model
+FresnelSpecular::FresnelSpecular(Spectrum3d _kr, Spectrum3d _kt, double eA, double eB) :
+                                kr(_kr), kt(_kt), etaA(eA), etaB(eB), BxDF(FRESNELSPECULAR) {}
+
+FresnelSpecular::~FresnelSpecular() {}
+
+Spectrum3d FresnelSpecular::eval(const Vector3d wo, const Vector3d wi) const {
+    return Spectrum3d(0.0, 0.0, 0.0);
+}
+
+double FresnelSpecular::calcPDF(const Vector3d wo, const Vector3d wi) const {
+    return 0.0;
+}
+
+double FresnelSpecular::getWeight() const {
+    return 1.0;
+}
+
+Spectrum3d FresnelSpecular::sampleWiAndEval(const Vector3d wo, Vector3d &wi,
+                                            Point2d u, double &pdf) const {
+    double Fr = FrDielectric(cosTheta(wo), etaA, etaB);
+    if (u[0] < Fr) { //reflection
+        // Compute perfect specular reflection direction
+        wi = reflect(wo, n);
+        pdf = Fr;
+        return Fr * kr / absCosTheta(wi);
+    }
+    else { //transmission
+        bool entering = CosTheta(wo) > 0;
+        Float etaI = entering ? etaA : etaB;
+        Float etaT = entering ? etaB : etaA;
+        
+        // Compute ray direction for specular transmission
+        if (!refract(wo, nn, etaI / etaT, wi)){
+            pdf = 1.0;
+            wi = reflect(wo, n);
+            std::cout<<"total internal reflection!"<<std::endl;
+            return T / std::max(absCosTheta(wi), 0.00001);
+        }
+        
+        Spectrum3d ft = kt * (1.0 - Fr); //?
+        
+        // Account for non-symmetry with transmission to different medium
+        if (mode == TransportMode::Radiance)
+            ft *= (etaI * etaI) / (etaT * etaT);
+        if (sampledType)
+            *sampledType = BxDFType(BSDF_SPECULAR | BSDF_TRANSMISSION);
+        *pdf = 1 - F;
+        return ft / AbsCosTheta(*wi);
+    }
+    return Spectrum3d(0.0, 0.0, 0.0);
+}
+
+double FresnelSpecular::FrDielectric(double cosThetaI, double etaI, double etaT) const {
+    bool entering = cosThetaI > 0.0;
+    if (!entering) {
+        std::swap(etaI, etaT);
+        cosThetaI = std::abs(cosThetaI);
+    }
+    double sinThetaI = sqrt(std::max(0.0, 1.0 - cosThetaI * cosThetaI));
+    double sinThetaT = sinThetaI * etaI / etaT;
+    if (sinThetaT >= 1) return 1.0; //total internal reflection
+    double cosThetaT = sqrt(std::max(0.0, 1.0 - sinThetaT * sinThetaT));
+    
+    //calculate r// and r⊥
+    double r1 = ((etaT * cosThetaI) - (etaI * cosThetaT)) / ((etaT * cosThetaI) + (etaI * cosThetaT));
+    double r2 = ((etaI * cosThetaI) - (etaT * cosThetaT)) / ((etaI * cosThetaI) + (etaT * cosThetaT));
+    
+    return 0.5 * (r1 * r1 + r2 * r2);
+}
+
+
 
 //////Blinn-Phong Specular Reflection
 //BlinnPhongSpecularReflection::BlinnPhongSpecularReflection(double _ks, double _sh) :

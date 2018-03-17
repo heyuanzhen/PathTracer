@@ -20,12 +20,18 @@ inline double clamp01(double value) {
     return newValue = newValue > 1.0 ? 1.0 : newValue;
 }
 
+//inline Spectrum3d clampSpec(Spectrum3d spec) {
+//    double maxV = spec[0] > spec[1] ? spec[0] : spec[1];
+//    maxV = maxV > spec[2] ? maxV : spec[2];
+//    return spec / maxV;
+//}
+
 inline double gammaCorrect(double value) {
     return pow(value, gammaCoefficient);
 }
 
 inline int toRBGUint8(double value) {
-    return (int)(gammaCorrect(clamp01(value)) * 255.0 + 0.5);
+    return (int)(clamp01(gammaCorrect(value)) * 255.0 + 0.5);
 }
 
 

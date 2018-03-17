@@ -13,6 +13,7 @@
 
 #include "typeAlias.h"
 #include "globalConstants.h"
+#include <iostream>
 
 //pbrt: page 510
 inline double cosTheta(Point3d w){
@@ -61,6 +62,26 @@ inline bool isSameHemisphere(const Vector3d wo, const Vector3d wi){
     return wo[2] * wi[2] > 0 ? true : false;
 }
 
+inline bool refract(const Vector3d &wi, const Vector3d n, double eta, Vector3d& wt) {
+    double cosThetaI = n.dot(wi);
+    double sin2ThetaI = std::max(0.0, 1.0 - cosThetaI * cosThetaI);
+    double sin2ThetaT = eta * eta * sin2ThetaI;
+    
+//    if (eta > 1.0 && sin2ThetaI > 0.308) {
+//        std::cout<<"sin2(thetaI) = "<<sin2ThetaI<<", 1/n2 = "<<1.0 / (eta * eta)<<std::endl;
+//    }
+    if (sin2ThetaI >= (1.0 / (eta * eta))){
+        return false;
+    }
+    double cosThetaT = sqrt(1.0 - sin2ThetaT);
+    wt = eta * (-wi) + (eta * cosThetaI - cosThetaT) * n;
+    wt = wt.normalized();
+//    if(eta > 1.0) {
+//        std::cout<<"eta = "<<eta<<", wi = "<<wi.transpose()<<", cosThetaI = "<<cosThetaI<<", cosThetaT = "<<cosThetaT<<", wt = "<<wt.transpose()<<std::endl;
+//    }
+    return true;
+}
+
 
 class BxDF {
 public:
@@ -69,7 +90,8 @@ public:
         DIFFUSE     = 2,
         CONSTANT    = 3,
         BFSPECULAR  = 4,
-        TRANSMISSION = 5
+        TRANSMISSION = 5,
+        FRESNELSPECULAR = 6
     };
     
     BxDF(BxDFType tp);
@@ -110,6 +132,19 @@ public:
     virtual double getWeight() const;
 };
 
+class SpecularTransmission : public BxDF {
+    const Spectrum3d T;
+    const double etaA, etaB;
+public:
+    SpecularTransmission(Spectrum3d _T, double eA, double eB);
+    ~SpecularTransmission();
+    
+    virtual Spectrum3d eval(const Vector3d wo, const Vector3d wi) const;
+    virtual Spectrum3d sampleWiAndEval(const Vector3d wo, Vector3d& wi, Point2d u, double& pdf) const;
+    virtual double calcPDF(const Vector3d wo, const Vector3d wi) const;
+    virtual double getWeight() const;
+};
+
 class LambertianDiffuseReflection : public BxDF {
     Spectrum3d kd;
 public:
@@ -128,6 +163,21 @@ public:
     
     virtual Spectrum3d eval(const Vector3d wo, const Vector3d wi) const;
     virtual double getWeight() const;
+};
+
+class FresnelSpecular : public BxDF {
+    Spectrum3d kr, kt;
+    double etaA, etaB;
+    
+public:
+    FresnelSpecular(Spectrum3d _kr, Spectrum3d _kt, double eA, double eB);
+    ~FresnelSpecular();
+    
+    virtual Spectrum3d eval(const Vector3d wo, const Vector3d wi) const;
+    virtual Spectrum3d sampleWiAndEval(const Vector3d wo, Vector3d& wi, Point2d u, double& pdf) const;
+    virtual double calcPDF(const Vector3d wo, const Vector3d wi) const;
+    virtual double getWeight() const;
+    double FrDielectric(double cosThetaI, double etaI, double etaT) const;
 };
 
 //class BlinnPhongSpecularReflection : public BxDF{
