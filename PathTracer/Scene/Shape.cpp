@@ -164,3 +164,28 @@ double Triangle::Area() const {
     return 0.5 * e1.cross(e2).norm();
 }
 
+Rectangular::Rectangular(Point3d _p0, Point3d _p1, Point3d _p2, bool isE) :p0(_p0), p1(_p1), p2(_p2), tri1(Triangle(_p0, _p1, _p2, isE)), tri2(Triangle(_p2, p0 + p2 - p1, _p0, isE)), Shape(RECTANGULAR, isE) {
+    e1 = p1 - p0;
+    e2 = p2 - p1;
+}
+
+Rectangular::~Rectangular() {}
+
+Vector3d Rectangular::getNormal(Point3d pWorld) {
+    return tri1.getNormal(pWorld);
+}
+
+double Rectangular::isIntersected(Ray *ray) {
+    return std::min(tri1.isIntersected(ray), tri2.isIntersected(ray));
+}
+
+Point3d Rectangular::sample(Point2d u, double &pdf) const {
+    pdf = 1.0 / Area();
+    return p0 + e1 * u[0] + e2 * u[1];
+}
+
+double Rectangular::Area() const {
+    return tri1.Area() + tri2.Area();
+}
+
+

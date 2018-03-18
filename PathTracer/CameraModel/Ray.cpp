@@ -86,7 +86,7 @@ bool Ray::brutalWayToFind(const Scene* scene) {
             t_min = t_now;
             t = t_now;
             Vector3d lN = sp->getNormal(calcP());
-//            if(!isSameHemisphere(lN, -d)){
+//            if(!isSameHemisphere(lN, -d) && (sp->getMaterial()->getType() == Material::PHONG)){
 ////                std::cout<<"ln: "<<lN.transpose()<<", d: "<<d.transpose()<<std::endl;
 ////                std::cout<<"Not same !"<<std::endl;
 //                lN = -lN;

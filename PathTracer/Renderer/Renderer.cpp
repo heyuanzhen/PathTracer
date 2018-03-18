@@ -28,7 +28,8 @@ Renderer::Renderer(int* reso, int spc, int mD, Scene* sc, Sampler* psp,
     scene = sc;
     pixelSampler = psp;
     normalSampler = nsp;
-    rays = new Ray[reso[1] * reso[0] * sampleCount]();
+//    rays = new Ray[reso[1] * reso[0] * sampleCount]();
+    rays = nullptr;
     camera = new PerspectiveCamera(lookAt, reso, fov, sampleCount, pixelSampler, rays);
 }
 
@@ -82,10 +83,12 @@ void Renderer::startRendering() {
         for (int coli = 0; coli < xres; coli++) {
 //    for (int rowi = 120; rowi < 121; rowi++) {
 //        for (int coli = 70; coli < 71; coli++) {
+            rays = camera->generateRays(rowi, coli);
             double* pixelBuffer = new double[sampleCount * 3]();
-//            #pragma omp parallel for schedule(dynamic)
+            #pragma omp parallel for schedule(dynamic)
             for (int spi = 0; spi < sampleCount; spi++) {
-                int offset = (rowi * xres + coli) * sampleCount + spi;
+//                int offset = (rowi * xres + coli) * sampleCount + spi;
+                int offset = spi;
                 if (!rays[offset].isInit()) {
                     std::cout<<"This ray has not been initialized !"<<std::endl;
                     continue;
@@ -133,7 +136,7 @@ void Renderer::startRendering() {
 
 
 void Renderer::test() {
-    camera->generateRays();
+//    camera->generateRays();
     startRendering();
     showImage();
 }

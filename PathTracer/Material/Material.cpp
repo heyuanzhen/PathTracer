@@ -39,7 +39,9 @@ BSDF* Material::getBSDF() const {
     return bsdf;
 }
 
-
+int Material::getType() const {
+    return mType;
+}
 
 int Material::decideWhichBxDFToSample() const {
     double u = (rand() * 1.0) / (RAND_MAX * 1.0);
@@ -52,6 +54,7 @@ int Material::decideWhichBxDFToSample() const {
     }
     return ind;
 }
+
 
 
 void Material::eval(const Vector3d woW, const Vector3d wiW,
@@ -127,9 +130,12 @@ Spectrum3d Material::sampleBSDF(const Vector3d woW, Vector3d& wiW, const Matrix3
 //        std::cout<<"wiW = "<<wiW.transpose()<<std::endl<<std::endl;
 //    }
 
-    
-    specularBounces = bxdf->getType() == BxDF::SPECULAR ? true : false;
-    isEnter = bxdf->getType() == BxDF::TRANSMISSION && wiL[2] < 0.0 ? true : false;
+    isEnter = false;
+    specularBounces = (bxdf->getType() == BxDF::SPECULAR) || (bxdf->getType() == BxDF::FRESNELSPECULAR);
+    isEnter = ((bxdf->getType() == BxDF::TRANSMISSION) || (bxdf->getType() ==  BxDF::FRESNELSPECULAR)) && wiL[2] < 0.0;
+//    if (isEnter) {
+//        std::cout<<"isEnter"<<std::endl;
+//    }
     
     for (int i = 0; i < BxDFCount; i++) {
         if (bsdf->bxdfs[i] != bxdf) {

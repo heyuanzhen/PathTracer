@@ -155,9 +155,17 @@ void PerspectiveCamera::calcRayParas(Point3d pos, Ray *ray) {
     ray->setRay(origin, dd, 0.0);
 }
 
-void PerspectiveCamera::generateRays() {
-    for (int rowi = 0; rowi < yres; rowi++) {
-        for (int coli = 0; coli < xres; coli++) {
+Ray* PerspectiveCamera::generateRays(int rowi, int coli) {
+//    for (int rowi = 0; rowi < yres; rowi++) {
+//        for (int coli = 0; coli < xres; coli++) {
+    
+            if (rays == nullptr) {
+                rays = new Ray[sampleCount]();
+            }
+            else{
+                delete[] rays;
+               rays = new Ray[sampleCount]();
+            }
             #pragma omp parallel for schedule(dynamic)
             for (int spi = 0; spi < sampleCount; spi++) {
                 Point2d p(rowi, coli);
@@ -165,14 +173,15 @@ void PerspectiveCamera::generateRays() {
                 p += sampler->get2D() - Point2d(0.5, 0.5);
                 Point3d pW = imgToWorld(p);
 //                std::cout<<"pW = "<<pW.transpose()<<std::endl;
-                int offset = (rowi * xres + coli) * sampleCount + spi;
+                int offset = spi;
                 calcRayParas(pW, &rays[offset]);
                 if (!rays[offset].isInit()) {
                     std::cout<<pW.transpose()<<::std::endl;
                 }
             }
-        }
-    }
+            return rays;
+//        }
+//    }
 //    for (int i = 0; i < yres; i++) {
 //        for (int j = 0; j < xres; j++) {
 //            std::cout<<"("<<i<<", "<<j<<"): "<<rays[i * xres + j].getDirection().transpose()<<std::endl;

@@ -45,4 +45,15 @@ private:
 };
 
 
+class FresnelBSDF : public BSDF {
+private:
+    Spectrum3d kr, kt;
+    double etaA, etaB;
+public:
+    FresnelBSDF(Spectrum3d _kr, Spectrum3d _kt, double _eA, double _eB);
+    ~FresnelBSDF();
+    
+    virtual void buildBSDF();
+};
+
 #endif /* BSDF_h */

@@ -153,35 +153,32 @@ Spectrum3d FresnelSpecular::sampleWiAndEval(const Vector3d wo, Vector3d &wi,
                                             Point2d u, double &pdf) const {
     double Fr = FrDielectric(cosTheta(wo), etaA, etaB);
     if (u[0] < Fr) { //reflection
-        // Compute perfect specular reflection direction
         wi = reflect(wo, n);
         pdf = Fr;
         return Fr * kr / absCosTheta(wi);
     }
     else { //transmission
-        bool entering = CosTheta(wo) > 0;
-        Float etaI = entering ? etaA : etaB;
-        Float etaT = entering ? etaB : etaA;
+        bool entering = cosTheta(wo) > 0;
+        double etaI = entering ? etaA : etaB;
+        double etaT = entering ? etaB : etaA;
         
-        // Compute ray direction for specular transmission
+        Vector3d nn = n;
+        nn = wo.dot(nn) > 0.0 ? nn : -nn;
         if (!refract(wo, nn, etaI / etaT, wi)){
             pdf = 1.0;
             wi = reflect(wo, n);
             std::cout<<"total internal reflection!"<<std::endl;
-            return T / std::max(absCosTheta(wi), 0.00001);
+            return kt / std::max(absCosTheta(wi), 0.00001);
         }
         
         Spectrum3d ft = kt * (1.0 - Fr); //?
         
         // Account for non-symmetry with transmission to different medium
-        if (mode == TransportMode::Radiance)
-            ft *= (etaI * etaI) / (etaT * etaT);
-        if (sampledType)
-            *sampledType = BxDFType(BSDF_SPECULAR | BSDF_TRANSMISSION);
-        *pdf = 1 - F;
-        return ft / AbsCosTheta(*wi);
+        ft *= (etaI * etaI) / (etaT * etaT);
+        
+        pdf = 1.0 - Fr;
+        return ft / absCosTheta(wi);
     }
-    return Spectrum3d(0.0, 0.0, 0.0);
 }
 
 double FresnelSpecular::FrDielectric(double cosThetaI, double etaI, double etaT) const {

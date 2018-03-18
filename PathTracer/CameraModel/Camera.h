@@ -22,7 +22,7 @@ public:
     Camera(int spC, Sampler* sp, Ray* r);
     virtual ~Camera();
     
-    virtual void generateRays() = 0;
+    virtual Ray* generateRays(int rowi, int coli) = 0;
 };
 
 
@@ -54,7 +54,7 @@ public:
     Point2i worldToImg(Point3d p);
     Point3d imgToWorld(Point2d p);
     void calcRayParas(Point3d pos, Ray* ray);
-    virtual void generateRays();
+    virtual Ray* generateRays(int rowi, int coli);
 };
 
 #endif /* Camera_h */

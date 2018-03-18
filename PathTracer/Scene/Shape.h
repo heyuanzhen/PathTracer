@@ -20,7 +20,8 @@ class Shape {
 public:
     enum ShapeType{
         SPHERE = 1,
-        TRIANGLE = 2
+        TRIANGLE = 2,
+        RECTANGULAR = 3
     };
     const ShapeType type;
     Transform trans;
@@ -71,6 +72,21 @@ public:
     virtual Point3d sample(Point2d u, double& pdf) const;
     virtual double Area() const;
 };
+
+class Rectangular : public Shape {
+    Point3d p0, p1, p2, p3;
+    Vector3d e1, e2;
+    Triangle tri1, tri2;
+public:
+    Rectangular(Point3d _p0, Point3d _p1, Point3d _p2, bool isE);
+    ~Rectangular();
+    
+    virtual Vector3d getNormal(Point3d pWorld);
+    virtual double isIntersected(Ray* ray);
+    virtual Point3d sample(Point2d u, double& pdf) const;
+    virtual double Area() const;
+};
+
 
 #endif /* Shape_h */
 

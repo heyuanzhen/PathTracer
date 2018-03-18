@@ -14,7 +14,8 @@
 class Material {
 public:
     enum materialType{
-        PHONG = 1
+        PHONG = 1,
+        FRESNEL = 2
     };
     
     Material(materialType mt, BSDF* bs);
@@ -24,6 +25,7 @@ public:
     Vector3d rotateNormalToWorld(const Vector3d vL, const Matrix3d invM) const;
     Vector3d getGeometryNormal() const;
     BSDF* getBSDF() const;
+    int getType() const;
     int decideWhichBxDFToSample() const;
     virtual void eval(const Vector3d wo, const Vector3d wi,
                       Vector3d& woL, Vector3d& wiL, const Matrix3d M,
