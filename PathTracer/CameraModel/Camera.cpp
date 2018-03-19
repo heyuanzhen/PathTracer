@@ -21,8 +21,8 @@ PerspectiveCamera::PerspectiveCamera(double* lookAt, int* reso, double fovf, int
     fov = fovf;
     xres = reso[1];
     yres = reso[0];
-    target = Point3d(lookAt[0], lookAt[1], lookAt[2]);
-    origin = Point3d(lookAt[3], lookAt[4], lookAt[5]);
+    origin = Point3d(lookAt[0], lookAt[1], lookAt[2]);
+    target = Point3d(lookAt[3], lookAt[4], lookAt[5]);
     up = Vector3d(lookAt[6], lookAt[7], lookAt[8]);
     f = (target - origin).norm();
     double theta = fov * 0.5;

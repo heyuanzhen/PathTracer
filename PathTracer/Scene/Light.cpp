@@ -31,6 +31,10 @@ bool Light::isDeltaLight() const {
     return type == POINT || type == DIRECTIONAL;
 }
 
+Shape* Light::getShape() const {
+    return nullptr;
+}
+
 
 ////Point light Source
 PointLight::PointLight(Point3d _pos, Spectrum3d _I) : pos(_pos), I(_I), Light(POINT) {}
@@ -72,6 +76,10 @@ Spectrum3d DirectionalLight::Sample_Li(const Intersection* inter, const Point2d 
 AreaLight::AreaLight(Spectrum3d Le, Shape* sp) : Lemit(Le), shape(sp), Light(AREA) {}
 
 AreaLight::~AreaLight() {}
+
+Shape* AreaLight::getShape() const {
+    return shape;
+}
 
 Spectrum3d AreaLight::Sample_Li(const Intersection *inter, const Point2d u, Vector3d &wi,
                                 double &pdf, bool &vis, const Scene *scene) const {

@@ -56,6 +56,7 @@ public:
     virtual Vector3d getNormal(Vector3d pWorld);
     virtual double isIntersected(Ray* rayW);
     virtual double Area() const;
+    virtual Point3d sample(Point2d u, double& pdf) const;
 };
 
 
@@ -67,6 +68,7 @@ public:
     ~Triangle();
     
     Point3d getPointByUV(double uu, double vv) const;
+    void setNormal(Vector3d nor);
     virtual Vector3d getNormal(Point3d pWorld);
     virtual double isIntersected(Ray* ray);
     virtual Point3d sample(Point2d u, double& pdf) const;
@@ -82,6 +84,7 @@ public:
     ~Rectangular();
     
     virtual Vector3d getNormal(Point3d pWorld);
+    void setNormal(Vector3d nor);
     virtual double isIntersected(Ray* ray);
     virtual Point3d sample(Point2d u, double& pdf) const;
     virtual double Area() const;

@@ -95,6 +95,7 @@ Spectrum3d PathIntegrator::estimateDirectLightOnly(const Intersection* it, const
 //        if (wiL[2] > 0.95) {
 //            std::cout<<wiL[2]<<std::endl;
 //        }
+//        std::cout<<"Li / lightPdf = "<<Li/lightPdf<<std::endl;
         if (!f.isZero()) {
             if (!Li.isZero()) {
                 if (light->isDeltaLight()){
@@ -110,18 +111,17 @@ Spectrum3d PathIntegrator::estimateDirectLightOnly(const Intersection* it, const
     }
     
     //⟨Sample BSDF with multiple importance sampling⟩
-//    if (!light->isDeltaLight()) {
-//        f = material->sampleBSDF(wo, wi, M, invM, scatteringPdf, specular);
-//        f *= abs(wi.dot(it->getLocalNormal()));
-//        if (!f.isZero() && scatteringPdf > 0.0) {
-//            double weight = 1.0;
-//            if (!specular) {
-//                lightPdf = light.Pdf_Li(it, wi);
-//                if (lightPdf == 0) return Ld;
-//                weight = PowerHeuristic(1, scatteringPdf, 1, lightPdf);
-//            }
-//        }
-//    }
+    if (!light->isDeltaLight()) {
+        bool isInter = false;
+        f = material->sampleBSDF(wo, wi, M, invM, scatteringPdf, specular, isInter);
+        f *= abs(wi.dot(it->getLocalNormal()));
+        if (!f.isZero() && scatteringPdf > 0.0) {
+            double weight = 1.0;
+            if (!specular) {
+                
+            }
+        }
+    }
     return Ld;
 }
 
@@ -151,9 +151,10 @@ Spectrum3d PathIntegrator::Li() {
         Intersection* inter = ray->getIntersection();   //--(1)
         
         
-//        if (bounces == 0 || specularBounce) {
-        if(true){
+        if (bounces == 0 || specularBounce) {
+//        if(true){
             if (isInter && inter->getShape()->isEmmit) {
+//                std::cout<<"here"<<std::endl;
                 Spectrum3d Le = inter->getShape()->getAreaLight()->L(inter->getInterPoint(), -ray->getDirection());
                 L += beta.cwiseProduct(Le);
             }
@@ -167,10 +168,10 @@ Spectrum3d PathIntegrator::Li() {
         calcRotateMartix(inter->getLocalNormal(), material->getGeometryNormal());
         
         //⟨Sample illumination from lights to find path contribution⟩ //(5)
-//        Spectrum3d beta_temp = beta;
-//        Spectrum3d Ld = beta_temp.cwiseProduct(uniformSampleOneLight(inter, scene, normalSampler,
-//                                                   -ray->getDirection(), false)); //wo = - ray.d
-//        L += Ld;
+        Spectrum3d beta_temp = beta;
+        Spectrum3d Ld = beta_temp.cwiseProduct(uniformSampleOneLight(inter, scene, normalSampler,
+                                                   -ray->getDirection(), false)); //wo = - ray.d
+        L += Ld;
         
         //⟨Sample BSDF to get new path direction⟩ //(6)
         Vector3d wi(0.0, 0.0, 0.0), wo = -ray->getDirection(); //negative!

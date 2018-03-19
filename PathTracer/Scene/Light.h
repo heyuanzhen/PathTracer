@@ -30,6 +30,7 @@ public:
     bool isDeltaLight() const;
     virtual Spectrum3d Sample_Li(const Intersection* inter, const Point2d u, Vector3d& wi,
                                  double& pdf, bool& vis, const Scene* scene) const = 0;
+    virtual Shape* getShape() const;
 };
 
 class PointLight : public Light {
@@ -65,6 +66,8 @@ private:
 public:
     AreaLight(Spectrum3d Le, Shape* sp);
     ~AreaLight();
+    
+    virtual Shape* getShape() const;
     virtual Spectrum3d Sample_Li(const Intersection* inter, const Point2d u, Vector3d& wi,
                                  double& pdf, bool& vis, const Scene* scene) const;
     Spectrum3d L(Point3d lightP, Vector3d wi) const;

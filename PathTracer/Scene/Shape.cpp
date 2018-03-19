@@ -8,6 +8,7 @@
 
 #include "Shape.h"
 #include "Light.h"
+#include "sampling.h"
 #include <iostream>
 
 ////Shape class
@@ -112,6 +113,11 @@ double Sphere::Area() const {
     return 4 * M_PI * radius * radius;
 }
 
+Point3d Sphere::sample(Point2d u, double &pdf) const {
+    pdf = 1.0 / Area();
+    return center + uniformSampleSphere(u) * radius;
+}
+
 ////Triangle Shape
 Triangle::Triangle(Point3d _p0, Point3d _p1, Point3d _p2, bool isE) : p0(_p0), p1(_p1), p2(_p2), Shape(TRIANGLE, isE) {
     e1 = p1 - p0;
@@ -127,6 +133,10 @@ Point3d Triangle::getPointByUV(double uu, double vv) const {
 
 Vector3d Triangle::getNormal(Point3d pWorld) {
     return n;
+}
+
+void Triangle::setNormal(Vector3d nor) {
+    n = nor;
 }
 
 double Triangle::isIntersected(Ray *ray) {
@@ -170,6 +180,11 @@ Rectangular::Rectangular(Point3d _p0, Point3d _p1, Point3d _p2, bool isE) :p0(_p
 }
 
 Rectangular::~Rectangular() {}
+
+void Rectangular::setNormal(Vector3d nor) {
+    tri1.setNormal(nor);
+    tri2.setNormal(nor);
+}
 
 Vector3d Rectangular::getNormal(Point3d pWorld) {
     return tri1.getNormal(pWorld);
