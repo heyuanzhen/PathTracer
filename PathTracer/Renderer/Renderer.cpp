@@ -114,15 +114,14 @@ void Renderer::startRendering() {
 //                }
             }
             
-//            std::cout<<"("<<rowi<<", "<<coli<<"), pix = "<<pix.transpose()<<std::endl<<std::endl;
             pix /= (sampleCount * 1.0);
             pixels[rowi][coli * 3] = pix(0);
             pixels[rowi][coli * 3 + 1] = pix(1);
             pixels[rowi][coli * 3 + 2] = pix(2);
             
-//            if (coli == 70) {
-//                std::cout<<"("<<rowi<<", "<<coli<<"), pix = "<<pix.transpose()<<std::endl<<std::endl;
-//            }
+            if (coli == 30 && rowi == 5) {
+                std::cout<<"("<<rowi<<", "<<coli<<"), pix = "<<pix.transpose()<<std::endl<<std::endl;
+            }
             
             delete[] pixelBuffer;
         }

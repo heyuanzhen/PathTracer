@@ -37,10 +37,12 @@ public:
     Material* getMaterial() const;
     AreaLight* getAreaLight() const;
     void setMaterial(Material* material);
-    virtual Vector3d getNormal(Point3d pWorld) = 0;
+    virtual Vector3d getNormal(Point3d pWorld) const = 0;
     virtual double isIntersected(Ray* ray) = 0;
     virtual double Area() const = 0;
     virtual Point3d sample(Point2d u, double& pdf) const;
+    virtual Point3d sample(const Intersection* it, const Point2d u, double& pdf) const;
+    virtual double pdf(const Intersection* itSur, Point3d pLi, Vector3d wi) const;
 };
 
 class Sphere : public Shape {
@@ -53,7 +55,7 @@ public:
     
     Point3d getCenPos() const;
     double getR() const;
-    virtual Vector3d getNormal(Vector3d pWorld);
+    virtual Vector3d getNormal(Vector3d pWorld) const;
     virtual double isIntersected(Ray* rayW);
     virtual double Area() const;
     virtual Point3d sample(Point2d u, double& pdf) const;
@@ -69,9 +71,11 @@ public:
     
     Point3d getPointByUV(double uu, double vv) const;
     void setNormal(Vector3d nor);
-    virtual Vector3d getNormal(Point3d pWorld);
+    virtual Vector3d getNormal(Point3d pWorld) const;
     virtual double isIntersected(Ray* ray);
     virtual Point3d sample(Point2d u, double& pdf) const;
+    virtual Point3d sample(const Intersection* it, const Point2d u, double& pdf) const;
+    virtual double pdf(const Intersection* itSur, Point3d pLi, Vector3d wi) const;
     virtual double Area() const;
 };
 
@@ -83,10 +87,12 @@ public:
     Rectangular(Point3d _p0, Point3d _p1, Point3d _p2, bool isE);
     ~Rectangular();
     
-    virtual Vector3d getNormal(Point3d pWorld);
+    virtual Vector3d getNormal(Point3d pWorld) const;
     void setNormal(Vector3d nor);
     virtual double isIntersected(Ray* ray);
     virtual Point3d sample(Point2d u, double& pdf) const;
+    virtual Point3d sample(const Intersection* it, const Point2d u, double& pdf) const;
+    virtual double pdf(const Intersection* itSur, Point3d pLi, Vector3d wi) const;
     virtual double Area() const;
 };
 

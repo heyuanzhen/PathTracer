@@ -57,11 +57,9 @@ Spectrum3d PathIntegrator::uniformSampleOneLight(const Intersection* it, const S
     Light* light = scene->getLight(lightNum);
     Point2d uLight = sampler->get2D();
     Point2d uScattering = sampler->get2D();
-    //    bool isSpecular = it->getMaterial()-
     bool isSpecular = false;//need to be done
     return estimateDirectLightOnly(it, uScattering, light, uLight,
                                    scene, normalSampler, wo, false, isSpecular)/ lightPdf;
-    //    return Spectrum3d(0.0, 0.0, 0.0);
 }
 
 Spectrum3d PathIntegrator::estimateDirectLightOnly(const Intersection* it, const Point2d uScattering,
@@ -73,16 +71,16 @@ Spectrum3d PathIntegrator::estimateDirectLightOnly(const Intersection* it, const
     double lightPdf = 0.0, scatteringPdf = 0.0;
     bool visibility;
     Spectrum3d f(0.0, 0.0, 0.0);
+    Spectrum3d Li(0.0, 0.0, 0.0);
+    Material* material = it->getMaterial();
     
     //⟨Sample light source with multiple importance sampling⟩
     //get Li, wi, lightPdf, visibility
-    Spectrum3d Li = light->Sample_Li(it, uLight, wi, lightPdf, visibility, scene);
-//    std::cout<<"Li = "<<Li.transpose()<<",lightPdf = "<<lightPdf<<std::endl;
+    Li = light->Sample_Li(it, uLight, wi, lightPdf, visibility, scene);
     if (!visibility) {
         return Spectrum3d(0.0, 0.0, 0.0);
     }
-//    std::cout<<"here"<<std::endl;
-    Material* material = it->getMaterial();
+
     if (lightPdf > 0 && !Li.isZero()) {
         if (!material) {
             std::cout<<"null material !"<<std::endl;
@@ -92,10 +90,6 @@ Spectrum3d PathIntegrator::estimateDirectLightOnly(const Intersection* it, const
         Vector3d woL, wiL;
         material->eval(wo, -wi, woL, wiL, M, f, scatteringPdf); //wi := -wi
         f *= abs(wiL[2]);
-//        if (wiL[2] > 0.95) {
-//            std::cout<<wiL[2]<<std::endl;
-//        }
-//        std::cout<<"Li / lightPdf = "<<Li/lightPdf<<std::endl;
         if (!f.isZero()) {
             if (!Li.isZero()) {
                 if (light->isDeltaLight()){
@@ -104,31 +98,44 @@ Spectrum3d PathIntegrator::estimateDirectLightOnly(const Intersection* it, const
                 else {
                     double weight = powerHeuristic(1, lightPdf, 1, scatteringPdf);
                     Ld += f.cwiseProduct(Li) * weight / lightPdf;
-//                    Ld += f.cwiseProduct(Li / lightPdf) / scatteringPdf;
                 }
             }
         }
     }
     
-    //⟨Sample BSDF with multiple importance sampling⟩
+//    //⟨Sample BSDF with multiple importance sampling⟩
     if (!light->isDeltaLight()) {
         bool isInter = false;
         f = material->sampleBSDF(wo, wi, M, invM, scatteringPdf, specular, isInter);
         f *= abs(wi.dot(it->getLocalNormal()));
         if (!f.isZero() && scatteringPdf > 0.0) {
             double weight = 1.0;
-            if (!specular) {
-                
+            Spectrum3d Li(0.0, 0.0, 0.0);
+            if (!specular && light->getShape()) {
+                Ray rL;
+                generateNewRay(it, wi, it->getLocalNormal(), false, rL);
+                bool isInter = rL.findIntersection(scene);
+                if (isInter) {
+                    Intersection* interL = rL.getIntersection();
+                    Light* al = interL->getShape()->getAreaLight();
+                    if (al == light) {
+                        Li = light->getShape()->getAreaLight()->L(interL->getInterPoint(), -wi);
+                        lightPdf = interL->getShape()->pdf(it, interL->getInterPoint(), wi);
+                        weight = powerHeuristic(1.0, scatteringPdf, 1.0, lightPdf);
+                        Ld += f.cwiseProduct(Li) * weight / scatteringPdf;
+                    }
+                }
+
             }
         }
     }
     return Ld;
 }
 
-void PathIntegrator::generateNewRay(Intersection* it, Vector3d wi, Vector3d nW, bool isEnter) {
+void PathIntegrator::generateNewRay(const Intersection* it, Vector3d wi, Vector3d nW, bool isEnter, Ray& r) {
     double flag = isEnter ? -10.0 : 10.0;
     Point3d newO = it->getInterPoint() + flag * nW * eps;
-    ray->setRay(newO, wi, 0.0);
+    r.setRay(newO, wi, 0.0);
 }
 
 
@@ -154,13 +161,11 @@ Spectrum3d PathIntegrator::Li() {
         if (bounces == 0 || specularBounce) {
 //        if(true){
             if (isInter && inter->getShape()->isEmmit) {
-//                std::cout<<"here"<<std::endl;
                 Spectrum3d Le = inter->getShape()->getAreaLight()->L(inter->getInterPoint(), -ray->getDirection());
                 L += beta.cwiseProduct(Le);
             }
             //⟨Addemittedlightatpathvertexorfromtheenvironment 877⟩ //(2)c
         }
-//        if( bounces > 0)    std::cout<<bounces<<std::endl;
         if (!isInter || bounces >= maxDepth)  break; //(3)
         
         //⟨Compute scattering functions and skip over medium boundaries⟩  //(4)
@@ -190,7 +195,7 @@ Spectrum3d PathIntegrator::Li() {
             <<", f = "<<f.transpose()<<", dot = "<<abs(wi.dot(inter->getLocalNormal()))
             <<", L = "<<L.transpose()<<", woW = "<<wo.transpose()<<", wiW = "<<wi.transpose()<<", lN = "<<inter->getLocalNormal().transpose()<<std::endl<<std::endl;
         }
-        generateNewRay(inter, wi, inter->getLocalNormal(), isEnter);
+        generateNewRay(inter, wi, inter->getLocalNormal(), isEnter, *ray);
         
         //⟨Account for subsurface scattering, if applicable⟩ (7)
         

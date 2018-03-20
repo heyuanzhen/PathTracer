@@ -21,8 +21,8 @@ void cbox(){
     rand();
     
     
-    int reso[2] = {1000 / 2, 1150 / 2};
-    int sampleCount = 4;
+    int reso[2] = {1000, 1150};
+    int sampleCount = 1024;
     int maxDepth = 20;
     
     Scene scene = Scene(8, 1);
@@ -36,14 +36,14 @@ void cbox(){
     Spectrum3d blue = Spectrum3d(0.9, 0.1, 0.1);
 
     
-    Sphere sphere1 = Sphere(1.98, Point3d(-2.56, 1.985, -1.5), false);
+    Sphere sphere1 = Sphere(1.98, Point3d(-2.36, 1.985, -1.5), false);
     scene.addShape(&sphere1);
     BlinnPhongBSDF bpBSDF1 = BlinnPhongBSDF(zero, zero, one);
     bpBSDF1.buildBSDF();
     Material mat1 = Material(Material::PHONG, &bpBSDF1);
     sphere1.setMaterial(&mat1);
     //
-    Sphere sphere2 = Sphere(1.98, Point3d(2.95, 1.985, 1.52), false);
+    Sphere sphere2 = Sphere(1.98, Point3d(2.55, 1.985, 1.52), false);
     scene.addShape(&sphere2);
     FresnelBSDF bpBSDF2 = FresnelBSDF(one, one, 1.0, 1.5);
     bpBSDF2.buildBSDF();
@@ -119,14 +119,18 @@ void cbox(){
 }
 
 
+
+
+
+
 void veach() {
     srand((unsigned)time(NULL));
     rand();
     
     
-    int reso[2] = {512 / 2, 768 / 2};
-    int sampleCount = 256;
-    int maxDepth = 20;
+    int reso[2] = {512 / 4, 768 / 4};
+    int sampleCount = 16;
+    int maxDepth = 50;
     
     Scene scene = Scene(7, 4);
     
@@ -138,7 +142,7 @@ void veach() {
     Spectrum3d li2 = Spectrum3d(901.803, 901.803, 901.803) * lightRatio;
     Spectrum3d li3 = Spectrum3d(11.1111, 11.1111, 11.1111) * lightRatio;
     Spectrum3d li4 = Spectrum3d(1.23457, 1.23457, 1.23457) * lightRatio;
-    Spectrum3d floorColor = Spectrum3d(0.05, 0.05, 0.05);
+    Spectrum3d floorColor = Spectrum3d(0.4, 0.4, 0.4);
     Spectrum3d plate1Diffuse = Spectrum3d(0.13, 0.09, 0.07);
     Spectrum3d plate1Specular = Spectrum3d(0.09, 0.09, 0.09);
     

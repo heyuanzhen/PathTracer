@@ -9,6 +9,7 @@
 #include "Shape.h"
 #include "Light.h"
 #include "sampling.h"
+#include "operation.h"
 #include <iostream>
 
 ////Shape class
@@ -49,6 +50,16 @@ Point3d Shape::sample(Point2d u, double &pdf) const {
     return Point3d(0.0, 0.0, 0.0);
 }
 
+Point3d Shape::sample(const Intersection *it, const Point2d u, double &pdf) const {
+    std::cout<<"This shape cannot be sampled !"<<std::endl;
+    return Point3d(0.0, 0.0, 0.0);
+}
+
+double Shape::pdf(const Intersection* itSur, Point3d pLi, Vector3d wi) const {
+    std::cout<<"This shape cannot calculate pdf !"<<std::endl;
+    return 0.0;
+}
+
 ////Sphere class
 Sphere::Sphere(double _r, Vector3d _cenPos, bool isE) : radius(_r), center(_cenPos), Shape(SPHERE, isE) {
     double ds[3] = {_cenPos(0), _cenPos(1), _cenPos(2)};
@@ -65,7 +76,7 @@ double Sphere::getR() const {
     return radius;
 }
 
-Vector3d Sphere::getNormal(Vector3d pWorld) {
+Vector3d Sphere::getNormal(Vector3d pWorld) const {
     Vector3d normal = pWorld - center;
     if (normal.norm() - radius > eps * 1e5) {
         std::cout<<normal.transpose()<<", "<<normal.norm() - radius<<std::endl;
@@ -131,7 +142,7 @@ Point3d Triangle::getPointByUV(double uu, double vv) const {
     return (1.0 - uu - vv) * p0 + uu * p1 + vv * p2;
 }
 
-Vector3d Triangle::getNormal(Point3d pWorld) {
+Vector3d Triangle::getNormal(Point3d pWorld) const {
     return n;
 }
 
@@ -156,18 +167,45 @@ double Triangle::isIntersected(Ray *ray) {
     if (v < 0.0 || (u + v) > 1.0) {
         return MAX_DOUBLE;
     }
-//    std::cout<<f<<", "<<e2.transpose()<<", "<<q.transpose()<<std::endl;
     double t = f * (e2.dot(r));
     if (t < 0.0) {
         return MAX_DOUBLE;
     }
-//    std::cout<<t<<std::endl;
     return t;
 }
 
 Point3d Triangle::sample(Point2d u, double &pdf) const {
     pdf = 1.0 / Area();
     return getPointByUV(u[0], u[1]);
+}
+
+
+
+Point3d Triangle::sample(const Intersection *it, const Point2d u, double &pdf) const {
+    Point3d pShape = sample(u, pdf);
+    Vector3d wi = (it->getInterPoint() - pShape).normalized();
+    if (wi.norm() < eps) {
+        pdf = 0.0;
+    }
+    else{
+        if (getNormal(pShape).dot(wi) < eps) {
+            pdf = 0.0;
+        }
+        else{
+            pdf *= distanceSquared(it->getInterPoint(), pShape) / abs(getNormal(pShape).dot(wi));
+        }
+    }
+    return pShape;
+}
+
+
+double Triangle::pdf(const Intersection *itSur, Point3d pLi, Vector3d wi) const {
+    Point3d pSur = itSur->getInterPoint();
+    double cosA = getNormal(pLi).dot(wi);
+    if (cosA < eps) {
+        return 0.0;
+    }
+    return distanceSquared(pSur, pLi) / abs(getNormal(pLi).dot(wi));
 }
 
 double Triangle::Area() const {
@@ -186,7 +224,7 @@ void Rectangular::setNormal(Vector3d nor) {
     tri2.setNormal(nor);
 }
 
-Vector3d Rectangular::getNormal(Point3d pWorld) {
+Vector3d Rectangular::getNormal(Point3d pWorld) const {
     return tri1.getNormal(pWorld);
 }
 
@@ -197,6 +235,32 @@ double Rectangular::isIntersected(Ray *ray) {
 Point3d Rectangular::sample(Point2d u, double &pdf) const {
     pdf = 1.0 / Area();
     return p0 + e1 * u[0] + e2 * u[1];
+}
+
+Point3d Rectangular::sample(const Intersection *it, const Point2d u, double &pdf) const {
+    Point3d pShape = sample(u, pdf);
+    Vector3d wi = (it->getInterPoint() - pShape).normalized();
+    if (wi.norm() < eps) {
+        pdf = 0.0;
+    }
+    else{
+        if (getNormal(pShape).dot(wi) < eps) {
+            pdf = 0.0;
+        }
+        else{
+            pdf *= distanceSquared(it->getInterPoint(), pShape) / abs(getNormal(pShape).dot(wi));
+        }
+    }
+    return pShape;
+}
+
+double Rectangular::pdf(const Intersection *itSur, Point3d pLi, Vector3d wi) const {
+    Point3d pSur = itSur->getInterPoint();
+    double cosA = getNormal(pLi).dot(wi);
+    if (cosA < eps) {
+        return 0.0;
+    }
+    return distanceSquared(pSur, pLi) / abs(getNormal(pLi).dot(wi));
 }
 
 double Rectangular::Area() const {

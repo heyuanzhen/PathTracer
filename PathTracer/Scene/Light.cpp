@@ -83,10 +83,9 @@ Shape* AreaLight::getShape() const {
 
 Spectrum3d AreaLight::Sample_Li(const Intersection *inter, const Point2d u, Vector3d &wi,
                                 double &pdf, bool &vis, const Scene *scene) const {
-    Point3d lightP = shape->sample(u, pdf), surP = inter->getInterPoint();
+    Point3d lightP = shape->sample(inter, u, pdf), surP = inter->getInterPoint();
     wi = (surP - lightP).normalized();
     vis = testVisibility(lightP, surP, scene);
-//    std::cout<<"vis = "<<vis<<std::endl;
     return L(lightP, wi);
 //    return Lemit;
 }
@@ -96,6 +95,9 @@ Spectrum3d AreaLight::L(Point3d lightP, Vector3d wi) const {
 //    return Lemit;
 }
 
+double AreaLight::pdf(Vector3d wi) const {
+    return 1.0 / shape->Area();
+}
 
 
 
