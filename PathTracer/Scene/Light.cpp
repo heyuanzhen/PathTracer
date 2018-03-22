@@ -13,6 +13,7 @@
 #include <iostream>
 
 ////Light abstract class
+double Light::powerSum = 0.0;
 
 Light::Light(LightType tp) : type(tp) {}
 
@@ -55,6 +56,9 @@ Spectrum3d PointLight::Sample_Li(const Intersection* inter, const Point2d u, Vec
     return I / distanceSquared(pos, pS);
 }
 
+double PointLight::getPower() const {
+    return 4 * Pi * I.norm();
+}
 
 ////Directional light source
 DirectionalLight::DirectionalLight(Vector3d _dir, Spectrum3d _I, Point3d wC, double wR) :
@@ -72,6 +76,10 @@ Spectrum3d DirectionalLight::Sample_Li(const Intersection* inter, const Point2d 
     return I;
 }
 
+double DirectionalLight::getPower() const {
+    return I.norm() * Pi * worldRadius * worldRadius;
+}
+
 ////Area Light source
 AreaLight::AreaLight(Spectrum3d Le, Shape* sp) : Lemit(Le), shape(sp), Light(AREA) {}
 
@@ -87,7 +95,6 @@ Spectrum3d AreaLight::Sample_Li(const Intersection *inter, const Point2d u, Vect
     wi = (surP - lightP).normalized();
     vis = testVisibility(lightP, surP, scene);
     return L(lightP, wi);
-//    return Lemit;
 }
 
 Spectrum3d AreaLight::L(Point3d lightP, Vector3d wi) const {
@@ -97,6 +104,10 @@ Spectrum3d AreaLight::L(Point3d lightP, Vector3d wi) const {
 
 double AreaLight::pdf(Vector3d wi) const {
     return 1.0 / shape->Area();
+}
+
+double AreaLight::getPower() const {
+    return Lemit.norm() * shape->Area() * Pi;
 }
 
 

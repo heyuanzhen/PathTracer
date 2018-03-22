@@ -23,6 +23,7 @@ public:
         AREA = 3
     };
     const LightType type;
+    static double powerSum;
     
     Light(LightType tp);
     ~Light();
@@ -30,19 +31,20 @@ public:
     bool isDeltaLight() const;
     virtual Spectrum3d Sample_Li(const Intersection* inter, const Point2d u, Vector3d& wi,
                                  double& pdf, bool& vis, const Scene* scene) const = 0;
+    virtual double getPower() const = 0;
     virtual Shape* getShape() const;
 };
 
 class PointLight : public Light {
     const Point3d pos;
     const Spectrum3d I;
-    
 public:
     PointLight(Point3d _pos, Spectrum3d _I);
     ~PointLight();
     Point3d getPos() const;
     virtual Spectrum3d Sample_Li(const Intersection* inter, const Point2d u, Vector3d& wi,
                                  double& pdf, bool& vis, const Scene* scene) const;
+    virtual double getPower() const;
 };
 
 class DirectionalLight : public Light{
@@ -56,6 +58,7 @@ public:
     ~DirectionalLight();
     virtual Spectrum3d Sample_Li(const Intersection* inter, const Point2d u, Vector3d& wi,
                                  double& pdf, bool& vis, const Scene* scene) const;
+    virtual double getPower() const;
 };
 
 
@@ -72,6 +75,7 @@ public:
                                  double& pdf, bool& vis, const Scene* scene) const;
     Spectrum3d L(Point3d lightP, Vector3d wi) const;
     double pdf(Vector3d wi) const;
+    virtual double getPower() const;
 };
 
 #endif /* Light_h */

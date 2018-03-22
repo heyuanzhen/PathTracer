@@ -62,6 +62,7 @@ Spectrum3d PathIntegrator::uniformSampleOneLight(const Intersection* it, const S
                                    scene, normalSampler, wo, false, isSpecular)/ lightPdf;
 }
 
+
 Spectrum3d PathIntegrator::estimateDirectLightOnly(const Intersection* it, const Point2d uScattering,
                                                    const Light* light, const Point2d uLight,
                                                    const Scene* scene, Sampler* sampler, Vector3d wo,
@@ -77,6 +78,7 @@ Spectrum3d PathIntegrator::estimateDirectLightOnly(const Intersection* it, const
     //⟨Sample light source with multiple importance sampling⟩
     //get Li, wi, lightPdf, visibility
     Li = light->Sample_Li(it, uLight, wi, lightPdf, visibility, scene);
+//    std::cout<<"Li = "<<Li.transpose()<<", lightPdf = "<<lightPdf<<std::endl;
     if (!visibility) {
         return Spectrum3d(0.0, 0.0, 0.0);
     }
@@ -102,6 +104,7 @@ Spectrum3d PathIntegrator::estimateDirectLightOnly(const Intersection* it, const
             }
         }
     }
+//    std::cout<<"Ld = "<<Ld.transpose()<<std::endl;
     
 //    //⟨Sample BSDF with multiple importance sampling⟩
     if (!light->isDeltaLight()) {
@@ -119,10 +122,14 @@ Spectrum3d PathIntegrator::estimateDirectLightOnly(const Intersection* it, const
                     Intersection* interL = rL.getIntersection();
                     Light* al = interL->getShape()->getAreaLight();
                     if (al == light) {
+//                        std::cout<<"here"<<std::endl;
                         Li = light->getShape()->getAreaLight()->L(interL->getInterPoint(), -wi);
                         lightPdf = interL->getShape()->pdf(it, interL->getInterPoint(), wi);
+//                        std::cout<<"Li = "<<Li.transpose()<<"lightPdf = "<<lightPdf<<std::endl;
                         weight = powerHeuristic(1.0, scatteringPdf, 1.0, lightPdf);
                         Ld += f.cwiseProduct(Li) * weight / scatteringPdf;
+//                        std::cout<<"scatteringPdf = "<<scatteringPdf<<std::endl;
+//                        std::cout<<"weight = "<<weight<<", Ld = "<<Ld.transpose()<<std::endl<<std::endl;
                     }
                 }
 

@@ -47,4 +47,22 @@ inline double getMaxDistanceInOneDim(Point3d p1, Point3d p2, int& dim) {
     return maxD;
 }
 
+inline Matrix3d calcRotateMartix(const Vector3d nW, const Vector3d nG){
+    Matrix3d M;
+    if ((abs(nW.x() - nG.x()) < eps) && (abs(nW.y() - nG.y()) < eps) && (abs(nW.z() - nG.z()) < eps)) {
+        M.setIdentity();
+        return M;
+    }
+    Vector3d v = nW.cross(nG);
+    double s = v.norm();
+    double c = nW.dot(nG);
+    Matrix3d vx;
+    vx << 0.0, -v.z(), v.y(),
+    v.z(), 0.0, -v.x(),
+    -v.y(), v.x(), 0.0;
+    Matrix3d I = Eigen::Matrix3d::Identity();
+    M = I + vx + vx * vx * (1.0 - c) / (s * s);
+    return M;
+}
+
 #endif /* operation_h */

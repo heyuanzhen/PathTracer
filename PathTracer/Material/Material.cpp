@@ -66,10 +66,7 @@ void Material::eval(const Vector3d woW, const Vector3d wiW,
     }
     woL = rotateNormalToLocal(woW, M);
     wiL = rotateNormalToLocal(wiW, M);
-//    std::cout<<"M = "<<M<<std::endl;
-//    std::cout<<"woL = "<<woL.transpose()<< ", wiL = "<<wiL.transpose()<<std::endl;
     if (!isSameHemisphere(woL, wiL)) {
-//        std::cout<<"Back ray !"<<" woW = "<<woL.transpose()<< ", wiW = "<<wiL.transpose()<<std::endl;
         f = Spectrum3d(0.0, 0.0, 0.0);
         pdf = 0.0;
         return;
@@ -84,9 +81,7 @@ void Material::eval(const Vector3d woW, const Vector3d wiW,
     }
 
     int pdfCount = 0;
-//    std::cout<<bsdf->getBxDFCount()<<std::endl;
     for (int i = 0; i < bsdf->getBxDFCount(); i++) {
-//        pdf += bsdf->bxdfs[i]->calcPDF(woL, wiL);
         pdf += bsdf->bxdfs[i]->getWeight() * bsdf->bxdfs[i]->calcPDF(woL, wiL) / bsdf->getWeightSum();
         pdfCount++;
         f += bsdf->bxdfs[i]->eval(woL, wiL);
@@ -126,16 +121,10 @@ Spectrum3d Material::sampleBSDF(const Vector3d woW, Vector3d& wiW, const Matrix3
     f = bxdf->sampleWiAndEval(woL, wiL, rsp.get2D(), pdf);
     pdf *= bxdf->getWeight() / bsdf->getWeightSum();
     wiW = rotateNormalToWorld(wiL, invM);
-//    if (bxdf->getType() == BxDF::SPECULAR) {
-//        std::cout<<"wiW = "<<wiW.transpose()<<std::endl<<std::endl;
-//    }
 
     isEnter = false;
     specularBounces = (bxdf->getType() == BxDF::SPECULAR) || (bxdf->getType() == BxDF::FRESNELSPECULAR);
     isEnter = ((bxdf->getType() == BxDF::TRANSMISSION) || (bxdf->getType() ==  BxDF::FRESNELSPECULAR)) && wiL[2] < 0.0;
-//    if (isEnter) {
-//        std::cout<<"isEnter"<<std::endl;
-//    }
     
     for (int i = 0; i < BxDFCount; i++) {
         if (bsdf->bxdfs[i] != bxdf) {
@@ -143,9 +132,6 @@ Spectrum3d Material::sampleBSDF(const Vector3d woW, Vector3d& wiW, const Matrix3
             f += bsdf->bxdfs[i]->eval(woL, wiL);
         }
     }
-//    if (bxdf->getType() == BxDF::TRANSMISSION && bsdf->bxdfs[3]->getWeight() > 0.0) {
-//        std::cout<<"f = "<<f.transpose()<<std::endl;
-//    }
     return f;
 }
 

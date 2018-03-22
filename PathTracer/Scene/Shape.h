@@ -59,6 +59,8 @@ public:
     virtual double isIntersected(Ray* rayW);
     virtual double Area() const;
     virtual Point3d sample(Point2d u, double& pdf) const;
+    virtual Point3d sample(const Intersection* it, const Point2d u, double& pdf) const;
+    virtual double pdf(const Intersection* itSur, Point3d pLi, Vector3d wi) const;
 };
 
 

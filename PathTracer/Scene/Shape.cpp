@@ -129,6 +129,42 @@ Point3d Sphere::sample(Point2d u, double &pdf) const {
     return center + uniformSampleSphere(u) * radius;
 }
 
+Point3d Sphere::sample(const Intersection *it, const Point2d u, double &pdf) const {
+    Point3d pRefToCen = it->getInterPoint() - center;
+    double dc = pRefToCen.norm();
+    if (dc - radius < eps) {
+//        std::cout<<"Sample point is in the sphere !"<<", p: "<<it->getInterPoint().transpose()<<
+//        ", cen = "<<center.transpose()<<", dc = "<<dc<<", radius = "<<radius<<std::endl;
+        pdf = 1.0;
+        return it->getInterPoint();
+    }
+    double sinThetaMax2 = radius * radius / (dc * dc);
+    double cosThetaMax = sqrt(std::max(0.0, 1.0 - sinThetaMax2));
+    double cosTheta = (1.0 - u[0]) + u[0] * cosThetaMax;
+    double sinTheta = sqrt(1.0 - cosTheta * cosTheta);
+    double phi = u[1] * 2 * Pi;
+    Vector3d negWiL = Point3d(cos(phi) * sinTheta, sin(phi) * sinTheta, cosTheta);
+    pdf = uniformSampleConePDF(cosThetaMax);
+    
+    double da = dc * sinTheta;
+    double dtd = std::max(0.0, sqrt(radius * radius - da * da));
+    double dsd = dc * cosTheta - dtd;
+    Matrix3d rotM = calcRotateMartix(-pRefToCen.normalized(), Vector3d(0.0, 0.0, 1.0)).inverse();
+    Vector3d negWiW = rotM * negWiL;
+    return it->getInterPoint() + negWiW * dsd;
+}
+
+double Sphere::pdf(const Intersection *itSur, Point3d pLi, Vector3d wi) const {
+    Point3d pRefToCen = itSur->getInterPoint() - center;
+    double dc = pRefToCen.norm();
+    if (dc - radius < eps) {
+        return 1.0;
+    }
+    double sinThetaMax2 = radius * radius / (dc * dc);
+    double cosThetaMax = sqrt(std::max(0.0, 1.0 - sinThetaMax2));
+    return uniformSampleConePDF(cosThetaMax);
+}
+
 ////Triangle Shape
 Triangle::Triangle(Point3d _p0, Point3d _p1, Point3d _p2, bool isE) : p0(_p0), p1(_p1), p2(_p2), Shape(TRIANGLE, isE) {
     e1 = p1 - p0;

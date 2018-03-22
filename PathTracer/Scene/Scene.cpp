@@ -7,6 +7,7 @@
 //
 
 #include "Scene.h"
+#include "Light.h"
 #include <iostream>
 
 Scene::Scene(int spT, int liT) : shapeTotal(spT), lightTotal(liT) {
@@ -61,4 +62,5 @@ void Scene::addShape(Shape *sp) {
 void Scene::addLight(Light *li) {
     lights[lightCount] = li;
     lightCount++;
+    Light::powerSum += li->getPower();
 }

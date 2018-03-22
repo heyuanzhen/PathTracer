@@ -209,8 +209,18 @@ double FresnelSpecular::FrDielectric(double cosThetaI, double etaI, double etaT)
 //
 //Spectrum3d BlinnPhongSpecularReflection::eval(const Vector3d wo, const Vector3d wi) const{
 //    Vector3d H = (wo + wi) / (wo + wi).norm();
-//    return Spectrum3d(1.0, 1.0, 1.0) * ks * pow(H.dot(n), shininess);
+//    return (shininess + 2.0) * Spectrum3d(1.0, 1.0, 1.0) * pow(H.dot(n), shininess) / (2.0 * Pi);
 //}
+//
+//Spectrum3d BlinnPhongSpecularReflection::sampleWiAndEval(const Vector3d wo, Vector3d &wi, Point2d u, double &pdf) {
+//    double theta = acos(pow(u[0], 1.0 / (shininess + 1.0)));
+//    double phi = 2.0 * Pi * u[1];
+//    Spectrum3d wh = Vector3d(cos(phi) * sin(theta), sin(phi) * sin(theta), cos(theta));
+//    wi = reflect(wo, wh);
+//    pdf = ((shininess + 2.0) / (shininess + 1.0)) * 4.0 * ()
+//}
+
+
 
 ////Blinn-Phong
 //BlinnPhong::BlinnPhong(double _ka, double _kd, double _ks, double _shininess) :

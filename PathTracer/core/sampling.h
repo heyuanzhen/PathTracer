@@ -89,7 +89,7 @@ inline Point3d uniformSampleCone(const Point2d u, const double cosThetaMax){
     return Point3d(cos(phi) * sinTheta, sin(phi) * sinTheta, cosTheta);
 }
 inline double uniformSampleConePDF(const double cosThetaMax){
-    return 1 / (2 * Pi * (1 - cosThetaMax));
+    return 1.0 / (2.0 * Pi * (1.0 - cosThetaMax));
 }
 
 //what's this ????
