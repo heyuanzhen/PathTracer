@@ -119,7 +119,7 @@ void Renderer::startRendering() {
             pixels[rowi][coli * 3 + 1] = pix(1);
             pixels[rowi][coli * 3 + 2] = pix(2);
             
-//            if (coli == 30 && rowi == 5) {
+//            if (pix.norm() > 2.0) {
 //                std::cout<<"("<<rowi<<", "<<coli<<"), pix = "<<pix.transpose()<<std::endl<<std::endl;
 //            }
             

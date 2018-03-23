@@ -117,13 +117,18 @@ Spectrum3d Material::sampleBSDF(const Vector3d woW, Vector3d& wiW, const Matrix3
         exit(0);
     }
     
-    Vector3d wiL;
-    f = bxdf->sampleWiAndEval(woL, wiL, rsp.get2D(), pdf);
+    Vector3d wiL(0.0 ,0.0, 0.0);
+    do {
+        f = bxdf->sampleWiAndEval(woL, wiL, rsp.get2D(), pdf);
+    } while (wiL[2] < 0.0 && bxdf->getType() == BxDF::BFSPECULAR);
+
     pdf *= bxdf->getWeight() / bsdf->getWeightSum();
     wiW = rotateNormalToWorld(wiL, invM);
 
     isEnter = false;
-    specularBounces = (bxdf->getType() == BxDF::SPECULAR) || (bxdf->getType() == BxDF::FRESNELSPECULAR);
+    specularBounces = (bxdf->getType() == BxDF::SPECULAR) ||
+                      (bxdf->getType() == BxDF::FRESNELSPECULAR);// ||
+//                      (bxdf->getType() == BxDF::BFSPECULAR);
     isEnter = ((bxdf->getType() == BxDF::TRANSMISSION) || (bxdf->getType() ==  BxDF::FRESNELSPECULAR)) && wiL[2] < 0.0;
     
     for (int i = 0; i < BxDFCount; i++) {
@@ -132,6 +137,9 @@ Spectrum3d Material::sampleBSDF(const Vector3d woW, Vector3d& wiW, const Matrix3
             f += bsdf->bxdfs[i]->eval(woL, wiL);
         }
     }
+//    if (bxdf->getType() == BxDF::BFSPECULAR && (f/pdf).norm() > 1.74) {
+//        std::cout<<"f = "<<f.transpose()<<", pdf = "<<pdf<<", f / pdf = "<<(f / pdf).transpose()<<", cos = "<<wiL.dot(nG)<<std::endl;
+//    }
     return f;
 }
 

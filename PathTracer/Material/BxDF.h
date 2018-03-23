@@ -181,10 +181,10 @@ public:
 };
 
 class BlinnPhongSpecularReflection : public BxDF{
-    double ks;
+    Spectrum3d ks;
     double shininess;
 public:
-    BlinnPhongSpecularReflection(double _ks, double _sh);
+    BlinnPhongSpecularReflection(Spectrum3d _ks, double _sh);
     ~BlinnPhongSpecularReflection();
     virtual Spectrum3d eval(const Vector3d wo, const Vector3d wi) const;
     virtual Spectrum3d sampleWiAndEval(const Vector3d wo, Vector3d& wi, Point2d u, double& pdf) const;

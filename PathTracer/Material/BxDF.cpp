@@ -8,6 +8,7 @@
 
 #include "BxDF.h"
 #include "sampling.h"
+#include "operation.h"
 #include <iostream>
 
 inline Vector3d reflect(const Vector3d wo, const Vector3d n) {
@@ -202,25 +203,65 @@ double FresnelSpecular::FrDielectric(double cosThetaI, double etaI, double etaT)
 
 
 //////Blinn-Phong Specular Reflection
-//BlinnPhongSpecularReflection::BlinnPhongSpecularReflection(double _ks, double _sh) :
-//                                ks(_ks), shininess(_sh), BxDF(BFSPECULAR) {}
-//
-//BlinnPhongSpecularReflection::~BlinnPhongSpecularReflection() {}
-//
-//Spectrum3d BlinnPhongSpecularReflection::eval(const Vector3d wo, const Vector3d wi) const{
+BlinnPhongSpecularReflection::BlinnPhongSpecularReflection(Spectrum3d _ks, double _sh) :
+                                ks(_ks), shininess(_sh), BxDF(BFSPECULAR) {}
+
+BlinnPhongSpecularReflection::~BlinnPhongSpecularReflection() {}
+
+Spectrum3d BlinnPhongSpecularReflection::eval(const Vector3d wo, const Vector3d wi) const{
+    Vector3d wr = reflect(wo, n);
+    if (wi.dot(wr) < eps || wi.dot(n) < eps) {
+        return Spectrum3d(0.0, 0.0, 0.0);
+    }
+    return ks * pow(wi.dot(wr), shininess) * (shininess + 2.0) / (2.0 * Pi);
 //    Vector3d H = (wo + wi) / (wo + wi).norm();
-//    return (shininess + 2.0) * Spectrum3d(1.0, 1.0, 1.0) * pow(H.dot(n), shininess) / (2.0 * Pi);
-//}
-//
-//Spectrum3d BlinnPhongSpecularReflection::sampleWiAndEval(const Vector3d wo, Vector3d &wi, Point2d u, double &pdf) {
-//    double theta = acos(pow(u[0], 1.0 / (shininess + 1.0)));
-//    double phi = 2.0 * Pi * u[1];
+//    return (shininess + 2.0) * ks * pow(H.dot(n), shininess) / (2.0 * Pi);
+}
+
+Spectrum3d BlinnPhongSpecularReflection::sampleWiAndEval(const Vector3d wo, Vector3d &wi, Point2d u, double &pdf) const {
+    double theta = acos(pow(u[0], 1.0 / (shininess + 1.0)));
+    double phi = 2.0 * Pi * u[1];
+    Vector3d wr = reflect(wo, n);
+    Vector3d wit = Vector3d(cos(phi) * sin(theta), sin(phi) * sin(theta), cos(theta));
+    Matrix3d rotM = calcRotateMartix(wr, n).inverse();
+    wi = rotM * wit;
 //    Spectrum3d wh = Vector3d(cos(phi) * sin(theta), sin(phi) * sin(theta), cos(theta));
-//    wi = reflect(wo, wh);
-//    pdf = ((shininess + 2.0) / (shininess + 1.0)) * 4.0 * ()
-//}
+//    Vector3d wi = uniformSampleHemisphere(u);
+    if (wi.dot(wr) < eps || wi.dot(n) < eps) {
+        pdf = 0.0;
+        return Spectrum3d(0.0, 0.0, 0.0);
+    }
+    pdf = calcPDF(wo, wi);
+    return eval(wo, wi);
+//    if (wi[2] < 0.0 || wo.dot(wh) < 0.0) {
+//        pdf = 0.0;
+//        return Spectrum3d(0.0, 0.0, 0.0);
+//    }
+//    pdf = std::max(1e-10, ((shininess + 1.0) / (2.0 * Pi)) * pow(wh.dot(n), shininess);// / (4.0 * wo.dot(wh)));
+//    Spectrum3d f = (shininess + 2.0) * ks * pow(wh.dot(n), shininess) / (2.0 * Pi);
+////    std::cout<<pow(cosTheta(wi), shininess)<<std::endl;
+//    Spectrum3d estimator = ks * ((shininess + 2.0) / (shininess + 1.0)) * 4.0 * wo.dot(wh);
+//    if ((f / pdf).norm() >1.74) {
+//        std::cout<<"estimator = "<<estimator.transpose()<<", es * cos = "<<(estimator * cosTheta(wi)).transpose()<<std::endl;
+//        std::cout<<"pdf = "<<pdf<<", f = "<<f.transpose()<<", f / pdf = "<<(f / pdf).transpose()<<"wi = "<<wi<<std::endl<<std::endl;
+//
+//    }
+//    return (shininess + 2.0) * ks * pow(wh.dot(n), shininess) / (2.0 * Pi);
+}
 
+double BlinnPhongSpecularReflection::calcPDF(const Vector3d wo, const Vector3d wi) const {
+//    return isSameHemisphere(wo, wi) ? absCosTheta(wi) * InvPi : 0.0;
+//    Spectrum3d wh = (wo + wi) / (wo + wi).norm();
+    Vector3d wr = reflect(wo, n);
+    if (wi.dot(wr) < 0.0) {
+        return 0.0;
+    }
+    return ((shininess + 1.0) / (2.0 * Pi)) * pow(wi.dot(wr), shininess);
+}
 
+double BlinnPhongSpecularReflection::getWeight() const {
+    return ks.norm();
+}
 
 ////Blinn-Phong
 //BlinnPhong::BlinnPhong(double _ka, double _kd, double _ks, double _shininess) :

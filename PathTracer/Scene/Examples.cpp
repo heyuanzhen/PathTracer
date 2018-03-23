@@ -38,7 +38,7 @@ void cbox(){
     
     Sphere sphere1 = Sphere(1.98, Point3d(-2.36, 1.985, -1.5), false);
     scene.addShape(&sphere1);
-    BlinnPhongBSDF bpBSDF1 = BlinnPhongBSDF(zero, zero, one);
+    PhongBSDF bpBSDF1 = PhongBSDF(zero, zero, one);
     bpBSDF1.buildBSDF();
     Material mat1 = Material(Material::PHONG, &bpBSDF1);
     sphere1.setMaterial(&mat1);
@@ -51,19 +51,19 @@ void cbox(){
     sphere2.setMaterial(&mat2);
     
     
-    BlinnPhongBSDF bpBSDFCeil = BlinnPhongBSDF(zero, threeQuater, zero);
+    PhongBSDF bpBSDFCeil = PhongBSDF(zero, threeQuater, zero);
     Material matCeil = Material(Material::PHONG, &bpBSDFCeil);
     
-    BlinnPhongBSDF bpBSDFBack = BlinnPhongBSDF(zero, threeQuater, zero);
+    PhongBSDF bpBSDFBack = PhongBSDF(zero, threeQuater, zero);
     Material matBack = Material(Material::PHONG, &bpBSDFBack);
     
-    BlinnPhongBSDF bpBSDFLeft = BlinnPhongBSDF(zero, red, zero);
+    PhongBSDF bpBSDFLeft = PhongBSDF(zero, red, zero);
     Material matLeft = Material(Material::PHONG, &bpBSDFLeft);
     
-    BlinnPhongBSDF bpBSDFRight = BlinnPhongBSDF(zero, blue, zero);
+    PhongBSDF bpBSDFRight = PhongBSDF(zero, blue, zero);
     Material matRight = Material(Material::PHONG, &bpBSDFRight);
     
-    BlinnPhongBSDF bpBSDFFloor = BlinnPhongBSDF(zero, threeQuater, zero);
+    PhongBSDF bpBSDFFloor = PhongBSDF(zero, threeQuater, zero);
     Material matFloor = Material(Material::PHONG, &bpBSDFFloor);
     
     
@@ -100,7 +100,7 @@ void cbox(){
 //    Spectrum3d li(4.0, 4.0, 4.0);
 //    Spectrum3d li(2.0, 2.0, 2.0);
 
-    BlinnPhongBSDF bsdfRecLight = BlinnPhongBSDF(zero, one, zero);
+    PhongBSDF bsdfRecLight = PhongBSDF(zero, one, zero);
     Material matRecLight = Material(Material::PHONG, &bsdfRecLight);
     Rectangular recLightShape = Rectangular(lA, lD, lC, true);
     scene.addShape(&recLightShape);
@@ -129,7 +129,7 @@ void veach() {
     
     
     int reso[2] = {512 / 2, 768 / 2};
-    int sampleCount = 100;
+    int sampleCount = 64;
     int maxDepth = 20;
     
     Scene scene = Scene(11, 5);
@@ -177,27 +177,27 @@ void veach() {
     floor2.setNormal(Vector3d(0.0, 0.0, 1.0));
     
     
-    BlinnPhongBSDF bsdfFloor1 = BlinnPhongBSDF(zero, floorColor, zero);
+    PhongBSDF bsdfFloor1 = PhongBSDF(zero, floorColor, zero);
     Material matFloor1 = Material(Material::PHONG, &bsdfFloor1);
-    BlinnPhongBSDF bsdfFloor2 = BlinnPhongBSDF(zero, floorColor, zero);
+    PhongBSDF bsdfFloor2 = PhongBSDF(zero, floorColor, zero);
     Material matFloor2 = Material(Material::PHONG, &bsdfFloor2);
-    BlinnPhongBSDF bsdfSphere0 = BlinnPhongBSDF(zero, little, zero);//
+    PhongBSDF bsdfSphere0 = PhongBSDF(zero, little, zero);//
     Material matSphere0 = Material(Material::PHONG, &bsdfSphere0);//
-    BlinnPhongBSDF bsdfSphere1 = BlinnPhongBSDF(zero, little, zero);
+    PhongBSDF bsdfSphere1 = PhongBSDF(zero, little, zero);
     Material matSphere1 = Material(Material::PHONG, &bsdfSphere1);
-    BlinnPhongBSDF bsdfSphere2 = BlinnPhongBSDF(zero, little, zero);
+    PhongBSDF bsdfSphere2 = PhongBSDF(zero, little, zero);
     Material matSphere2 = Material(Material::PHONG, &bsdfSphere2);
-    BlinnPhongBSDF bsdfSphere3 = BlinnPhongBSDF(zero, little, zero);
+    PhongBSDF bsdfSphere3 = PhongBSDF(zero, little, zero);
     Material matSphere3 = Material(Material::PHONG, &bsdfSphere3);
-    BlinnPhongBSDF bsdfSphere4 = BlinnPhongBSDF(zero, little, zero);
+    PhongBSDF bsdfSphere4 = PhongBSDF(zero, little, zero);
     Material matSphere4 = Material(Material::PHONG, &bsdfSphere4);
-    BlinnPhongBSDF bsdfPlate1 = BlinnPhongBSDF(zero, plate1Diffuse, plate1Specular);
+    BlinnPhongBSDF bsdfPlate1 = BlinnPhongBSDF(zero, plate1Diffuse, plate1Specular,500.0* 0.1 / 0.005);
     Material matPlate1 = Material(Material::PHONG, & bsdfPlate1);
-    BlinnPhongBSDF bsdfPlate2 = BlinnPhongBSDF(zero, plate1Diffuse, plate1Specular);
+    BlinnPhongBSDF bsdfPlate2 = BlinnPhongBSDF(zero, plate1Diffuse, plate1Specular,500.0* 0.1 / 0.02);
     Material matPlate2 = Material(Material::PHONG, & bsdfPlate2);
-    BlinnPhongBSDF bsdfPlate3 = BlinnPhongBSDF(zero, plate1Diffuse, plate1Specular);
+    BlinnPhongBSDF bsdfPlate3 = BlinnPhongBSDF(zero, plate1Diffuse, plate1Specular,500.0* 0.1 / 0.05);
     Material matPlate3 = Material(Material::PHONG, & bsdfPlate3);
-    BlinnPhongBSDF bsdfPlate4 = BlinnPhongBSDF(zero, plate1Diffuse, plate1Specular);
+    BlinnPhongBSDF bsdfPlate4 = BlinnPhongBSDF(zero, plate1Diffuse, plate1Specular,500.0* 0.1 / 0.1);
     Material matPlate4 = Material(Material::PHONG, & bsdfPlate4);
     
     AreaLight sphereLight0 = AreaLight(li0, &sphere0);//

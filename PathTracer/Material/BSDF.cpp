@@ -45,7 +45,7 @@ double BSDF::getWeightSum() const {
 
 
 ////Blinn-Phong Reflection Model
-BlinnPhongBSDF::BlinnPhongBSDF(Spectrum3d _ka, Spectrum3d _kd, Spectrum3d _ks):
+PhongBSDF::PhongBSDF(Spectrum3d _ka, Spectrum3d _kd, Spectrum3d _ks):
                 ka(_ka), kd(_kd), ks(_ks), T(Spectrum3d(0.0, 0.0, 0.0)), eta(1.0){
     buildBSDF();
     weightSum = 0.0;
@@ -54,7 +54,7 @@ BlinnPhongBSDF::BlinnPhongBSDF(Spectrum3d _ka, Spectrum3d _kd, Spectrum3d _ks):
     }
 }
 
-BlinnPhongBSDF::BlinnPhongBSDF(Spectrum3d _ka, Spectrum3d _kd, Spectrum3d _ks,
+PhongBSDF::PhongBSDF(Spectrum3d _ka, Spectrum3d _kd, Spectrum3d _ks,
                                Spectrum3d _T, double e):
 ka(_ka), kd(_kd), ks(_ks), T(_T), eta(e){
     buildBSDF();
@@ -64,6 +64,49 @@ ka(_ka), kd(_kd), ks(_ks), T(_T), eta(e){
     }
 }
 
+
+PhongBSDF::~PhongBSDF() {
+    if (isBuilt) {
+        for (int i = 0; i < BxDFCount; i++) {
+            delete bxdfs[i];
+        }
+    }
+}
+
+void PhongBSDF::buildBSDF() {
+    if (isBuilt) {
+        return;
+    }
+    BxDF* ambientReflection = new ConstantReflection(ka);
+    BxDF* diffuseReflection = new LambertianDiffuseReflection(kd);
+    BxDF* specularReflection = new SpecularReflection(ks);
+    BxDF* specularTransmission = new SpecularTransmission(T, 1.0, eta);
+    addBxDF(ambientReflection);
+    addBxDF(diffuseReflection);
+    addBxDF(specularReflection);
+    addBxDF(specularTransmission);
+    setBuilt(true);
+}
+
+
+////Blinn Phong BSDF
+BlinnPhongBSDF::BlinnPhongBSDF(Spectrum3d _ka, Spectrum3d _kd, Spectrum3d _ks, Spectrum3d _T, double sh, double e) :
+ka(_ka), kd(_kd), ks(_ks), T(_T), shininess(sh), eta(e) {
+    buildBSDF();
+    weightSum = 0.0;
+    for (int i = 0; i < getBxDFCount(); i++) {
+        weightSum += bxdfs[i]->getWeight();
+    }
+}
+
+BlinnPhongBSDF::BlinnPhongBSDF(Spectrum3d _ka, Spectrum3d _kd, Spectrum3d _ks, double sh) :
+ka(_ka), kd(_kd), ks(_ks), shininess(sh), T(Spectrum3d(0.0, 0.0, 0.0)), eta(1.0){
+    buildBSDF();
+    weightSum = 0.0;
+    for (int i = 0; i < getBxDFCount(); i++) {
+        weightSum += bxdfs[i]->getWeight();
+    }
+}
 
 BlinnPhongBSDF::~BlinnPhongBSDF() {
     if (isBuilt) {
@@ -79,7 +122,7 @@ void BlinnPhongBSDF::buildBSDF() {
     }
     BxDF* ambientReflection = new ConstantReflection(ka);
     BxDF* diffuseReflection = new LambertianDiffuseReflection(kd);
-    BxDF* specularReflection = new SpecularReflection(ks);
+    BxDF* specularReflection = new BlinnPhongSpecularReflection(ks, shininess);
     BxDF* specularTransmission = new SpecularTransmission(T, 1.0, eta);
     addBxDF(ambientReflection);
     addBxDF(diffuseReflection);

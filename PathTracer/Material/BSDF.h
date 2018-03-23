@@ -32,16 +32,28 @@ public:
     virtual void buildBSDF() = 0;
 };
 
-class BlinnPhongBSDF : public BSDF {
+class PhongBSDF : public BSDF {
 public:
-    BlinnPhongBSDF(Spectrum3d _ka, Spectrum3d _kd, Spectrum3d _ks);
-    BlinnPhongBSDF(Spectrum3d _ka, Spectrum3d _kd, Spectrum3d _ks, Spectrum3d _T, double e);
-    ~BlinnPhongBSDF();
+    PhongBSDF(Spectrum3d _ka, Spectrum3d _kd, Spectrum3d _ks);
+    PhongBSDF(Spectrum3d _ka, Spectrum3d _kd, Spectrum3d _ks, Spectrum3d _T, double e);
+    ~PhongBSDF();
     
     virtual void buildBSDF();
 private:
     Spectrum3d ka, kd, ks, T;
     double eta;
+};
+
+class BlinnPhongBSDF : public BSDF {
+private:
+    Spectrum3d ka, kd, ks, T;
+    double shininess, eta;
+public:
+    BlinnPhongBSDF(Spectrum3d _ka, Spectrum3d _kd, Spectrum3d _ks, double sh);
+    BlinnPhongBSDF(Spectrum3d _ka, Spectrum3d _kd, Spectrum3d _ks, Spectrum3d _T, double sh, double e);
+    ~BlinnPhongBSDF();
+    
+    virtual void buildBSDF();
 };
 
 
