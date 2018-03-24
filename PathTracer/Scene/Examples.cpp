@@ -128,9 +128,10 @@ void veach() {
     rand();
     
     
-    int reso[2] = {512 / 2, 768 / 2};
-    int sampleCount = 64;
+    int reso[2] = {768, 1152};
+    int sampleCount = 1024;
     int maxDepth = 20;
+    //
     
     Scene scene = Scene(11, 5);
     
