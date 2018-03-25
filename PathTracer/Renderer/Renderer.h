@@ -53,8 +53,9 @@ public:
     ~Renderer();
     void printPixels() const;
     void modifyPixels();
-    void showImage() const;
+//    void showImage() const;
     void showImage_uint8() const;
+    void writePPM() const;
     void startRendering();
     void test();
 };

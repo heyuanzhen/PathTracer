@@ -32,8 +32,8 @@ void cbox(){
     Spectrum3d threeQuater = Spectrum3d(0.75, 0.75, 0.75);
     Spectrum3d oneQuater = Spectrum3d(0.25, 0.25, 0.25);
     Spectrum3d half = Spectrum3d(0.5, 0.5, 0.5);
-    Spectrum3d red = Spectrum3d(0.1, 0.1, 0.9);
-    Spectrum3d blue = Spectrum3d(0.9, 0.1, 0.1);
+    Spectrum3d red = Spectrum3d(0.9, 0.1, 0.1);
+    Spectrum3d blue = Spectrum3d(0.1, 0.1, 0.9);
 
     
     Sphere sphere1 = Sphere(1.98, Point3d(-2.36, 1.985, -1.5), false);
@@ -129,7 +129,7 @@ void veach() {
     
     
     int reso[2] = {768, 1152};
-    int sampleCount = 1024;
+    int sampleCount = 4;
     int maxDepth = 20;
     //
     
@@ -144,7 +144,7 @@ void veach() {
     Spectrum3d li3 = Spectrum3d(11.1111, 11.1111, 11.1111) * lightRatio;
     Spectrum3d li4 = Spectrum3d(1.23457, 1.23457, 1.23457) * lightRatio;
     Spectrum3d floorColor = Spectrum3d(0.4, 0.4, 0.4);
-    Spectrum3d plate1Diffuse = Spectrum3d(0.13, 0.09, 0.07), plate1Specular = Spectrum3d(0.09, 0.09, 0.09);
+    Spectrum3d plate1Diffuse = Spectrum3d(0.07, 0.09, 0.13), plate1Specular = Spectrum3d(0.09, 0.09, 0.09);
 //    Spectrum3d plate2Diffuse = Spectrum3d()
     
     Point3d pfloor1(-10, -4.14615, -10), pfloor2(-10, -4.14615, 10), pfloor3(10, -4.14615, 10);

@@ -11,7 +11,7 @@
 #include "PathIntegrator.h"
 
 #include <iostream>
-#include <opencv2/opencv.hpp>
+//#include <opencv2/opencv.hpp>
 
 Renderer::Renderer(int* reso, int spc, int mD, Scene* sc, Sampler* psp,
                    Sampler* nsp, double* lookAt, double fov) {
@@ -59,18 +59,28 @@ void Renderer::printPixels() const {
     }
 }
 
-void Renderer::showImage() const {
-    cv::Mat img = cv::Mat::zeros(yres, xres, CV_8UC3);
-    for (int i = 0; i < yres; i++) {
-        for (int j = 0; j < xres; j++) {
-            img.at<cv::Vec3b>(i, j)[0] = toRBGUint8(pixels[i][j * 3]);
-            img.at<cv::Vec3b>(i, j)[1] = toRBGUint8(pixels[i][j * 3 + 1]);
-            img.at<cv::Vec3b>(i, j)[2] = toRBGUint8(pixels[i][j * 3 + 2]);
+//void Renderer::showImage() const {
+//    cv::Mat img = cv::Mat::zeros(yres, xres, CV_8UC3);
+//    for (int i = 0; i < yres; i++) {
+//        for (int j = 0; j < xres; j++) {
+//            img.at<cv::Vec3b>(i, j)[0] = toRBGUint8(pixels[i][j * 3]);
+//            img.at<cv::Vec3b>(i, j)[1] = toRBGUint8(pixels[i][j * 3 + 1]);
+//            img.at<cv::Vec3b>(i, j)[2] = toRBGUint8(pixels[i][j * 3 + 2]);
+//        }
+//    }
+//    cv::imwrite("result/img.png", img);
+//    cv::imshow("window", img);
+//    cv::waitKey(0);
+//}
+
+void Renderer::writePPM() const {
+    FILE *f = fopen("result/img.ppm", "w");         // Write image to PPM file.
+    fprintf(f, "P3\n%d %d\n%d\n", xres, yres, 255);
+    for (int i = 0; i < yres; i++){
+        for (int j = 0; j < xres; j++){
+            fprintf(f, "%d %d %d ", toRBGUint8(pixels[i][j * 3]), toRBGUint8(pixels[i][j * 3 + 1]), toRBGUint8(pixels[i][j * 3 + 2]));
         }
     }
-    cv::imwrite("result/img.png", img);
-    cv::imshow("window", img);
-    cv::waitKey(0);
 }
 
 
@@ -87,26 +97,19 @@ void Renderer::startRendering() {
             double* pixelBuffer = new double[sampleCount * 3]();
             #pragma omp parallel for schedule(dynamic)
             for (int spi = 0; spi < sampleCount; spi++) {
-//                int offset = (rowi * xres + coli) * sampleCount + spi;
                 int offset = spi;
                 if (!rays[offset].isInit()) {
                     std::cout<<"This ray has not been initialized !"<<std::endl;
                     continue;
                 }
-//                std::cout<<rays[offset].getDirection().transpose()<<std::endl;
                 PathIntegrator path = PathIntegrator(&rays[offset], scene, normalSampler, maxDepth);
                 Spectrum3d rad = path.Li();
-//                if (rad.norm() > eps) {
-//                    std::cout<<"("<<rowi<<", "<<coli<<"), rad = "<<rad.transpose()<<std::endl;
-//                }
                 pixelBuffer[spi * 3] = rad[0];
                 pixelBuffer[spi * 3 + 1] = rad[1];
                 pixelBuffer[spi * 3 + 2] = rad[2];
             }
             Spectrum3d pix(0.0, 0.0, 0.0), pix_temp(0.0, 0.0, 0.0);
             for (int spi = 0; spi < sampleCount; spi++) {
-//                std::cout<<"pixelBuffer("<<spi<<") = "<<pixelBuffer[spi * 3]<<", "
-//                <<pixelBuffer[spi * 3 + 1]<<", "<<pixelBuffer[spi * 3 + 2]<<std::endl;
                 pix_temp = Spectrum3d(pixelBuffer[spi * 3], pixelBuffer[spi * 3 + 1], pixelBuffer[spi * 3 + 2]);
                 pix = pix + pix_temp;
 //                if (pix_temp.norm() > eps) {
@@ -118,10 +121,6 @@ void Renderer::startRendering() {
             pixels[rowi][coli * 3] = pix(0);
             pixels[rowi][coli * 3 + 1] = pix(1);
             pixels[rowi][coli * 3 + 2] = pix(2);
-            
-//            if (pix.norm() > 2.0) {
-//                std::cout<<"("<<rowi<<", "<<coli<<"), pix = "<<pix.transpose()<<std::endl<<std::endl;
-//            }
             
             delete[] pixelBuffer;
         }
@@ -137,5 +136,6 @@ void Renderer::startRendering() {
 void Renderer::test() {
 //    camera->generateRays();
     startRendering();
-    showImage();
+    writePPM();
+//    showImage();
 }
