@@ -134,8 +134,13 @@ void Renderer::startRendering() {
 
 
 void Renderer::test() {
-//    camera->generateRays();
+    time_t start,stop;
+    start = time(NULL);
+    
     startRendering();
+    
+    stop = time(NULL);
+    printf("Rendering used Time: %ld s\n",(stop-start));
+    
     writePPM();
-//    showImage();
 }

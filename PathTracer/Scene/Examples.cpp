@@ -21,9 +21,9 @@ void cbox(){
     rand();
     
     
-    int reso[2] = {1000 / 4, 1150 / 4};
-    int sampleCount = 64;
-    int maxDepth = 20;
+    int reso[2] = {1000, 1150};
+    int sampleCount = 4900;
+    int maxDepth = 10;
     
     Scene scene = Scene(8, 1);
     
@@ -130,7 +130,7 @@ void veach() {
     
     int reso[2] = {768, 1152};
     int sampleCount = 4;
-    int maxDepth = 20;
+    int maxDepth = 10;
     //
     
     Scene scene = Scene(11, 5);
@@ -192,7 +192,7 @@ void veach() {
     Material matSphere3 = Material(Material::PHONG, &bsdfSphere3);
     PhongBSDF bsdfSphere4 = PhongBSDF(zero, little, zero);
     Material matSphere4 = Material(Material::PHONG, &bsdfSphere4);
-    BlinnPhongBSDF bsdfPlate1 = BlinnPhongBSDF(zero, plate1Diffuse, plate1Specular,500.0* 0.1 / 0.005);
+    BlinnPhongBSDF bsdfPlate1 = BlinnPhongBSDF(zero, plate1Diffuse, plate1Specular,5000.0* 0.1 / 0.005);
     Material matPlate1 = Material(Material::PHONG, & bsdfPlate1);
     BlinnPhongBSDF bsdfPlate2 = BlinnPhongBSDF(zero, plate1Diffuse, plate1Specular,500.0* 0.1 / 0.02);
     Material matPlate2 = Material(Material::PHONG, & bsdfPlate2);
