@@ -11,9 +11,16 @@
 #include <iostream>
 
 ////Material
+Material::Material() {}
+
 Material::Material(materialType mt, BSDF* bs) : mType(mt), bsdf(bs) {}
 
 Material::~Material() {}
+
+void Material::setMaterial(Material::materialType mt, BSDF *bs) {
+    mType = mt;
+    bsdf = bs;
+}
 
 Vector3d Material::rotateNormalToLocal(const Vector3d vW, const Matrix3d M) const {
     if (M.isZero()) {

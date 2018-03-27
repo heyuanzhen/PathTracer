@@ -8,6 +8,8 @@
 
 #include "Scene.h"
 #include "Light.h"
+#include "OBJ_Loader.h"
+#include "Shape.h"
 #include <iostream>
 
 Scene::Scene(int spT, int liT) : shapeTotal(spT), lightTotal(liT) {
@@ -23,7 +25,7 @@ Scene::~Scene(){
 }
 
 Shape* Scene::getShape(int spi) const {
-    if (spi >= shapeTotal) {
+    if (spi >= shapeTotal || spi >= shapeCount) {
         std::cout<<"Shape index "<<spi<<" out of range !"<<std::endl;
         return nullptr;
     }
@@ -31,7 +33,7 @@ Shape* Scene::getShape(int spi) const {
 }
 
 Light* Scene::getLight(int li) const {
-    if (li >= lightTotal) {
+    if (li >= lightTotal || li >= lightCount) {
         std::cout<<"Light index out of range !"<<std::endl;
         return nullptr;
     }
@@ -64,3 +66,36 @@ void Scene::addLight(Light *li) {
     lightCount++;
     Light::powerSum += li->getPower();
 }
+
+void Scene::readObjFile(std::string fileName, Shape **triangles, bool isE) {
+    objl::Loader loader;
+    bool loadout = loader.LoadFile(fileName);
+    int meshCount = (int)loader.LoadedMeshes.size();
+    triangles = new Shape* [meshCount]();
+    if (loadout) {
+        int tri = 0;
+        for (int i = 0; i < meshCount; i++) {
+            objl::Mesh curMesh = loader.LoadedMeshes[i];
+            int surfaceCount = (int)curMesh.Indices.size();
+            for (int j = 0; j < surfaceCount; j+= 3) {
+                int id1 = curMesh.Indices[j], id2 = curMesh.Indices[j + 1], id3 = curMesh.Indices[j + 2];
+                Point3d p1(curMesh.Vertices[id1].Position.X, curMesh.Vertices[id1].Position.Y, curMesh.Vertices[id1].Position.Z);
+                Point3d p2(curMesh.Vertices[id2].Position.X, curMesh.Vertices[id2].Position.Y, curMesh.Vertices[id2].Position.Z);
+                Point3d p3(curMesh.Vertices[id3].Position.X, curMesh.Vertices[id3].Position.Y, curMesh.Vertices[id3].Position.Z);
+                triangles[tri] = new Triangle(p1, p2, p3, isE);
+                addShape(triangles[tri++]);
+            }
+        }
+    }
+}
+
+
+
+
+
+
+
+
+
+
+

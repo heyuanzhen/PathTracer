@@ -45,6 +45,8 @@ double BSDF::getWeightSum() const {
 
 
 ////Blinn-Phong Reflection Model
+PhongBSDF::PhongBSDF() {}
+
 PhongBSDF::PhongBSDF(Spectrum3d _ka, Spectrum3d _kd, Spectrum3d _ks):
                 ka(_ka), kd(_kd), ks(_ks), T(Spectrum3d(0.0, 0.0, 0.0)), eta(1.0){
     buildBSDF();
@@ -58,10 +60,7 @@ PhongBSDF::PhongBSDF(Spectrum3d _ka, Spectrum3d _kd, Spectrum3d _ks,
                                Spectrum3d _T, double e):
 ka(_ka), kd(_kd), ks(_ks), T(_T), eta(e){
     buildBSDF();
-    weightSum = 0.0;
-    for (int i = 0; i < getBxDFCount(); i++) {
-        weightSum += bxdfs[i]->getWeight();
-    }
+    
 }
 
 
@@ -86,8 +85,20 @@ void PhongBSDF::buildBSDF() {
     addBxDF(specularReflection);
     addBxDF(specularTransmission);
     setBuilt(true);
+    weightSum = 0.0;
+    for (int i = 0; i < getBxDFCount(); i++) {
+        weightSum += bxdfs[i]->getWeight();
+    }
 }
 
+void PhongBSDF::buildBSDF(Spectrum3d _ka, Spectrum3d _kd, Spectrum3d _ks) {
+    ka = _ka;
+    kd = _kd;
+    ks = _ks;
+    T = Spectrum3d(0.0, 0.0, 0.0);
+    eta = 0.0;
+    buildBSDF();
+}
 
 ////Blinn Phong BSDF
 BlinnPhongBSDF::BlinnPhongBSDF(Spectrum3d _ka, Spectrum3d _kd, Spectrum3d _ks, Spectrum3d _T, double sh, double e) :

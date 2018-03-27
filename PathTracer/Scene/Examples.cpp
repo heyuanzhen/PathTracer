@@ -21,8 +21,8 @@ void cbox(){
     rand();
     
     
-    int reso[2] = {1000, 1150};
-    int sampleCount = 4900;
+    int reso[2] = {1000 / 5, 1150 / 5};
+    int sampleCount = 4;
     int maxDepth = 10;
     
     Scene scene = Scene(8, 1);
@@ -95,7 +95,7 @@ void cbox(){
     left.setMaterial(&matLeft);
     
     Point3d lA(-1.05, 9.99, -1.05), lB(1.05, 9.99, -1.05), lC(1.05, 9.99, 1.05), lD(-1.05, 9.99, 1.05);
-    Spectrum3d li(40.0, 40.0, 40.0);
+    Spectrum3d li(25.0, 25.0, 25.0);
 //    Point3d lA(-3.05, 9.99, -3.05), lB(3.05, 9.99, -3.05), lC(3.05, 9.99, 3.05), lD(-3.05, 9.99, 3.05);
 //    Spectrum3d li(4.0, 4.0, 4.0);
 //    Spectrum3d li(2.0, 2.0, 2.0);
@@ -129,7 +129,7 @@ void veach() {
     
     
     int reso[2] = {768, 1152};
-    int sampleCount = 4;
+    int sampleCount = 1024;
     int maxDepth = 10;
     //
     
@@ -252,7 +252,56 @@ void veach() {
     renderer.test();
 }
 
+void objTest() {
+    srand((unsigned)time(NULL));
+    rand();
+    
+    
+    int reso[2] = {768, 1152};
+    int sampleCount = 1024;
+    int maxDepth = 10;
+    //
+    
+    Spectrum3d zero = Spectrum3d(0.0, 0.0, 0.0);
+    Spectrum3d one = Spectrum3d(1.0, 1.0, 1.0);
+    Spectrum3d threeQuater = Spectrum3d(0.75, 0.75, 0.75);
 
+    Scene scene = Scene(10000, 1);
+    
+    Shape** triangles = nullptr;
+    scene.readObjFile("Resources/scene01.obj", triangles, false);
+    int totalShapes = scene.getShapeCount();
+    PhongBSDF* bsdfArr = new PhongBSDF[totalShapes]();
+    Material* mat = new Material[totalShapes]();
+    for (int i = 0; i < totalShapes; i++) {
+//        std::cout<<scene.getShape(i)->type<<std::endl;
+        bsdfArr[i].buildBSDF(zero, threeQuater, zero);
+        mat[i].setMaterial(Material::PHONG, &bsdfArr[i]);
+        triangles[i]->setMaterial(&mat[i]);
+    }
+    
+    
+    
+    
+    Point3d lA(-1.05, 9.99, -1.05), lB(1.05, 9.99, -1.05), lC(1.05, 9.99, 1.05), lD(-1.05, 9.99, 1.05);
+    Spectrum3d li(25.0, 25.0, 25.0);
+    PhongBSDF bsdfRecLight = PhongBSDF(zero, one, zero);
+    Material matRecLight = Material(Material::PHONG, &bsdfRecLight);
+    Rectangular recLightShape = Rectangular(lA, lD, lC, true);
+    scene.addShape(&recLightShape);
+    recLightShape.setMaterial(&matRecLight);
+    AreaLight recLight = AreaLight(li, &recLightShape);
+    recLightShape.setAreaLight(&recLight);
+    scene.addLight(&recLight);
+    
+    StratifiedSampler pixelSampler = StratifiedSampler(sampleCount);
+    RandomSampler normalSampler = RandomSampler();
+    double lookAt[9] = {0.0,5.0,19.0, 0.0,5.0,0.0, 0.0,1.0,0.0};
+    double fov = M_PI / 4.0;
+    Renderer renderer = Renderer(reso, sampleCount, maxDepth, &scene,
+                                 &pixelSampler, &normalSampler, lookAt, fov);
+    renderer.test();
+}
 
 
 

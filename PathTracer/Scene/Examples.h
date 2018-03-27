@@ -11,6 +11,7 @@
 
 void cbox();
 void veach();
+void objTest();
 
 
 #endif /* Examples_h */

@@ -87,6 +87,7 @@
 		60C905092044451C00417DDA /* PathIntegrator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PathIntegrator.h; sourceTree = "<group>"; };
 		60C9050A2044451C00417DDA /* PathIntegrator.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PathIntegrator.cpp; sourceTree = "<group>"; };
 		60D551A02046E9BE00DF789A /* operation.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = operation.h; sourceTree = "<group>"; };
+		60E10954206A673000711932 /* OBJ_Loader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OBJ_Loader.h; sourceTree = "<group>"; };
 		60EF45912026F7E000DFCF7A /* sampling.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = sampling.h; sourceTree = "<group>"; };
 		60EF45972027026700DFCF7A /* globalConstants.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = globalConstants.h; sourceTree = "<group>"; };
 		60EF459920275FA800DFCF7A /* BxDF.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BxDF.h; sourceTree = "<group>"; };
@@ -213,6 +214,7 @@
 		60EF45902026F7B900DFCF7A /* core */ = {
 			isa = PBXGroup;
 			children = (
+				60E10954206A673000711932 /* OBJ_Loader.h */,
 				603089652025DA9500C6D568 /* typeAlias.h */,
 				60EF45972027026700DFCF7A /* globalConstants.h */,
 				60EF45912026F7E000DFCF7A /* sampling.h */,

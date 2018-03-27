@@ -38,8 +38,9 @@ void parallelTest(){
 }
 
 int main(int argc, const char * argv[]) {
-//    cbox();
-    veach();
+    cbox();
+//    veach();
+//    objTest();
 //    test();
 //    parallelTest();
     return 0;

@@ -17,10 +17,11 @@ public:
         PHONG = 1,
         FRESNEL = 2
     };
-    
+    Material();
     Material(materialType mt, BSDF* bs);
     virtual ~Material();
     
+    void setMaterial(materialType mt, BSDF* bs);
     Vector3d rotateNormalToLocal(const Vector3d vW, const Matrix3d M) const;
     Vector3d rotateNormalToWorld(const Vector3d vL, const Matrix3d invM) const;
     Vector3d getGeometryNormal() const;

@@ -34,11 +34,13 @@ public:
 
 class PhongBSDF : public BSDF {
 public:
+    PhongBSDF();
     PhongBSDF(Spectrum3d _ka, Spectrum3d _kd, Spectrum3d _ks);
     PhongBSDF(Spectrum3d _ka, Spectrum3d _kd, Spectrum3d _ks, Spectrum3d _T, double e);
     ~PhongBSDF();
     
     virtual void buildBSDF();
+    void buildBSDF(Spectrum3d _ka, Spectrum3d _kd, Spectrum3d _ks);
 private:
     Spectrum3d ka, kd, ks, T;
     double eta;
