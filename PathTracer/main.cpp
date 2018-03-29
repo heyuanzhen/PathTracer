@@ -23,13 +23,6 @@
 using namespace std;
 
 
-
-void test() {
-    Point3d p0(-3, 0.0, 0.0), p1(0, -3, 0.0), p2(0, 3, 0.0);
-    Triangle tri1 = Triangle(p0, p1, p2, true);
-    cout<<tri1.Area()<<endl;
-}
-
 void parallelTest(){
     #pragma omp parallel for schedule(dynamic)
     for (int i = 0; i < 100; i++) {
@@ -42,6 +35,5 @@ int main(int argc, const char * argv[]) {
 //    veach();
 //    objTest();
 //    test();
-//    parallelTest();
     return 0;
 }

@@ -29,7 +29,7 @@ bool Light::testVisibility(Point3d pL, Point3d pS, const Scene* scene) const {
 }
 
 bool Light::isDeltaLight() const {
-    return type == POINT || type == DIRECTIONAL;
+    return type == POINT || type == DIRECTIONAL || type == AMBIENT;
 }
 
 Shape* Light::getShape() const {
@@ -110,7 +110,21 @@ double AreaLight::getPower() const {
     return Lemit.norm() * shape->Area() * Pi;
 }
 
+AmbientLight::AmbientLight(Spectrum3d La) : Lamb(La), Light(AMBIENT) {}
 
+AmbientLight::~AmbientLight() {}
+
+Spectrum3d AmbientLight::Sample_Li(const Intersection *inter, const Point2d u, Vector3d &wi,
+                                   double &pdf, bool &vis, const Scene *scene) const {
+    wi = -inter->getLocalNormal();
+    pdf = 1.0;
+    vis = true;
+    return Lamb;
+}
+
+double AmbientLight::getPower() const {
+    return Lamb.norm(); //need to be done
+}
 
 
 

@@ -64,10 +64,12 @@ private:
     Spectrum3d kr, kt;
     double etaA, etaB;
 public:
+    FresnelBSDF();
     FresnelBSDF(Spectrum3d _kr, Spectrum3d _kt, double _eA, double _eB);
     ~FresnelBSDF();
     
     virtual void buildBSDF();
+    void buildBSDF(Spectrum3d _kr, Spectrum3d _kt, double _eA, double _eB);
 };
 
 #endif /* BSDF_h */

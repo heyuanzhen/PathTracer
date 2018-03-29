@@ -77,33 +77,35 @@ Spectrum3d PathIntegrator::estimateDirectLightOnly(const Intersection* it, const
     
     //⟨Sample light source with multiple importance sampling⟩
     //get Li, wi, lightPdf, visibility
-    Li = light->Sample_Li(it, uLight, wi, lightPdf, visibility, scene);
-//    std::cout<<"Li = "<<Li.transpose()<<", lightPdf = "<<lightPdf<<std::endl;
-    if (!visibility) {
-        return Spectrum3d(0.0, 0.0, 0.0);
-    }
-
-    if (lightPdf > 0 && !Li.isZero()) {
-        if (!material) {
-            std::cout<<"null material !"<<std::endl;
-            return Spectrum3d(0.0, 0.0, 0.0);
-        }
-        //get f, scatteringPdf, woL, wiL
-        Vector3d woL, wiL;
-        material->eval(wo, -wi, woL, wiL, M, f, scatteringPdf); //wi := -wi
-        f *= abs(wiL[2]);
-        if (!f.isZero()) {
-            if (!Li.isZero()) {
-                if (light->isDeltaLight()){
-                    Ld += f.cwiseProduct(Li) / lightPdf;
-                }
-                else {
-                    double weight = powerHeuristic(1, lightPdf, 1, scatteringPdf);
-                    Ld += f.cwiseProduct(Li) * weight / lightPdf;
-                }
-            }
-        }
-    }
+//    Li = light->Sample_Li(it, uLight, wi, lightPdf, visibility, scene);
+////    std::cout<<"Li = "<<Li.transpose()<<", lightPdf = "<<lightPdf<<std::endl;
+//    if (!visibility) {
+//        return Spectrum3d(0.0, 0.0, 0.0);
+//    }
+//
+//    if (lightPdf > 0 && !Li.isZero()) {
+//        if (!material) {
+//            std::cout<<"null material !"<<std::endl;
+//            return Spectrum3d(0.0, 0.0, 0.0);
+//        }
+//        //get f, scatteringPdf, woL, wiL
+//        Vector3d woL, wiL;
+//        material->eval(wo, -wi, woL, wiL, M, f, scatteringPdf); //wi := -wi
+//        f *= abs(wiL[2]);
+////        std::cout<<"f = "<<f.transpose()<<std::endl;
+//        if (!f.isZero()) {
+//            if (!Li.isZero()) {
+//                if (light->isDeltaLight()){
+////                    std::cout<<"f = "<<f.transpose()<<std::endl;
+//                    Ld += f.cwiseProduct(Li) / lightPdf;
+//                }
+//                else {
+//                    double weight = powerHeuristic(1, lightPdf, 1, scatteringPdf);
+//                    Ld += f.cwiseProduct(Li) * weight / lightPdf;
+//                }
+//            }
+//        }
+//    }
 //    std::cout<<"Ld = "<<Ld.transpose()<<std::endl;
     
 //    //⟨Sample BSDF with multiple importance sampling⟩

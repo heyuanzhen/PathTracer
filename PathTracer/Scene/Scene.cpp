@@ -74,23 +74,51 @@ void Scene::readObjFile(std::string fileName, Shape **triangles, bool isE) {
     triangles = new Shape* [meshCount]();
     if (loadout) {
         int tri = 0;
+        double maxX = -MAX_DOUBLE, maxY = -MAX_DOUBLE, maxZ = -MAX_DOUBLE;
+        double minX = MAX_DOUBLE, minY = MAX_DOUBLE, minZ = MAX_DOUBLE;
         for (int i = 0; i < meshCount; i++) {
             objl::Mesh curMesh = loader.LoadedMeshes[i];
             int surfaceCount = (int)curMesh.Indices.size();
             for (int j = 0; j < surfaceCount; j+= 3) {
                 int id1 = curMesh.Indices[j], id2 = curMesh.Indices[j + 1], id3 = curMesh.Indices[j + 2];
                 Point3d p1(curMesh.Vertices[id1].Position.X, curMesh.Vertices[id1].Position.Y, curMesh.Vertices[id1].Position.Z);
+                maxX = curMesh.Vertices[id1].Position.X > maxX ? curMesh.Vertices[id1].Position.X : maxX;
+                minX = curMesh.Vertices[id1].Position.X < minX ? curMesh.Vertices[id1].Position.X : minX;
+                maxY = curMesh.Vertices[id1].Position.Y > maxY ? curMesh.Vertices[id1].Position.Y : maxY;
+                minY = curMesh.Vertices[id1].Position.Y < minY ? curMesh.Vertices[id1].Position.Y : minY;
+                maxZ = curMesh.Vertices[id1].Position.Z > maxZ ? curMesh.Vertices[id1].Position.Z : maxZ;
+                minZ = curMesh.Vertices[id1].Position.Z < minZ ? curMesh.Vertices[id1].Position.Z : minZ;
                 Point3d p2(curMesh.Vertices[id2].Position.X, curMesh.Vertices[id2].Position.Y, curMesh.Vertices[id2].Position.Z);
+                maxX = curMesh.Vertices[id2].Position.X > maxX ? curMesh.Vertices[id2].Position.X : maxX;
+                minX = curMesh.Vertices[id2].Position.X < minX ? curMesh.Vertices[id2].Position.X : minX;
+                maxY = curMesh.Vertices[id2].Position.Y > maxY ? curMesh.Vertices[id2].Position.Y : maxY;
+                minY = curMesh.Vertices[id2].Position.Y < minY ? curMesh.Vertices[id2].Position.Y : minY;
+                maxZ = curMesh.Vertices[id2].Position.Z > maxZ ? curMesh.Vertices[id2].Position.Z : maxZ;
+                minZ = curMesh.Vertices[id2].Position.Z < minZ ? curMesh.Vertices[id2].Position.Z : minZ;
                 Point3d p3(curMesh.Vertices[id3].Position.X, curMesh.Vertices[id3].Position.Y, curMesh.Vertices[id3].Position.Z);
+                maxX = curMesh.Vertices[id3].Position.X > maxX ? curMesh.Vertices[id3].Position.X : maxX;
+                minX = curMesh.Vertices[id3].Position.X < minX ? curMesh.Vertices[id3].Position.X : minX;
+                maxY = curMesh.Vertices[id3].Position.Y > maxY ? curMesh.Vertices[id3].Position.Y : maxY;
+                minY = curMesh.Vertices[id3].Position.Y < minY ? curMesh.Vertices[id3].Position.Y : minY;
+                maxZ = curMesh.Vertices[id3].Position.Z > maxZ ? curMesh.Vertices[id3].Position.Z : maxZ;
+                minZ = curMesh.Vertices[id3].Position.Z < minZ ? curMesh.Vertices[id3].Position.Z : minZ;
                 triangles[tri] = new Triangle(p1, p2, p3, isE);
                 addShape(triangles[tri++]);
+
             }
         }
+        double cenX = (maxX + minX) * 0.5;
+        double cenY = (maxY + minY) * 0.5;
+        double cenZ = (maxZ + minZ) * 0.5;
+        double lenX = maxX - minX;
+        double lenY = maxY - minY;
+        double lenZ = maxZ - minZ;
+        printf("minX = %lf, minY = %lf, minZ = %lf\n", minX, minY, minZ);
+        printf("maxX = %lf, maxY = %lf, maxZ = %lf\n", maxX, maxY, maxZ);
+        printf("cenX = %lf, cenY = %lf, cenZ = %lf\n", cenX, cenY, cenZ);
+        printf("lenX = %lf, lenY = %lf, lenZ = %lf\n", lenX, lenY, lenZ);
     }
 }
-
-
-
 
 
 

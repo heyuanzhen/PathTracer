@@ -23,7 +23,7 @@ void cbox(){
     
     int reso[2] = {1000 / 5, 1150 / 5};
     int sampleCount = 4;
-    int maxDepth = 10;
+    int maxDepth = 1;
     
     Scene scene = Scene(8, 1);
     
@@ -257,8 +257,8 @@ void objTest() {
     rand();
     
     
-    int reso[2] = {768, 1152};
-    int sampleCount = 1024;
+    int reso[2] = {1000 / 5, 1000 / 5};
+    int sampleCount = 576;
     int maxDepth = 10;
     //
     
@@ -266,24 +266,32 @@ void objTest() {
     Spectrum3d one = Spectrum3d(1.0, 1.0, 1.0);
     Spectrum3d threeQuater = Spectrum3d(0.75, 0.75, 0.75);
 
-    Scene scene = Scene(10000, 1);
+    Scene scene = Scene(100000, 1);
     
     Shape** triangles = nullptr;
-    scene.readObjFile("Resources/scene01.obj", triangles, false);
+    scene.readObjFile("Resources/bunny.obj", triangles, false);
     int totalShapes = scene.getShapeCount();
-    PhongBSDF* bsdfArr = new PhongBSDF[totalShapes]();
+//    PhongBSDF* bsdfArr = new PhongBSDF[totalShapes]();
+    FresnelBSDF* bsdfArr = new FresnelBSDF[totalShapes]();
     Material* mat = new Material[totalShapes]();
     for (int i = 0; i < totalShapes; i++) {
 //        std::cout<<scene.getShape(i)->type<<std::endl;
-        bsdfArr[i].buildBSDF(zero, threeQuater, zero);
-        mat[i].setMaterial(Material::PHONG, &bsdfArr[i]);
-        triangles[i]->setMaterial(&mat[i]);
+//        bsdfArr[i].buildBSDF(zero, Spectrum3d(1.0, 0.9, 0.0), zero);
+//        mat[i].setMaterial(Material::PHONG, &bsdfArr[i]);
+        bsdfArr[i].buildBSDF(one, one, 1.0, 1.5);
+        mat[i].setMaterial(Material::FRESNEL, &bsdfArr[i]);
+        scene.getShape(i)->setMaterial(&mat[i]);
     }
     
+    Spectrum3d floorColor = Spectrum3d(0.4, 0.4, 0.4);
+    Point3d pfloor1(-10, 0.03, -10), pfloor2(-10, 0.03, 10), pfloor3(10, 0.03, 10);
+    Rectangular floor1 = Rectangular(pfloor3, pfloor2, pfloor1, false);
+    PhongBSDF bsdfFloor1 = PhongBSDF(zero, floorColor, zero);
+    Material matFloor1 = Material(Material::PHONG, &bsdfFloor1);
+    floor1.setMaterial(&matFloor1);
+    scene.addShape(&floor1);
     
-    
-    
-    Point3d lA(-1.05, 9.99, -1.05), lB(1.05, 9.99, -1.05), lC(1.05, 9.99, 1.05), lD(-1.05, 9.99, 1.05);
+    Point3d lA(-0.105, 0.588, -0.105), lB(0.105, 0.588, -0.105), lC(0.105, 0.588, 0.105), lD(-0.105, 0.588, 0.105);
     Spectrum3d li(25.0, 25.0, 25.0);
     PhongBSDF bsdfRecLight = PhongBSDF(zero, one, zero);
     Material matRecLight = Material(Material::PHONG, &bsdfRecLight);
@@ -293,16 +301,114 @@ void objTest() {
     AreaLight recLight = AreaLight(li, &recLightShape);
     recLightShape.setAreaLight(&recLight);
     scene.addLight(&recLight);
+//    AmbientLight al = AmbientLight(Spectrum3d(1.0, 1.0, 1.0));
+//    scene.addLight(&al);
     
     StratifiedSampler pixelSampler = StratifiedSampler(sampleCount);
     RandomSampler normalSampler = RandomSampler();
-    double lookAt[9] = {0.0,5.0,19.0, 0.0,5.0,0.0, 0.0,1.0,0.0};
+    double lookAt[9] = {-0.016818,0.410016,0.15, -0.016818,0.110016,0.001592, 0.0,1.0,0.0};
     double fov = M_PI / 4.0;
     Renderer renderer = Renderer(reso, sampleCount, maxDepth, &scene,
                                  &pixelSampler, &normalSampler, lookAt, fov);
     renderer.test();
 }
 
+
+void test() {
+    srand((unsigned)time(NULL));
+    rand();
+    
+    
+    int reso[2] = {1000 / 5, 1150 / 5};
+    int sampleCount = 4;
+    int maxDepth = 10;
+    
+    Scene scene = Scene(8, 1);
+    
+    Spectrum3d zero = Spectrum3d(0.0, 0.0, 0.0);
+    Spectrum3d one = Spectrum3d(1.0, 1.0, 1.0);
+    Spectrum3d threeQuater = Spectrum3d(0.75, 0.75, 0.75);
+    Spectrum3d oneQuater = Spectrum3d(0.25, 0.25, 0.25);
+    Spectrum3d half = Spectrum3d(0.5, 0.5, 0.5);
+    Spectrum3d red = Spectrum3d(0.9, 0.1, 0.1);
+    Spectrum3d blue = Spectrum3d(0.1, 0.1, 0.9);
+    
+    
+    Sphere sphere1 = Sphere(1.98, Point3d(-2.36, 1.985, -1.5), false);
+    scene.addShape(&sphere1);
+    PhongBSDF bpBSDF1 = PhongBSDF(zero, zero, one);
+    bpBSDF1.buildBSDF();
+    Material mat1 = Material(Material::PHONG, &bpBSDF1);
+    sphere1.setMaterial(&mat1);
+    //
+    Sphere sphere2 = Sphere(1.98, Point3d(2.55, 1.985, 1.52), false);
+    scene.addShape(&sphere2);
+    FresnelBSDF bpBSDF2 = FresnelBSDF(one, one, 1.0, 1.5);
+    bpBSDF2.buildBSDF();
+    Material mat2 = Material(Material::FRESNEL, &bpBSDF2);
+    sphere2.setMaterial(&mat2);
+    
+    
+    PhongBSDF bpBSDFCeil = PhongBSDF(zero, threeQuater, zero);
+    Material matCeil = Material(Material::PHONG, &bpBSDFCeil);
+    
+    PhongBSDF bpBSDFBack = PhongBSDF(zero, threeQuater, zero);
+    Material matBack = Material(Material::PHONG, &bpBSDFBack);
+    
+    PhongBSDF bpBSDFLeft = PhongBSDF(zero, red, zero);
+    Material matLeft = Material(Material::PHONG, &bpBSDFLeft);
+    
+    PhongBSDF bpBSDFRight = PhongBSDF(zero, blue, zero);
+    Material matRight = Material(Material::PHONG, &bpBSDFRight);
+    
+    PhongBSDF bpBSDFFloor = PhongBSDF(zero, threeQuater, zero);
+    Material matFloor = Material(Material::PHONG, &bpBSDFFloor);
+    
+    
+    Point3d p1(-5.763970, 0.000000, 5.000000);
+    Point3d p2(5.763970, 0.000000, 5.000000);
+    Point3d p3(-5.763970, 10.000000, 5.000000);
+    Point3d p4(5.763970, 10.000000, 5.000000);
+    Point3d p5(-5.763970, 10.000000, -5.000000);
+    Point3d p6(5.763970, 10.000000, -5.000000);
+    Point3d p7(-5.763970, 0.000000, -5.000000);
+    Point3d p8(5.763970, 0.000000, -5.000000);
+    
+    Rectangular ceil = Rectangular(p3, p4, p6, false);
+    Rectangular back = Rectangular(p5, p6, p8, false);
+    Rectangular floor = Rectangular(p7, p8, p2, false);
+    Rectangular right = Rectangular(p2, p8, p6, false);
+    Rectangular left = Rectangular(p7, p1, p3, false);
+    
+    scene.addShape(&ceil);
+    scene.addShape(&back);
+    scene.addShape(&floor);
+    scene.addShape(&right);
+    scene.addShape(&left);
+    
+    ceil.setMaterial(&matCeil);
+    back.setMaterial(&matBack);
+    floor.setMaterial(&matFloor);
+    right.setMaterial(&matRight);
+    left.setMaterial(&matLeft);
+    
+    Point3d lA(-1.05, 9.99, -1.05), lB(1.05, 9.99, -1.05), lC(1.05, 9.99, 1.05), lD(-1.05, 9.99, 1.05);
+    Spectrum3d li(25.0, 25.0, 25.0);
+    //    Point3d lA(-3.05, 9.99, -3.05), lB(3.05, 9.99, -3.05), lC(3.05, 9.99, 3.05), lD(-3.05, 9.99, 3.05);
+    //    Spectrum3d li(4.0, 4.0, 4.0);
+    //    Spectrum3d li(2.0, 2.0, 2.0);
+    
+    AmbientLight al = AmbientLight(Spectrum3d(1.0, 1.0, 1.0));
+    scene.addLight(&al);
+    
+    StratifiedSampler pixelSampler = StratifiedSampler(sampleCount);
+    RandomSampler normalSampler = RandomSampler();
+    double lookAt[9] = {0.0,5.0,39.0, 0.0,5.0,0.0, 0.0,1.0,0.0};
+    double fov = M_PI / 4.0;
+    Renderer renderer = Renderer(reso, sampleCount, maxDepth, &scene,
+                                 &pixelSampler, &normalSampler, lookAt, fov);
+    renderer.test();
+}
 
 
 

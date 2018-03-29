@@ -144,13 +144,11 @@ void BlinnPhongBSDF::buildBSDF() {
 
 
 //// Fresnel BSDF
+FresnelBSDF::FresnelBSDF() {}
+
 FresnelBSDF::FresnelBSDF(Spectrum3d _kr, Spectrum3d _kt, double _eA, double _eB) :
                 kr(_kr), kt(_kt), etaA(_eA), etaB(_eB){
     buildBSDF();
-    weightSum = 0.0;
-    for (int i = 0; i < getBxDFCount(); i++) {
-        weightSum += bxdfs[i]->getWeight();
-    }
 }
 
 FresnelBSDF::~FresnelBSDF() {
@@ -168,6 +166,18 @@ void FresnelBSDF::buildBSDF() {
     BxDF* fresnelSpecular = new FresnelSpecular(kr, kt, etaA, etaB);
     addBxDF(fresnelSpecular);
     setBuilt(true);
+    weightSum = 0.0;
+    for (int i = 0; i < getBxDFCount(); i++) {
+        weightSum += bxdfs[i]->getWeight();
+    }
+}
+
+void FresnelBSDF::buildBSDF(Spectrum3d _kr, Spectrum3d _kt, double _eA, double _eB) {
+    kr = _kr;
+    kt = _kt;
+    etaA = _eA;
+    etaB = _eB;
+    buildBSDF();
 }
 
 
