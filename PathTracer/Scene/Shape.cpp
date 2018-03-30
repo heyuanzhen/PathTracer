@@ -166,12 +166,19 @@ double Sphere::pdf(const Intersection *itSur, Point3d pLi, Vector3d wi) const {
 }
 
 ////Triangle Shape
-Triangle::Triangle(Point3d _p0, Point3d _p1, Point3d _p2, bool isE) : p0(_p0), p1(_p1), p2(_p2), Shape(TRIANGLE, isE) {
+Triangle::Triangle(Point3d _p0, Point3d _p1, Point3d _p2, bool isE) : p0(_p0), p1(_p1), p2(_p2), pn0(Vector3d(0.0, 0.0, 0.0)), pn1(Vector3d(0.0, 0.0, 0.0)), pn2(Vector3d(0.0, 0.0, 0.0)), Shape(TRIANGLE, isE) {
     e1 = p1 - p0;
     e2 = p2 - p0;
     n = -e1.cross(e2).normalized();
 }
 
+Triangle::Triangle(Point3d _p0, Point3d _p1, Point3d _p2, Vector3d _n0,Vector3d _n1, Vector3d _n2,
+                   bool isE) :p0(_p0), p1(_p1), p2(_p2), pn0(_n0), pn1(_n1), pn2(_n2), Shape(TRIANGLE, isE)
+{
+    e1 = p1 - p0;
+    e2 = p2 - p0;
+    n = -e1.cross(e2).normalized();
+}
 Triangle::~Triangle() {}
 
 Point3d Triangle::getPointByUV(double uu, double vv) const {
@@ -179,7 +186,13 @@ Point3d Triangle::getPointByUV(double uu, double vv) const {
 }
 
 Vector3d Triangle::getNormal(Point3d pWorld) const {
-    return n;
+    if (pn0.norm() < eps || pn1.norm() < eps || pn2.norm() < eps) {
+        return n;
+    }
+    else { //need to be done
+//        std::cout<<"here"<<std::endl;
+        return ((pn0 + pn1 + pn2) * oneOverThree).normalized();
+    }
 }
 
 void Triangle::setNormal(Vector3d nor) {

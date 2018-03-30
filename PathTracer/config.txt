@@ -1,0 +1,4 @@
+Scene 3
+Resolution 300 300
+SampleCount 1024
+MaxDepth 10

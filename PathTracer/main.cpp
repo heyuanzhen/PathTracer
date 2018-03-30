@@ -9,16 +9,7 @@
 #include <iostream>
 
 #include "Examples.h"
-
-#include "Sampler.h"
-#include "sampling.h"
-#include "BxDF.h"
-#include "Material.h"
-#include "Camera.h"
-#include "Scene.h"
-#include "Shape.h"
-#include "Renderer.h"
-#include "Light.h"
+#include "FileParser.h"
 
 using namespace std;
 
@@ -31,9 +22,11 @@ void parallelTest(){
 }
 
 int main(int argc, const char * argv[]) {
-//    cbox();
-//    veach();
-    objTest();
-//    test();
+    srand((unsigned)time(NULL));
+    rand();
+    
+    string fileName = "config.txt";
+    FileParser fp(fileName);
+    fp.readAndSchedule();
     return 0;
 }

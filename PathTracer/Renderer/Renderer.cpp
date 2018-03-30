@@ -88,6 +88,7 @@ void Renderer::writePPM() const {
 
 void Renderer::startRendering() {
     std::cout<<"sampleCount = "<<sampleCount<<std::endl;
+    std::cout<<"maxDepth = "<<maxDepth<<std::endl;
     std::cout<<"–––––––––––––––––––Start Rendering––––––––––––––––––"<<std::endl;
     for (int rowi = 0; rowi < yres; rowi++) {
         for (int coli = 0; coli < xres; coli++) {

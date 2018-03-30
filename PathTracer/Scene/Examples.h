@@ -9,9 +9,9 @@
 #ifndef Examples_h
 #define Examples_h
 
-void cbox();
-void veach();
-void objTest();
+void cbox(int* reso, int sampleCount, int maxDepth);
+void veach(int* reso, int sampleCount, int maxDepth);
+void objTest(int* reso, int sampleCount, int maxDepth);
 void test();
 
 

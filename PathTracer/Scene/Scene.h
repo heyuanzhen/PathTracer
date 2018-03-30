@@ -23,6 +23,9 @@ private:
     int shapeCount; //number of shapes that has been added to shape list now
     int lightCount;
 public:
+    int objShapesCount;
+    Shape** objShapes;
+    
     Scene(int spT, int liT);
     ~Scene();
     
@@ -35,7 +38,8 @@ public:
     int getLightCount() const;
     void addShape(Shape* sp);
     void addLight(Light* li);
-    void readObjFile(std::string fileName, Shape** triangles, bool isE, double* cen, double* len);
+    void readObjFile(std::string fileName, bool isE, double* cen, double* len);
+    void cleanObj();
 };
 
 

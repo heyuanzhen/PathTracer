@@ -134,8 +134,11 @@ Spectrum3d Material::sampleBSDF(const Vector3d woW, Vector3d& wiW, const Matrix3
 
     isEnter = false;
     specularBounces = (bxdf->getType() == BxDF::SPECULAR) ||
-                      (bxdf->getType() == BxDF::FRESNELSPECULAR);// ||
+                      (bxdf->getType() == BxDF::FRESNELSPECULAR); //||
 //                      (bxdf->getType() == BxDF::BFSPECULAR);
+//    if (specularBounces) {
+//        std::cout<<"here"<<std::endl;
+//    }
     isEnter = ((bxdf->getType() == BxDF::TRANSMISSION) || (bxdf->getType() ==  BxDF::FRESNELSPECULAR)) && wiL[2] < 0.0;
     
     for (int i = 0; i < BxDFCount; i++) {

@@ -13,6 +13,7 @@
 		603089692025DB9E00C6D568 /* Sampler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 603089672025DB9E00C6D568 /* Sampler.cpp */; };
 		60319044203BAAA600B1021F /* Scene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 60319043203BAAA600B1021F /* Scene.cpp */; };
 		6031904A203BAFF500B1021F /* Light.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 60319049203BAFF500B1021F /* Light.cpp */; };
+		6034DC91206E212600901BED /* FileParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6034DC90206E212600901BED /* FileParser.cpp */; };
 		6036E859202C315D00F47D9D /* Material.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6036E858202C315D00F47D9D /* Material.cpp */; };
 		604AA850202D4ADE007224E6 /* BSDF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 604AA84F202D4ADE007224E6 /* BSDF.cpp */; };
 		60809A26203D4C270051EB4F /* Intersection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 60809A25203D4C270051EB4F /* Intersection.cpp */; };
@@ -50,6 +51,9 @@
 		60319043203BAAA600B1021F /* Scene.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Scene.cpp; sourceTree = "<group>"; };
 		60319048203BAFF500B1021F /* Light.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Light.h; sourceTree = "<group>"; };
 		60319049203BAFF500B1021F /* Light.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Light.cpp; sourceTree = "<group>"; };
+		6034DC8F206E212600901BED /* FileParser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FileParser.h; sourceTree = "<group>"; };
+		6034DC90206E212600901BED /* FileParser.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = FileParser.cpp; sourceTree = "<group>"; };
+		6034DC92206E3B5800901BED /* config.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = config.txt; sourceTree = "<group>"; };
 		6036E857202C315D00F47D9D /* Material.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Material.h; sourceTree = "<group>"; };
 		6036E858202C315D00F47D9D /* Material.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Material.cpp; sourceTree = "<group>"; };
 		604AA84E202D4ADE007224E6 /* BSDF.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BSDF.h; sourceTree = "<group>"; };
@@ -161,9 +165,10 @@
 		6030895A2025D64600C6D568 /* PathTracer */ = {
 			isa = PBXGroup;
 			children = (
+				6034DC92206E3B5800901BED /* config.txt */,
 				6030895B2025D64600C6D568 /* main.cpp */,
 				60BF93C8203AA1C7002F2A23 /* CameraModel */,
-				60EF45902026F7B900DFCF7A /* core */,
+				60EF45902026F7B900DFCF7A /* Core */,
 				60EF459820275F6600DFCF7A /* Material */,
 				6005A6CD2043D61700BF0336 /* Renderer */,
 				60319041203BAA9300B1021F /* Scene */,
@@ -194,6 +199,8 @@
 				603089672025DB9E00C6D568 /* Sampler.cpp */,
 				60BF93C5203A7C7D002F2A23 /* Transform.h */,
 				60BF93C6203A7C7D002F2A23 /* Transform.cpp */,
+				6034DC8F206E212600901BED /* FileParser.h */,
+				6034DC90206E212600901BED /* FileParser.cpp */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -211,7 +218,7 @@
 			path = CameraModel;
 			sourceTree = "<group>";
 		};
-		60EF45902026F7B900DFCF7A /* core */ = {
+		60EF45902026F7B900DFCF7A /* Core */ = {
 			isa = PBXGroup;
 			children = (
 				60E10954206A673000711932 /* OBJ_Loader.h */,
@@ -220,7 +227,7 @@
 				60EF45912026F7E000DFCF7A /* sampling.h */,
 				60D551A02046E9BE00DF789A /* operation.h */,
 			);
-			path = core;
+			path = Core;
 			sourceTree = "<group>";
 		};
 		60EF459820275F6600DFCF7A /* Material */ = {
@@ -305,6 +312,7 @@
 				603089692025DB9E00C6D568 /* Sampler.cpp in Sources */,
 				60B7A5CD205E0B1F00258C1F /* Examples.cpp in Sources */,
 				60BF93C1203A6D1D002F2A23 /* Shape.cpp in Sources */,
+				6034DC91206E212600901BED /* FileParser.cpp in Sources */,
 				6030895C2025D64600C6D568 /* main.cpp in Sources */,
 				609D7D1C203AC08700599AFE /* Ray.cpp in Sources */,
 				604AA850202D4ADE007224E6 /* BSDF.cpp in Sources */,

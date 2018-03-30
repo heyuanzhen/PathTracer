@@ -30,7 +30,7 @@ public:
     AreaLight* areaLight;
     
     Shape(ShapeType tp, bool isE);
-    ~Shape();
+    virtual ~Shape();
     
     void transRayToLocal(Ray* rayW, Ray& rayL);
     void setAreaLight(AreaLight* al);
@@ -66,9 +66,11 @@ public:
 
 class Triangle : public Shape {
     Point3d p0, p1, p2;
+    Vector3d pn0, pn1, pn2;
     Vector3d e1, e2, n;
 public:
     Triangle(Point3d _p0, Point3d _p1, Point3d _p2, bool isE);
+    Triangle(Point3d _p0, Point3d _p1, Point3d _p2, Vector3d _n0, Vector3d _n1, Vector3d _n2, bool isE);
     ~Triangle();
     
     Point3d getPointByUV(double uu, double vv) const;

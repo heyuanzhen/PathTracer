@@ -152,8 +152,7 @@ Spectrum3d PathIntegrator::Li() {
     Spectrum3d L(0.0, 0.0, 0.0), beta(1.0, 1.0, 1.0);
     bool specularBounce = false;
     bool isEnter = false;
-//    Spectrum3d betaList[10];
-    bool flag = false;
+
     for (int bounces = 0; ; bounces++) {
 //        (1)⟨Intersect ray with scene and store intersection in isect 877⟩
 //        (2)⟨Possibly add emitted light at intersection 877⟩
@@ -196,8 +195,7 @@ Spectrum3d PathIntegrator::Li() {
         
         Spectrum3d betaOld = beta;
         beta = beta.cwiseProduct(f * abs(wi.dot(inter->getLocalNormal()))) / pdf;
-//        bool judge = material->getBSDF()->bxdfs[3]->getWeight() > 0.01 && bounces == 1 &&
-//                     wi.dot(inter->getLocalNormal()) > 0.0001;
+
         if(false){
             std::cout<<wi.dot(inter->getLocalNormal())<<std::endl;
             std::cout<<"beta_old = "<<betaOld.transpose()<<", beta = "<<beta.transpose()<<", pdf = "<<pdf
