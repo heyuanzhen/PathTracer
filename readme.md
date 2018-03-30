@@ -4,7 +4,7 @@ This is a lightweight Path Tracer which implement Monte Carlo Integration and mu
 
 ### Dependencies
 
-*Eigen
+* Eigen
 
 ### Usage
 
