@@ -67,7 +67,7 @@ void Scene::addLight(Light *li) {
     Light::powerSum += li->getPower();
 }
 
-void Scene::readObjFile(std::string fileName, Shape **triangles, bool isE) {
+void Scene::readObjFile(std::string fileName, Shape **triangles, bool isE, double* cen, double* len) {
     objl::Loader loader;
     bool loadout = loader.LoadFile(fileName);
     int meshCount = (int)loader.LoadedMeshes.size();
@@ -113,6 +113,8 @@ void Scene::readObjFile(std::string fileName, Shape **triangles, bool isE) {
         double lenX = maxX - minX;
         double lenY = maxY - minY;
         double lenZ = maxZ - minZ;
+        cen[0] = cenX; cen[1] = cenY; cen[2] = cenZ;
+        len[0] = lenX; len[1] = lenY; len[2] = lenZ;
         printf("minX = %lf, minY = %lf, minZ = %lf\n", minX, minY, minZ);
         printf("maxX = %lf, maxY = %lf, maxZ = %lf\n", maxX, maxY, maxZ);
         printf("cenX = %lf, cenY = %lf, cenZ = %lf\n", cenX, cenY, cenZ);

@@ -35,7 +35,7 @@ public:
     int getLightCount() const;
     void addShape(Shape* sp);
     void addLight(Light* li);
-    void readObjFile(std::string fileName, Shape** triangles, bool isE);
+    void readObjFile(std::string fileName, Shape** triangles, bool isE, double* cen, double* len);
 };
 
 

@@ -41,6 +41,8 @@ PerspectiveCamera::PerspectiveCamera(double* lookAt, int* reso, double fovf, int
     m_camToWorld.setIdentity();
     
     Point3d zero(0.0, 0.0, 0.0);
+    printf("Camera position: (%lf, %lf, %lf)\n", origin[0], origin[1], origin[2]);
+    printf("Camera target: (%lf, %lf, %lf)\n", target[0], target[1], target[2]);
 }
 
 PerspectiveCamera::~PerspectiveCamera() {}
