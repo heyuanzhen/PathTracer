@@ -24,7 +24,6 @@ bool Light::testVisibility(Point3d pL, Point3d pS, const Scene* scene) const {
     int dim = 0;
     double maxD = getMaxDistanceInOneDim(pL, pS, dim);
     double tmax = maxD / r.getDirection()[dim]; //pL and pS must be this order
-//    std::cout<<"maxD = "<<maxD<<"maxDir = "<<r.getDirection()[dim]<<std::endl;
     return !r.findInterBetween(scene, tmax);
 }
 

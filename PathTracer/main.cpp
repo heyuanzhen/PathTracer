@@ -25,7 +25,7 @@ int main(int argc, const char * argv[]) {
     srand((unsigned)time(NULL));
     rand();
     
-    string fileName = "config.txt";
+    string fileName = "./config.txt";
     FileParser fp(fileName);
     fp.readAndSchedule();
     return 0;

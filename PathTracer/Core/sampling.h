@@ -15,9 +15,7 @@
 #include "globalConstants.h"
 #include "Sampler.h"
 
-//RandomSampler rsp;
 
-//pbrt: page: 775
 inline Point3d uniformSampleHemisphere(const Point2d u){
     double z = u[0];
     double r = sqrt(1.0 - z * z);
@@ -29,7 +27,6 @@ inline double uniformSampleHemispherePDF(){
 }
 
 
-//pbrt: page776
 inline Point3d uniformSampleSphere(const Point2d u){
     double z = 1.0 - 2.0 * u[0];
     double r = sqrt(1.0 - z * z);
@@ -40,7 +37,6 @@ inline double uniformSampleSpherePDF(){
     return Inv4Pi;
 }
 
-//pbrt: page 777. This function is not used
 inline Point2d uniformSampleDisk(const Point2d u) {
     double r = sqrt(u[0]);
     double theta = 2 * M_PI * u[1];
@@ -48,7 +44,6 @@ inline Point2d uniformSampleDisk(const Point2d u) {
     return p;
 }
 
-//pbrt: page 778
 inline Point2d concentricSampleDisk(const Point2d u) {
     // Map uniform random numbers to $[-1,1]^2$
     Point2d uMapped = 2.0 * u - Vector2d(1.0, 1.0);
@@ -71,7 +66,6 @@ inline Point2d concentricSampleDisk(const Point2d u) {
     return p;
 }
 
-//pbrt: page 780
 inline Point3d cosineSampleHemisphere(const Point2d u){
     Point2d p_disk = concentricSampleDisk(u);
     double z = sqrt(1.0 - p_disk.x() * p_disk.x() - p_disk.y() - p_disk.y());
@@ -81,7 +75,6 @@ inline double cosinSampleHemisphere(double cosTheta){
     return cosTheta * InvPi;
 }
 
-//pbrt: page 781
 inline Point3d uniformSampleCone(const Point2d u, const double cosThetaMax){
     double cosTheta = (1.0 - u[0]) + u[0] * cosThetaMax;
     double sinTheta = sqrt(1.0 - cosTheta * cosTheta);

@@ -20,15 +20,12 @@ Renderer::Renderer(int* reso, int spc, int mD, Scene* sc, Sampler* psp,
     sampleCount = spc;
     maxDepth = mD;
     pixels = new double*[yres]();
-//    pixels_uint8 = new int*[yres]();
     for (int i = 0; i < yres; i++) {
         pixels[i] = new double[xres * 3](); //3 channels
-//        pixels_uint8[i] = new int[xres * 3]();
     }
     scene = sc;
     pixelSampler = psp;
     normalSampler = nsp;
-//    rays = new Ray[reso[1] * reso[0] * sampleCount]();
     rays = nullptr;
     camera = new PerspectiveCamera(lookAt, reso, fov, sampleCount, pixelSampler, rays);
 }
@@ -37,10 +34,8 @@ Renderer::Renderer(int* reso, int spc, int mD, Scene* sc, Sampler* psp,
 Renderer::~Renderer() {
     for (int i = 0; i < yres; i++) {
         delete[] pixels[i];
-//        delete[] pixels_uint8[i]
     }
     delete[] pixels;
-//    delete[] pixels_uint8;
     delete[] rays;
 }
 
@@ -113,9 +108,6 @@ void Renderer::startRendering() {
             for (int spi = 0; spi < sampleCount; spi++) {
                 pix_temp = Spectrum3d(pixelBuffer[spi * 3], pixelBuffer[spi * 3 + 1], pixelBuffer[spi * 3 + 2]);
                 pix = pix + pix_temp;
-//                if (pix_temp.norm() > eps) {
-//                    std::cout<<"("<<rowi<<", "<<coli<<"), pix_temp = "<<pix_temp.transpose()<<std::endl;
-//                }
             }
             
             pix /= (sampleCount * 1.0);

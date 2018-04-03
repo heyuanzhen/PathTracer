@@ -13,13 +13,6 @@
 #include "sampling.h"
 #include <iostream>
 
-//PathIntegrator::PathIntegrator() {
-//    ray = nullptr;
-//    scene = nullptr;
-//    sampler = nullptr;
-//    maxDepth = 0;
-//}
-
 
 PathIntegrator::PathIntegrator(Ray* r, const Scene* sce, Sampler* nsp, int mD) :
 ray(r), scene(sce), normalSampler(nsp), maxDepth(mD) {
@@ -78,7 +71,6 @@ Spectrum3d PathIntegrator::estimateDirectLightOnly(const Intersection* it, const
     //⟨Sample light source with multiple importance sampling⟩
     //get Li, wi, lightPdf, visibility
     Li = light->Sample_Li(it, uLight, wi, lightPdf, visibility, scene);
-//    std::cout<<"Li = "<<Li.transpose()<<", lightPdf = "<<lightPdf<<std::endl;
     if (!visibility) {
         return Spectrum3d(0.0, 0.0, 0.0);
     }
@@ -92,11 +84,9 @@ Spectrum3d PathIntegrator::estimateDirectLightOnly(const Intersection* it, const
         Vector3d woL, wiL;
         material->eval(wo, -wi, woL, wiL, M, f, scatteringPdf); //wi := -wi
         f *= abs(wiL[2]);
-//        std::cout<<"f = "<<f.transpose()<<std::endl;
         if (!f.isZero()) {
             if (!Li.isZero()) {
                 if (light->isDeltaLight()){
-//                    std::cout<<"f = "<<f.transpose()<<std::endl;
                     Ld += f.cwiseProduct(Li) / lightPdf;
                 }
                 else {
@@ -124,14 +114,10 @@ Spectrum3d PathIntegrator::estimateDirectLightOnly(const Intersection* it, const
                     Intersection* interL = rL.getIntersection();
                     Light* al = interL->getShape()->getAreaLight();
                     if (al == light) {
-//                        std::cout<<"here"<<std::endl;
                         Li = light->getShape()->getAreaLight()->L(interL->getInterPoint(), -wi);
                         lightPdf = interL->getShape()->pdf(it, interL->getInterPoint(), wi);
-//                        std::cout<<"Li = "<<Li.transpose()<<"lightPdf = "<<lightPdf<<std::endl;
                         weight = powerHeuristic(1.0, scatteringPdf, 1.0, lightPdf);
                         Ld += f.cwiseProduct(Li) * weight / scatteringPdf;
-//                        std::cout<<"scatteringPdf = "<<scatteringPdf<<std::endl;
-//                        std::cout<<"weight = "<<weight<<", Ld = "<<Ld.transpose()<<std::endl<<std::endl;
                     }
                 }
 
@@ -154,16 +140,8 @@ Spectrum3d PathIntegrator::Li() {
     bool isEnter = false;
 
     for (int bounces = 0; ; bounces++) {
-//        (1)⟨Intersect ray with scene and store intersection in isect 877⟩
-//        (2)⟨Possibly add emitted light at intersection 877⟩
-//        (3)⟨Terminate path if ray escaped or maxDepth was reached 877⟩
-//        (4)⟨Compute scattering functions and skip over medium boundaries 878⟩
-//        (5)⟨Sample illumination from lights  to find path contribution 878⟩
-//        (6)⟨Sample BSDF to get new path direction 878⟩
-//        (7)⟨Account for subsurface scattering, if applicable 915⟩
-//        (8)⟨Possibly terminate the path with Russian roulette 879⟩
-        bool isInter = ray->findIntersection(scene);    //
-        Intersection* inter = ray->getIntersection();   //--(1)
+        bool isInter = ray->findIntersection(scene);
+        Intersection* inter = ray->getIntersection();
         
         
         if (bounces == 0 || specularBounce) {
@@ -172,21 +150,17 @@ Spectrum3d PathIntegrator::Li() {
                 Spectrum3d Le = inter->getShape()->getAreaLight()->L(inter->getInterPoint(), -ray->getDirection());
                 L += beta.cwiseProduct(Le);
             }
-            //⟨Addemittedlightatpathvertexorfromtheenvironment 877⟩ //(2)c
         }
         if (!isInter || bounces >= maxDepth)  break; //(3)
         
-        //⟨Compute scattering functions and skip over medium boundaries⟩  //(4)
         Material* material = inter->getMaterial();
         calcRotateMartix(inter->getLocalNormal(), material->getGeometryNormal());
         
-        //⟨Sample illumination from lights to find path contribution⟩ //(5)
         Spectrum3d beta_temp = beta;
         Spectrum3d Ld = beta_temp.cwiseProduct(uniformSampleOneLight(inter, scene, normalSampler,
                                                    -ray->getDirection(), false)); //wo = - ray.d
         L += Ld;
         
-        //⟨Sample BSDF to get new path direction⟩ //(6)
         Vector3d wi(0.0, 0.0, 0.0), wo = -ray->getDirection(); //negative!
         double pdf;
         Spectrum3d f = material->sampleBSDF(wo, wi, M, invM, pdf, specularBounce, isEnter);
@@ -204,9 +178,9 @@ Spectrum3d PathIntegrator::Li() {
         }
         generateNewRay(inter, wi, inter->getLocalNormal(), isEnter, *ray);
         
-        //⟨Account for subsurface scattering, if applicable⟩ (7)
+        //⟨Account for subsurface scattering, if applicable⟩
         
-        //⟨Possibly terminate the path with Russian roulette⟩ (8)
+        //⟨Possibly terminate the path with Russian roulette⟩
         
     }
     ray->setRadiance(L);

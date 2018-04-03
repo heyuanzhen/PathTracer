@@ -174,13 +174,13 @@ void veach(int* reso, int sampleCount, int maxDepth) {
     Material matSphere3 = Material(Material::PHONG, &bsdfSphere3);
     PhongBSDF bsdfSphere4 = PhongBSDF(zero, little, zero);
     Material matSphere4 = Material(Material::PHONG, &bsdfSphere4);
-    BlinnPhongBSDF bsdfPlate1 = BlinnPhongBSDF(zero, plate1Diffuse, plate1Specular,5000.0* 0.1 / 0.005);
+    BlinnPhongBSDF bsdfPlate1 = BlinnPhongBSDF(zero, plate1Diffuse, plate1Specular,5000.0 * 0.1 / 0.005);
     Material matPlate1 = Material(Material::PHONG, & bsdfPlate1);
-    BlinnPhongBSDF bsdfPlate2 = BlinnPhongBSDF(zero, plate1Diffuse, plate1Specular,500.0* 0.1 / 0.02);
+    BlinnPhongBSDF bsdfPlate2 = BlinnPhongBSDF(zero, plate1Diffuse, plate1Specular,500.0 * 0.1 / 0.02);
     Material matPlate2 = Material(Material::PHONG, & bsdfPlate2);
-    BlinnPhongBSDF bsdfPlate3 = BlinnPhongBSDF(zero, plate1Diffuse, plate1Specular,500.0* 0.1 / 0.05);
+    BlinnPhongBSDF bsdfPlate3 = BlinnPhongBSDF(zero, plate1Diffuse, plate1Specular,500.0 * 0.1 / 0.05);
     Material matPlate3 = Material(Material::PHONG, & bsdfPlate3);
-    BlinnPhongBSDF bsdfPlate4 = BlinnPhongBSDF(zero, plate1Diffuse, plate1Specular,500.0* 0.1 / 0.1);
+    BlinnPhongBSDF bsdfPlate4 = BlinnPhongBSDF(zero, plate1Diffuse, plate1Specular,500.0 * 0.1 / 0.1);
     Material matPlate4 = Material(Material::PHONG, & bsdfPlate4);
     
     AreaLight sphereLight0 = AreaLight(li0, &sphere0);//
@@ -241,6 +241,7 @@ void objTest(int* reso, int sampleCount, int maxDepth) {
     Spectrum3d zero = Spectrum3d(0.0, 0.0, 0.0);
     Spectrum3d one = Spectrum3d(1.0, 1.0, 1.0);
     Spectrum3d threeQuater = Spectrum3d(0.75, 0.75, 0.75);
+    Spectrum3d yellow(0.5, 0.5, 0.2);
 
     Scene scene = Scene(100000, 1);
     
@@ -248,23 +249,23 @@ void objTest(int* reso, int sampleCount, int maxDepth) {
     double len[3] = {0.0};
     scene.readObjFile("Resources/runner.obj", false, cen, len);
     int totalShapes = scene.getShapeCount();
-    FresnelBSDF* bsdfArr = new FresnelBSDF[totalShapes]();
+    PhongBSDF* bsdfArr = new PhongBSDF[totalShapes]();
     Material* mat = new Material[totalShapes]();
     for (int i = 0; i < scene.objShapesCount; i++) {
-        bsdfArr[i].buildBSDF(one, one, 1.0, 1.5);
-        mat[i].setMaterial(Material::FRESNEL, &bsdfArr[i]);
+        bsdfArr[i].buildBSDF(zero, yellow, zero);
+        mat[i].setMaterial(Material::PHONG, &bsdfArr[i]);
         scene.objShapes[i]->setMaterial(&mat[i]);
     }
     
+//    Spectrum3d sphere1Color(0.25, 0.25, 0.75);
     Spectrum3d sphere1Color(0.25, 0.25, 0.75);
-    Spectrum3d sphere1Specular(0.4787, 0.4787, 0.4787);
     Point3d center1(-3.2, 0.6, -2);
     double radius1 = 0.6;
     Sphere sphere1 = Sphere(radius1, center1, false);
-    BlinnPhongBSDF bsdfSphere1 = BlinnPhongBSDF(zero, sphere1Color, sphere1Specular,500.0* 0.1 / 0.1);
-    Material matSphere1 = Material(Material::PHONG, &bsdfSphere1);
-    sphere1.setMaterial(&matSphere1);
     scene.addShape(&sphere1);
+    PhongBSDF bpBSDF1 = PhongBSDF(zero, sphere1Color, zero);
+    Material mat1 = Material(Material::PHONG, &bpBSDF1);
+    sphere1.setMaterial(&mat1);
     
     Spectrum3d floor1Color = Spectrum3d(0.4, 0.4, 0.4);
     Point3d pfloor1(-100, -0.006, -100), pfloor2(-100, -0.006, 100), pfloor3(100, -0.006, 100);
@@ -292,7 +293,7 @@ void objTest(int* reso, int sampleCount, int maxDepth) {
 
     
     Spectrum3d little = Spectrum3d(0.001, 0.001, 0.001);
-    Spectrum3d li0 = Spectrum3d(400, 400, 400);
+    Spectrum3d li0 = Spectrum3d(300, 300, 300);
     Point3d cen0(cen[0], cen[1] + len[1] * 2, cen[2]);
     Sphere sphere0 = Sphere(0.5, cen0, true);//
     PhongBSDF bsdfSphere0 = PhongBSDF(zero, little, zero);//

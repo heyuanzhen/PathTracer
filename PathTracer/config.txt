@@ -1,4 +1,5 @@
 Scene 3
-Resolution 300 300
+Resolution 800 800
 SampleCount 1024
 MaxDepth 10
+
