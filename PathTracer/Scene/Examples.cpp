@@ -314,6 +314,3 @@ void objTest(int* reso, int sampleCount, int maxDepth) {
                                  &pixelSampler, &normalSampler, lookAt, fov);
     renderer.test();
 }
-
-
-

@@ -1,6 +1,8 @@
 # Path Tracer
 
-This is a lightweight Path Tracer which implement Monte Carlo Integration and multiple importance sampling. It refers to Physically Based Rendering, Third Edition.
+This is a lightweight Path Tracer which implement Monte Carlo Integration and multiple importance sampling. It refers to Physically Based Rendering, Third Edition. 
+
+Please refer to `document.pdf` for detail information.
 
 ### Dependencies
 
